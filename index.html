@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Icon library (FontAwesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Background decorations for premium luxury vibe -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="container">
+    <!-- Simulator Sidebar / Control Panel -->
+    <div class="control-panel">
+      <div class="logo">
+        <i class="fa-solid fa-gem icon-logo"></i>
+        <h1>黑豹娱乐城</h1>
+        <p>BLACK PANTHER CASINO 1068TV</p>
+      </div>
+      
+      <div class="desc-card">
+        <h3>💡 通用娱乐城风格</h3>
+        <ul>
+          <li><strong>模拟余额打通</strong>：所有界面共享充值与投注余额。在体育及六合彩投注均可扣除余额。</li>
+          <li><strong>游戏大厅</strong>：一比一还原首页布局。包含横幅活动、个人信息栏、左侧游戏分类侧栏、右侧热门游戏格。</li>
+          <li><strong>一分六合彩</strong>：点击游戏列表中的“一分六合彩”可切换至高度还原的投注页面，包含自动开奖倒计时、滚球号更新、单/双/大/小投注盘口、筹码选择及投注功能。</li>
+          <li><strong>短剧播放器</strong>：竖屏短片模式，配有点赞/留言浮窗，可通过按键或上下滑动无缝切换多部短剧。</li>
+          <li><strong>视频大厅</strong>：顶部横向分类左右滑动，包含视频缩略图，点击可播放。</li>
+          <li><strong>分流聊天室</strong>：1/3上方推荐，2/3下方聊天弹幕流。</li>
+        </ul>
+      </div>
+
+      <div class="simulator-controls">
+        <h3>🎛️ 模拟账户操作</h3>
+        <div class="balance-adjuster">
+          <span>当前虚拟余额: <strong id="sidebar-balance-display">¥1000.00</strong></span>
+          <button id="btn-sidebar-deposit" class="control-btn"><i class="fa-solid fa-wallet"></i> 一键充值 ¥500</button>
+        </div>
+        <button id="btn-theme-toggle" class="control-btn"><i class="fa-solid fa-circle-half-stroke"></i> 切换手机皮肤</button>
+      </div>
+      
+      <div class="credits">
+        <p>© 2026 Black Panther Entertainment Space</p>
+      </div>
+    </div>
+
+    <!-- Phone Simulator Container -->
+    <div class="phone-wrapper">
+      <div class="phone phone-dark" id="mobile-device">
+        <!-- Phone Speaker and Camera (Notch/Dynamic Island) -->
+        <div class="phone-notch">
+          <div class="camera"></div>
+          <div class="speaker"></div>
+        </div>
+        
+        <!-- Side Buttons -->
+        <div class="phone-btn phone-btn-vol-up"></div>
+        <div class="phone-btn phone-btn-vol-down"></div>
+        <div class="phone-btn phone-btn-power"></div>
+        
+        <!-- Screen Content Container -->
+        <div class="phone-screen" id="phone-screen-container">
+          
+          <!-- Status Bar -->
+          <div class="status-bar">
+            <div class="status-left">
+              <span class="carrier"><i class="fa-solid fa-wifi"></i> 无SIM卡</span>
+            </div>
+            <div class="status-time" id="status-time">22:03</div>
+            <div class="status-right">
+              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-battery-full"></i>
+            </div>
+          </div>
+          
+          <!-- Web App Body Inside Phone -->
+          <div class="app-body" id="app-root">
+            
+            <!-- PAGE 1: 视频 (Video Hall) -->
+            <div class="app-page" id="page-videos">
+              <!-- Video Header Bar matching screenshot -->
+              <div class="video-header-bar">
+                <div class="lobby-logo-title">
+                  <img src="assets/black_panther_logo.png" class="lobby-logo-avatar" alt="LOGO">
+                  <div>
+                    <h4>黑豹视频</h4>
+                    <span>1068.tv</span>
+                  </div>
+                </div>
+                <div class="search-bar-middle">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="极品专区" readonly>
+                </div>
+                <div class="header-right-icons">
+                  <i class="fa-solid fa-file-invoice"></i>
+                  <i class="fa-regular fa-thumbs-up"></i>
+                </div>
+              </div>
+
+              <!-- Categories scroll bar -->
+              <div class="video-categories-bar">
+                <div class="scroll-categories">
+                  <div class="category-pill active" data-cat="recommend">推荐</div>
+                  <div class="category-pill" data-cat="gossip">网暴吃瓜</div>
+                  <div class="category-pill" data-cat="domestic">国产传媒</div>
+                  <div class="category-pill" data-cat="selfie">自拍偷拍</div>
+                  <div class="category-pill" data-cat="japanese">日本无码</div>
+                  <div class="category-pill" data-cat="western">欧美精品</div>
+                </div>
+              </div>
+              
+              <div class="scroll-content">
+                <!-- 1. 广告图片区 (Ad Banner) -->
+                <div class="video-ad-banner">
+                  <img src="assets/banner.png" alt="今日存明日送 广告图">
+                </div>
+
+                <!-- 2. 公告区 (Marquee Announcement) -->
+                <div class="video-marquee-announcement">
+                  <i class="fa-solid fa-bullhorn text-orange announcement-icon"></i>
+                  <div class="marquee-text-container">
+                    <div class="marquee-text">欢迎光临黑豹视频！全球顶级观影app，无限看片，全部免费！首充即送300%红利...</div>
+                  </div>
+                </div>
+
+                <!-- 3. 游戏入口 (10 Game Entrance Slots) -->
+                <div class="video-game-entrance-grid">
+                  <div class="video-game-slot" data-game="fast3">
+                    <div class="game-icon-box">
+                      <img src="assets/game_fast3.png" alt="一分快三">
+                    </div>
+                    <span>一分快三</span>
+                  </div>
+                  <div class="video-game-slot" data-game="pg">
+                    <div class="game-icon-box">
+                      <img src="assets/game_mahjong.png" alt="PG爆奖">
+                    </div>
+                    <span>PG爆奖</span>
+                  </div>
+                  <div class="video-game-slot" data-game="wali">
+                    <div class="game-icon-box">
+                      <img src="assets/origami.png" alt="瓦力游戏">
+                    </div>
+                    <span>瓦力游戏</span>
+                  </div>
+                  <div class="video-game-slot" data-game="chess">
+                    <div class="game-icon-box">
+                      <img src="assets/science.png" alt="欢乐棋牌">
+                    </div>
+                    <span>欢乐棋牌</span>
+                  </div>
+                  <div class="video-game-slot" data-game="ag">
+                    <div class="game-icon-box">
+                      <img src="assets/chat_cover.png" alt="AG百家乐">
+                    </div>
+                    <span>AG百家乐</span>
+                  </div>
+                  <!-- Row 2 -->
+                  <div class="video-game-slot" data-action="messages">
+                    <div class="game-icon-box">
+                      <img src="assets/lego.png" alt="站内信">
+                      <span class="badge">3</span>
+                    </div>
+                    <span>站内信</span>
+                  </div>
+                  <div class="video-game-slot" data-action="offers">
+                    <div class="game-icon-box">
+                      <img src="assets/drawing.png" alt="优惠中心">
+                    </div>
+                    <span>优惠中心</span>
+                  </div>
+                  <div class="video-game-slot" data-game="first_deposit">
+                    <div class="game-icon-box">
+                      <img src="assets/banner.png" alt="首存赠300%">
+                    </div>
+                    <span>首存赠300%</span>
+                  </div>
+                  <div class="video-game-slot" data-action="deposit_prize">
+                    <div class="game-icon-box">
+                      <img src="assets/sports_cover.png" alt="充值领奖">
+                    </div>
+                    <span>充值领奖</span>
+                  </div>
+                  <div class="video-game-slot" data-action="lucky_wheel">
+                    <div class="game-icon-box">
+                      <img src="assets/chat_cover.png" alt="幸运大转盘">
+                    </div>
+                    <span>幸运大转盘</span>
+                  </div>
+                </div>
+
+                <!-- 4. 视频入口 (Video Grid Header & List) -->
+                <div class="video-section-title-row">
+                  <div class="title-left">
+                    <span class="red-bar">|</span>
+                    <h3>网暴吃瓜</h3>
+                  </div>
+                  <span class="title-right">查看全部 <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+
+                <div class="video-full-width-list" id="video-grid-container">
+                  
+                  <div class="video-full-width-card" data-video-title="迷奸高中女教师 (偷拍系列)" data-img="assets/drama_still1.png">
+                    <div class="video-thumb">
+                      <img src="assets/drama_still1.png" alt="视频封面">
+                      <i class="fa-solid fa-play play-overlay-icon"></i>
+                      <span class="duration-label">98分钟</span>
+                    </div>
+                    <div class="video-desc">
+                      <h4>迷奸高中女教师：女教师被下药迷奸内射 (震撼流出)</h4>
+                      <p>2,891,854次播放 · 98%好评</p>
+                    </div>
+                  </div>
+
+                  <div class="video-full-width-card" data-video-title="清纯校花私密交易实录" data-img="assets/origami.png">
+                    <div class="video-thumb">
+                      <img src="assets/origami.png" alt="视频封面">
+                      <i class="fa-solid fa-play play-overlay-icon"></i>
+                      <span class="duration-label">115分钟</span>
+                    </div>
+                    <div class="video-desc">
+                      <h4>【精品传媒】清纯校花与豪门大少爷的私密恋情交易实拍</h4>
+                      <p>1,234,812次播放 · 95%好评</p>
+                    </div>
+                  </div>
+
+                  <div class="video-full-width-card" data-video-title="更衣室隐蔽镜头无码自拍" data-img="assets/science.png">
+                    <div class="video-thumb">
+                      <img src="assets/science.png" alt="视频封面">
+                      <i class="fa-solid fa-play play-overlay-icon"></i>
+                      <span class="duration-label">85分钟</span>
+                    </div>
+                    <div class="video-desc">
+                      <h4>【自拍流出】更衣室隐蔽角度无码自拍泄露 (日本无码)</h4>
+                      <p>3,921,085次播放 · 97%好评</p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 2: 短剧 (Short Drama) -->
+            <div class="app-page" id="page-dramas">
+              <div class="short-drama-container" id="drama-player-area">
+                <!-- Vertical still background -->
+                <img id="drama-bg-img" src="assets/drama_still1.png" alt="短剧画面" class="drama-still-bg">
+                
+                <!-- Overlay HUD details -->
+                <div class="drama-overlay-right">
+                  <div class="drama-author-avatar">
+                    <img src="assets/banner.png" alt="作者">
+                    <i class="fa-solid fa-plus add-author-icon"></i>
+                  </div>
+                  <div class="hud-action-icon" id="btn-like-drama">
+                    <i class="fa-solid fa-heart"></i>
+                    <span id="drama-likes-count">12.5w</span>
+                  </div>
+                  <div class="hud-action-icon">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span>4851</span>
+                  </div>
+                  <div class="hud-action-icon">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>9540</span>
+                  </div>
+                </div>
+                
+                <div class="drama-overlay-bottom">
+                  <h3 id="drama-creator">@小美剧场</h3>
+                  <p id="drama-title">《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽</p>
+                  <div class="progress-bar-drama">
+                    <div class="progress-fill" style="width: 45%;"></div>
+                  </div>
+                </div>
+
+                <!-- Navigation Controls inside drama page -->
+                <div class="drama-nav-controls">
+                  <button id="btn-prev-drama" class="drama-nav-btn"><i class="fa-solid fa-chevron-up"></i></button>
+                  <button id="btn-next-drama" class="drama-nav-btn"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 3: 聊天 (Chatrooms Split view) -->
+            <div class="app-page" id="page-chats">
+              <!-- Grid view of chatrooms -->
+              <div class="chatrooms-lobby" id="chatrooms-lobby">
+                <!-- Primary Top Nav Tabs -->
+                <div class="chat-lobby-top-nav">
+                  <div class="chat-main-tab active" data-category="chatroom">聊天室</div>
+                  <div class="chat-main-tab" data-category="vip">VIP专属</div>
+                  <div class="chat-main-tab" data-category="naked">激情裸聊</div>
+                </div>
+
+                <!-- Secondary Sub-category Nav Tags -->
+                <div class="chat-lobby-sub-nav">
+                  <div class="chat-sub-tab active" data-sub="recommend">热门推荐</div>
+                  <div class="chat-sub-tab" data-sub="game">游戏狂欢</div>
+                  <div class="chat-sub-tab" data-sub="worldcup">2026世界杯</div>
+                  <div class="chat-sub-tab" data-sub="voice">语音厅</div>
+                </div>
+
+                <div class="scroll-content">
+                  <div class="chat-rooms-grid">
+                    
+                    <!-- Room 1 -->
+                    <div class="chat-room-grid-card" data-room-id="1" data-room-name="快三刀枪炮" data-category="chatroom" data-sub="recommend,game">
+                      <div class="chat-room-thumb">
+                        <img src="assets/game_fast3.png" alt="快三刀枪炮">
+                        <span class="room-label-badge badge-fast3">BL 一分快三</span>
+                        <span class="room-hot-badge">43</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 192546</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>快三刀枪炮</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 2 -->
+                    <div class="chat-room-grid-card" data-room-id="2" data-room-name="鸿运快三" data-category="chatroom" data-sub="game">
+                      <div class="chat-room-thumb">
+                        <img src="assets/game_fast3.png" alt="鸿运快三">
+                        <span class="room-label-badge badge-fast3">BL 一分快三</span>
+                        <span class="room-hot-badge">19</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 199505</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>鸿运快三</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 3 -->
+                    <div class="chat-room-grid-card" data-room-id="3" data-room-name="七妹带飞" data-category="chatroom" data-sub="recommend,game">
+                      <div class="chat-room-thumb">
+                        <img src="assets/game_fast3.png" alt="七妹带飞">
+                        <span class="room-label-badge badge-fast3">BL 一分快三</span>
+                        <span class="room-hot-badge">53</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 201613</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>七妹带飞</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 4 -->
+                    <div class="chat-room-grid-card" data-room-id="4" data-room-name="炮总快三王" data-category="chatroom" data-sub="game">
+                      <div class="chat-room-thumb">
+                        <img src="assets/game_fast3.png" alt="炮总快三王">
+                        <span class="room-label-badge badge-fast3">BL 一分快三</span>
+                        <span class="room-hot-badge">24</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 191883</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>炮总快三王</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 5 -->
+                    <div class="chat-room-grid-card" data-room-id="5" data-room-name="体育红单基地" data-category="chatroom" data-sub="recommend,worldcup">
+                      <div class="chat-room-thumb">
+                        <img src="assets/sports_cover.png" alt="体育红单基地">
+                        <span class="room-label-badge badge-sports">BL 体育赛事</span>
+                        <span class="room-hot-badge">58</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 197130</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>体育红单基地</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 6 -->
+                    <div class="chat-room-grid-card" data-room-id="6" data-room-name="美加墨爆庄房" data-category="chatroom" data-sub="worldcup">
+                      <div class="chat-room-thumb">
+                        <img src="assets/sports_cover.png" alt="美加墨爆庄房">
+                        <span class="room-label-badge badge-sports">BL 体育赛事</span>
+                        <span class="room-hot-badge">24</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 190262</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>美加墨爆庄房</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 7 -->
+                    <div class="chat-room-grid-card" data-room-id="7" data-room-name="骚男淫女房" data-category="chatroom" data-sub="voice">
+                      <div class="chat-room-thumb">
+                        <img src="assets/science.png" alt="骚男淫女房">
+                        <span class="room-label-badge badge-voice">BL 语音厅</span>
+                        <span class="room-hot-badge">24</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 19911</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>骚男淫女房</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 8 -->
+                    <div class="chat-room-grid-card" data-room-id="8" data-room-name="专属服从房" data-category="chatroom" data-sub="recommend,voice">
+                      <div class="chat-room-thumb">
+                        <img src="assets/drawing.png" alt="专属服从房">
+                        <span class="room-label-badge badge-voice">BL 语音厅</span>
+                        <span class="room-hot-badge">31</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 32748</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>专属服从房</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 9 (VIP) -->
+                    <div class="chat-room-grid-card" data-room-id="9" data-room-name="VIP专属至尊快三" data-category="vip" data-sub="recommend,game">
+                      <div class="chat-room-thumb">
+                        <img src="assets/game_fast3.png" alt="VIP专属至尊快三">
+                        <span class="room-label-badge badge-fast3">BL 一分快三</span>
+                        <span class="room-hot-badge">88</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 250109</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>VIP专属至尊快三</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 10 (VIP) -->
+                    <div class="chat-room-grid-card" data-room-id="10" data-room-name="VIP美女一对一" data-category="vip" data-sub="voice">
+                      <div class="chat-room-thumb">
+                        <img src="assets/chat_cover.png" alt="VIP美女一对一">
+                        <span class="room-label-badge badge-voice">BL 语音厅</span>
+                        <span class="room-hot-badge">99</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 48201</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>VIP美女一对一</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 11 (Naked) -->
+                    <div class="chat-room-grid-card" data-room-id="11" data-room-name="午夜激情诱惑" data-category="naked" data-sub="recommend,voice">
+                      <div class="chat-room-thumb">
+                        <img src="assets/science.png" alt="午夜激情诱惑">
+                        <span class="room-label-badge badge-voice">BL 语音厅</span>
+                        <span class="room-hot-badge">99</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 398104</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>午夜激情诱惑</h4>
+                      </div>
+                    </div>
+
+                    <!-- Room 12 (Naked) -->
+                    <div class="chat-room-grid-card" data-room-id="12" data-room-name="户外直播大秀" data-category="naked" data-sub="worldcup">
+                      <div class="chat-room-thumb">
+                        <img src="assets/sports_cover.png" alt="户外直播大秀">
+                        <span class="room-label-badge badge-sports">BL 体育赛事</span>
+                        <span class="room-hot-badge">72</span>
+                        <div class="thumb-bottom-overlays">
+                          <span class="room-viewer-count"><i class="fa-solid fa-user"></i> 148202</span>
+                          <span class="room-status-tag"><i class="fa-solid fa-circle-play"></i> 热聊中</span>
+                        </div>
+                      </div>
+                      <div class="chat-room-info">
+                        <h4>户外直播大秀</h4>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Split View Screen (1/3 Top recommended, 2/3 Bottom Chat) -->
+              <div class="chat-split-room" id="chat-split-room">
+                
+                <!-- Chatroom Header matching screenshot -->
+                <div class="split-room-header">
+                  <button id="btn-leave-chat" class="chat-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                  <div class="header-center-info">
+                    <h4 id="split-current-room-name">爱情买卖厅</h4>
+                    <span class="online-status-lbl"><i class="fa-solid fa-user-group"></i> <span id="chat-online-count">17076</span>人在线</span>
+                  </div>
+                  <div class="header-right-actions">
+                    <span class="reward-btn"><i class="fa-solid fa-gift"></i> 打赏</span>
+                    <span class="queue-lbl"><i class="fa-solid fa-rotate"></i> 排队0</span>
+                  </div>
+                </div>
+                
+                <!-- Top 2-Row Grid of Hostesses matching screenshot -->
+                <div class="hostess-grid-section">
+                  <div class="hostess-grid">
+                    
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/drama_still1.png" alt="迷儿19岁">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 迷儿19岁</span>
+                    </div>
+
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/chat_cover.png" alt="奶胸蜜桃吖">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 蜜桃吖</span>
+                    </div>
+
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/origami.png" alt="主持人薄冰">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge admin-tag">管 主持人薄冰</span>
+                    </div>
+
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/drawing.png" alt="红太狼">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 红太狼</span>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/science.png" alt="晴雯子">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 晴雯子</span>
+                    </div>
+
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/lego.png" alt="00后安琪拉">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 安琪拉</span>
+                    </div>
+
+                    <div class="hostess-slot">
+                      <div class="hostess-avatar-box">
+                        <img src="assets/sports_cover.png" alt="可爱小雨">
+                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
+                      </div>
+                      <span class="hostess-name-badge live-tag">播 可爱小雨</span>
+                    </div>
+
+                    <div class="hostess-slot join-slot" id="btn-join-call">
+                      <div class="hostess-avatar-box join-box">
+                        <i class="fa-solid fa-plus"></i>
+                      </div>
+                      <span class="hostess-name-badge">加入连线</span>
+                    </div>
+
+                  </div>
+                </div>
+                
+                <!-- Bottom Chat Log & Action Bar -->
+                <div class="split-chat-area">
+                  <div class="split-chat-messages" id="split-chat-log">
+                    <!-- Messages flow in real-time -->
+                  </div>
+                  
+                  <!-- Chat input bar matching screenshot -->
+                  <div class="screenshot-chat-input-bar">
+                    <button class="icon-input-btn"><i class="fa-solid fa-circle-plus"></i></button>
+                    <button class="icon-input-btn"><i class="fa-solid fa-volume-high"></i></button>
+                    <input type="text" id="split-chat-input" placeholder="还需充值50元可以发言">
+                    <button class="icon-input-btn"><i class="fa-regular fa-face-smile"></i></button>
+                    <div class="clear-screen-toggle">
+                      <span>清屏</span>
+                      <label class="switch">
+                        <input type="checkbox" id="toggle-clear-screen">
+                        <span class="slider round"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- PAGE 4: 体育 (Sports Schedule & Betting) -->
+            <div class="app-page" id="page-sports">
+              <div class="sports-header">
+                <!-- Row 1: Category Pills & More Platform Button -->
+                <div class="sports-category-row">
+                  <div class="sports-category-pills">
+                    <div class="sports-category-pill active" data-sport="soccer">足球</div>
+                    <div class="sports-category-pill" data-sport="basketball">篮球</div>
+                    <div class="sports-category-pill" data-sport="tennis">网球</div>
+                    <div class="sports-category-pill" data-sport="volleyball">排球</div>
+                    <div class="sports-category-pill" data-sport="pingpong">乒乓球</div>
+                  </div>
+                  <button class="sports-more-platform">更多平台 <i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+
+                <!-- Row 2: Icon Filters Row -->
+                <div class="sports-filter-row">
+                  <div class="sports-filter-item" data-filter="hot">
+                    <i class="fa-solid fa-fire icon-hot"></i>
+                    <span>热门</span>
+                  </div>
+                  <div class="sports-filter-item active" data-filter="live">
+                    <i class="fa-solid fa-futbol icon-live"></i>
+                    <span>滚球</span>
+                  </div>
+                  <div class="sports-filter-item" data-filter="anchor">
+                    <i class="fa-solid fa-microphone icon-anchor"></i>
+                    <span>主播</span>
+                  </div>
+                  <div class="sports-filter-item" data-filter="today">
+                    <i class="fa-solid fa-calendar-days icon-today"></i>
+                    <span>今日</span>
+                  </div>
+                  <div class="sports-filter-item" data-filter="early">
+                    <i class="fa-solid fa-hourglass-start icon-early"></i>
+                    <span>早盘</span>
+                  </div>
+                  <div class="sports-filter-item" data-filter="filter">
+                    <i class="fa-solid fa-filter icon-filter"></i>
+                    <span>筛选</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="scroll-content">
+                <div class="sports-match-list" id="sports-match-list-container">
+                  
+                  <!-- Soccer Match 1 -->
+                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="101" data-home="皇家马德里" data-away="巴塞罗那" data-score="2 - 1" data-time="68分钟" data-odds-h="1.85" data-odds-d="3.40" data-odds-a="2.10">
+                    <div class="match-meta">
+                      <span class="match-league">西班牙甲级联赛</span>
+                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 68'</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-shield-halved team-flag home-flag"></i>
+                        <span>皇家马德里</span>
+                      </div>
+                      <div class="score">2</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-shield-halved team-flag away-flag"></i>
+                        <span>巴塞罗那</span>
+                      </div>
+                      <div class="score">1</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.85</button>
+                      <button class="odds-btn">平局 3.40</button>
+                      <button class="odds-btn">客胜 2.10</button>
+                    </div>
+                  </div>
+
+                  <!-- Soccer Match 2 -->
+                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="102" data-home="曼彻斯特城" data-away="阿森纳" data-score="0 - 0" data-time="12分钟" data-odds-h="1.62" data-odds-d="3.80" data-odds-a="2.95">
+                    <div class="match-meta">
+                      <span class="match-league">英格兰超级联赛</span>
+                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 12'</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-shield-halved team-flag home-flag"></i>
+                        <span>曼彻斯特城</span>
+                      </div>
+                      <div class="score">0</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-shield-halved team-flag away-flag"></i>
+                        <span>阿森纳</span>
+                      </div>
+                      <div class="score">0</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.62</button>
+                      <button class="odds-btn">平局 3.80</button>
+                      <button class="odds-btn">客胜 2.95</button>
+                    </div>
+                  </div>
+
+                  <!-- Basketball Match 1 -->
+                  <div class="match-card" data-sport="basketball" data-filter="live today hot" data-match-id="201" data-home="洛杉矶湖人" data-away="金州勇士" data-score="102 - 98" data-time="第四节 8'" data-odds-h="1.72" data-odds-d="9.00" data-odds-a="2.25">
+                    <div class="match-meta">
+                      <span class="match-league">美职篮 NBA</span>
+                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 Q4 8'</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-basketball team-flag home-flag" style="color: #ffa502;"></i>
+                        <span>洛杉矶湖人</span>
+                      </div>
+                      <div class="score">102</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-basketball team-flag away-flag" style="color: #ffa502;"></i>
+                        <span>金州勇士</span>
+                      </div>
+                      <div class="score">98</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.72</button>
+                      <button class="odds-btn">客胜 2.25</button>
+                    </div>
+                  </div>
+
+                  <!-- Basketball Match 2 -->
+                  <div class="match-card" data-sport="basketball" data-filter="early today" data-match-id="202" data-home="波士顿凯尔特人" data-away="迈阿密热火" data-score="VS" data-time="今天 19:30" data-odds-h="1.45" data-odds-d="11.0" data-odds-a="2.80">
+                    <div class="match-meta">
+                      <span class="match-league">美职篮 NBA</span>
+                      <span class="match-time" style="color: var(--text-grey);"><i class="fa-regular fa-clock"></i> 未开始 今天 19:30</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-basketball team-flag home-flag" style="color: #ffa502;"></i>
+                        <span>波士顿凯尔特人</span>
+                      </div>
+                      <div class="score">-</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-basketball team-flag away-flag" style="color: #ffa502;"></i>
+                        <span>迈阿密热火</span>
+                      </div>
+                      <div class="score">-</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.45</button>
+                      <button class="odds-btn">客胜 2.80</button>
+                    </div>
+                  </div>
+
+                  <!-- Tennis Match 1 -->
+                  <div class="match-card" data-sport="tennis" data-filter="live today hot" data-match-id="301" data-home="德约科维奇" data-away="纳达尔" data-score="2 - 1" data-time="第三盘 2-1" data-odds-h="1.68" data-odds-d="8.50" data-odds-a="2.15">
+                    <div class="match-meta">
+                      <span class="match-league">法国网球公开赛</span>
+                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 Set 3</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag home-flag" style="color: var(--color-success);"></i>
+                        <span>德约科维奇</span>
+                      </div>
+                      <div class="score">2</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag away-flag" style="color: var(--color-success);"></i>
+                        <span>纳达尔</span>
+                      </div>
+                      <div class="score">1</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.68</button>
+                      <button class="odds-btn">客胜 2.15</button>
+                    </div>
+                  </div>
+
+                  <!-- Tennis Match 2 -->
+                  <div class="match-card" data-sport="tennis" data-filter="early today" data-match-id="302" data-home="阿尔卡拉斯" data-away="辛纳" data-score="VS" data-time="明天 14:00" data-odds-h="1.80" data-odds-d="7.50" data-odds-a="1.95">
+                    <div class="match-meta">
+                      <span class="match-league">温布尔登网球公开赛</span>
+                      <span class="match-time" style="color: var(--text-grey);"><i class="fa-regular fa-clock"></i> 未开始 明天 14:00</span>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag home-flag" style="color: var(--color-success);"></i>
+                        <span>阿尔卡拉斯</span>
+                      </div>
+                      <div class="score">-</div>
+                    </div>
+                    <div class="match-team-row">
+                      <div class="team">
+                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag away-flag" style="color: var(--color-success);"></i>
+                        <span>辛纳</span>
+                      </div>
+                      <div class="score">-</div>
+                    </div>
+                    <div class="betting-odds-preview">
+                      <button class="odds-btn">主胜 1.80</button>
+                      <button class="odds-btn">客胜 1.95</button>
+                    </div>
+                  </div>
+
+                  <!-- Empty state element -->
+                  <div class="sports-empty-state" id="sports-empty-state-el" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.72rem;">
+                    <i class="fa-regular fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 8px; color: rgba(255,255,255,0.15); display: block;"></i>
+                    暂无进行中的比赛，敬请期待！
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Sports Betting Drawer Panel -->
+              <div class="sports-betting-drawer" id="sports-bet-drawer">
+                <div class="drawer-header">
+                  <h4>体育极速押注</h4>
+                  <button id="btn-close-sports-drawer" class="drawer-close-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="drawer-content">
+                  <div class="bet-match-details">
+                    <span id="bet-drawer-league">西班牙甲级联赛</span>
+                    <h3 id="bet-drawer-match-teams">皇家马德里 VS 巴塞罗那</h3>
+                  </div>
+                  
+                  <div class="bet-options-row">
+                    <div class="bet-opt-card" data-opt="h">
+                      <span class="opt-label">主胜</span>
+                      <strong class="opt-odds" id="bet-drawer-odds-h">1.85</strong>
+                    </div>
+                    <div class="bet-opt-card" data-opt="d">
+                      <span class="opt-label">平局</span>
+                      <strong class="opt-odds" id="bet-drawer-odds-d">3.40</strong>
+                    </div>
+                    <div class="bet-opt-card" data-opt="a">
+                      <span class="opt-label">客胜</span>
+                      <strong class="opt-odds" id="bet-drawer-odds-a">2.10</strong>
+                    </div>
+                  </div>
+
+                  <!-- Chips Selector -->
+                  <div class="chips-row" id="sports-chips-row">
+                    <div class="chip-btn" data-val="10">10</div>
+                    <div class="chip-btn active" data-val="50">50</div>
+                    <div class="chip-btn" data-val="100">100</div>
+                    <div class="chip-btn" data-val="500">500</div>
+                    <div class="chip-btn" data-val="1000">1K</div>
+                  </div>
+
+                  <div class="bet-amount-input-row">
+                    <span>押注金额:</span>
+                    <input type="number" id="sports-bet-amount" value="50">
+                  </div>
+
+                  <button id="btn-sports-bet-submit" class="bet-submit-btn">立即押注</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 5: 游戏 (Main Games Hall - Matches First Screenshot) -->
+            <div class="app-page active" id="page-games">
+              <!-- Header Bar (Matches Screenshot) -->
+              <div class="lobby-header-bar">
+                <div class="lobby-logo-title">
+                  <img src="assets/black_panther_logo.png" class="lobby-logo-avatar" alt="LOGO">
+                  <div>
+                    <h4>黑豹视频</h4>
+                    <span>1068.tv</span>
+                  </div>
+                </div>
+                <button class="lobby-customer-btn"><i class="fa-solid fa-headset"></i> 客服</button>
+              </div>
+
+              <!-- Top Marquee Activity Announcement -->
+              <div class="marquee-announcement">
+                <i class="fa-solid fa-bullhorn announcement-icon"></i>
+                <div class="marquee-text-container">
+                  <div class="marquee-text">欢迎光临黑豹视频！全球顶级观影app，无限看片，充值赠送300%，天天返水...</div>
+                </div>
+              </div>
+
+              <!-- Scroll Content Container -->
+              <div class="scroll-content lobby-scroll-area">
+                <!-- Promotional Banner -->
+                <div class="lobby-banner-wrapper">
+                  <img src="assets/banner.png" alt="首充福利" class="lobby-banner-img">
+                  <div class="banner-overlay-text">
+                    <h2>新会员</h2>
+                    <h3>首充赠送<span>300%</span></h3>
+                    <p>限时活动 先到先得</p>
+                  </div>
+                </div>
+
+                <!-- Account Status Panel -->
+                <div class="account-status-panel">
+                  <div class="account-info">
+                    <span class="username">伯人心贤oyo</span>
+                    <div class="balance-row">
+                      <strong class="balance-val" id="app-balance-display">¥1000.00</strong>
+                      <i class="fa-solid fa-rotate balance-refresh-icon" id="btn-refresh-balance"></i>
+                    </div>
+                  </div>
+                  <div class="account-actions">
+                    <button class="action-mini-btn" id="btn-onekey-retrieve">一键取回</button>
+                    <button class="action-mini-btn highlight" id="btn-deposit-popup">充值</button>
+                    <button class="action-mini-btn" id="btn-withdraw-popup">提现</button>
+                    <button class="action-mini-btn">活动</button>
+                    <button class="action-mini-btn">记录</button>
+                  </div>
+                </div>
+
+                <!-- Split Left Sidebar Categories & Right Game Grid -->
+                <div class="lobby-main-split">
+                  <!-- Left category menu bar -->
+                  <div class="lobby-left-menu">
+                    <div class="menu-tab-item active" data-category="hot">
+                      <i class="fa-solid fa-fire"></i>
+                      <span>热门</span>
+                    </div>
+                    <div class="menu-tab-item" data-category="lottery">
+                      <i class="fa-solid fa-ticket"></i>
+                      <span>彩票</span>
+                    </div>
+                    <div class="menu-tab-item" data-category="pg">
+                      <i class="fa-solid fa-gamepad"></i>
+                      <span>PG</span>
+                    </div>
+                    <div class="menu-tab-item" data-category="wali">
+                      <i class="fa-solid fa-dice"></i>
+                      <span>瓦力</span>
+                    </div>
+                  </div>
+
+                  <!-- Right game grid list (updates based on left category tab) -->
+                  <div class="lobby-right-grid" id="lobby-games-list">
+                    <!-- Default Hot Category games -->
+                    <div class="lobby-game-card" data-game-id="mark_six">
+                      <div class="game-icon-container">
+                        <img src="assets/chat_cover.png" alt="六合彩">
+                      </div>
+                      <span>一分六合彩</span>
+                    </div>
+
+                    <div class="lobby-game-card" data-game-id="fast_three">
+                      <div class="game-icon-container">
+                        <img src="assets/game_fast3.png" alt="一分快三">
+                      </div>
+                      <span>一分快三</span>
+                    </div>
+
+                    <div class="lobby-game-card" data-game-id="baccarat">
+                      <div class="game-icon-container">
+                        <img src="assets/lego.png" alt="极速百家乐">
+                      </div>
+                      <span>极速百家乐</span>
+                    </div>
+
+                    <div class="lobby-game-card" data-game-id="canada28">
+                      <div class="game-icon-container">
+                        <img src="assets/sports_cover.png" alt="加拿大28">
+                      </div>
+                      <span>加拿大28</span>
+                    </div>
+
+                    <div class="lobby-game-card" data-game-id="mahjong">
+                      <div class="game-icon-container">
+                        <img src="assets/game_mahjong.png" alt="麻将胡了">
+                      </div>
+                      <span>麻将胡了</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 6: 我的 (User Center Profile - Matches Screenshots) -->
+            <div class="app-page" id="page-profile">
+              <!-- Top Header Section -->
+              <div class="profile-header-container">
+                <div class="profile-user-info">
+                  <div class="profile-avatar-wrapper">
+                    <img src="assets/chat_cover.png" alt="头像">
+                    <span class="profile-avatar-camera"><i class="fa-solid fa-camera"></i></span>
+                  </div>
+                  <div class="profile-meta">
+                    <div class="profile-username-row">
+                      <h3 id="profile-username-lbl">伯人心贤oyo</h3>
+                      <i class="fa-regular fa-pen-to-square" id="btn-edit-username"></i>
+                    </div>
+                    <div class="profile-id-row">
+                      <span>ID:301636280</span>
+                      <i class="fa-regular fa-copy" id="btn-copy-id"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="profile-header-right" id="btn-profile-notifications">
+                  <i class="fa-regular fa-bell"></i>
+                  <span class="profile-bell-badge">3</span>
+                </div>
+              </div>
+
+              <div class="scroll-content">
+                <!-- Marquee Announcement Bar -->
+                <div class="profile-marquee-bar">
+                  <i class="fa-solid fa-bullhorn text-orange announcement-icon"></i>
+                  <div class="marquee-text-container">
+                    <div class="marquee-text">全部免费。新会员首充送300%，一倍流水提款！充值1元即送体验VIP，快来体验吧！</div>
+                  </div>
+                </div>
+
+                <!-- VIP Card -->
+                <div class="profile-vip-card">
+                  <div class="profile-vip-left">
+                    <div class="profile-vip-title">
+                      <i class="fa-solid fa-crown"></i> 普通会员
+                    </div>
+                    <div class="profile-vip-desc">
+                      开通VIP，海量影片，专属线路，全场畅看<br>
+                      充值1元起送季度卡，彩票打码1000元再送永久卡！
+                    </div>
+                  </div>
+                  <div class="profile-vip-right">
+                    <span class="profile-vip-badge">限时特惠</span>
+                    <button class="profile-vip-btn" id="btn-buy-vip">特惠开通</button>
+                  </div>
+                </div>
+
+                <!-- Grid Perks Row -->
+                <div class="profile-perks-row">
+                  <div class="profile-perk-card" id="btn-daily-task">
+                    <div class="profile-perk-info">
+                      <h4>每日任务</h4>
+                      <p>7天连续签到 轻松赚大奖</p>
+                    </div>
+                    <img src="assets/game_fast3.png" alt="每日任务" class="profile-perk-icon-img">
+                  </div>
+                  <div class="profile-perk-card" id="btn-premium-vip">
+                    <div class="profile-perk-info">
+                      <h4>尊享VIP</h4>
+                      <p>晋级礼金+周俸禄<br>+月俸禄 终身收益</p>
+                    </div>
+                    <img src="assets/game_mahjong.png" alt="尊享VIP" class="profile-perk-icon-img">
+                  </div>
+                </div>
+
+                <!-- Promotional Slider/Banner -->
+                <div class="profile-banner-slider">
+                  <img src="assets/banner.png" alt="新会员专享">
+                  <div class="profile-slider-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                </div>
+
+                <!-- Wallet / Balance Box -->
+                <div class="profile-wallet-section">
+                  <div class="profile-wallet-top">
+                    <div class="profile-wallet-info">
+                      <h2 id="profile-balance-val">¥1000.00</h2>
+                      <span>我的余额</span>
+                    </div>
+                    <button class="profile-retrieve-btn" id="btn-profile-onekey-retrieve">
+                      <i class="fa-solid fa-hand-holding-dollar"></i> 一键取回
+                    </button>
+                  </div>
+                  <div class="profile-wallet-actions">
+                    <button class="profile-action-btn deposit" id="btn-profile-deposit">
+                      <i class="fa-solid fa-wallet"></i> 充值
+                    </button>
+                    <button class="profile-action-btn withdraw" id="btn-profile-withdraw">
+                      <i class="fa-solid fa-money-bill-transfer"></i> 提现
+                    </button>
+                  </div>
+                </div>
+
+                <!-- "常用功能" Features list -->
+                <div class="profile-features-section">
+                  <h4>常用功能</h4>
+                  <div class="profile-features-grid">
+                    
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-coins"></i>
+                      </div>
+                      <span>推广赚钱</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                      </div>
+                      <span>交易记录</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box" style="color: #ff4757;">
+                        <i class="fa-solid fa-clock"></i>
+                      </div>
+                      <span>观看历史</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-star"></i>
+                      </div>
+                      <span>收藏记录</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-credit-card"></i>
+                      </div>
+                      <span>收款方式</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-gift"></i>
+                      </div>
+                      <span>分享好友</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-headset"></i>
+                      </div>
+                      <span>客服中心</span>
+                    </div>
+
+                    <div class="profile-feature-item">
+                      <div class="profile-feature-icon-box">
+                        <i class="fa-solid fa-gear"></i>
+                      </div>
+                      <span>设置</span>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- SUB-PAGE: 一分六合彩 (1-Minute Mark Six betting view - matches screenshot 2) -->
+            <div class="sub-game-page" id="page-mark-six">
+              <!-- Game Header -->
+              <div class="sub-game-header">
+                <button id="btn-back-to-lobby" class="game-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <h3>一分六合彩</h3>
+                <div class="header-balance-box">
+                  <span id="game-top-balance">1000.00</span>
+                  <i class="fa-solid fa-rotate" id="btn-refresh-game-balance"></i>
+                </div>
+              </div>
+
+              <!-- Opening Result panel -->
+              <div class="opening-result-panel">
+                <div class="result-top-info">
+                  <span class="issue-number">第<strong id="mark6-issue">202606051273</strong>期</span>
+                  <span class="countdown-clock">本期截止 <strong id="mark6-timer">00 : 45</strong></span>
+                </div>
+                
+                <!-- Open Ball Numbers -->
+                <div class="balls-row" id="mark6-balls-container">
+                  <div class="ball ball-red">8</div>
+                  <div class="ball ball-red">23</div>
+                  <div class="ball ball-green">49</div>
+                  <div class="ball ball-blue">9</div>
+                  <div class="ball ball-green">21</div>
+                  <div class="ball ball-red">18</div>
+                  <div class="balls-plus">+</div>
+                  <div class="ball ball-blue">31</div>
+                </div>
+
+                <!-- Opened tags (Double/Zodiac, etc.) -->
+                <div class="balls-tags-row" id="mark6-tags-container">
+                  <span class="tag-box bg-white">35</span>
+                  <span class="tag-box bg-blue">大</span>
+                  <span class="tag-box bg-light-blue">单</span>
+                  <span class="tag-box bg-red">红</span>
+                  <span class="tag-box bg-orange">猴</span>
+                </div>
+              </div>
+
+              <!-- Quick Game Menu Tab Bar -->
+              <div class="game-sub-tabs">
+                <div class="sub-tab active">全部游戏</div>
+                <div class="sub-tab">玩法说明</div>
+                <div class="sub-tab">投注报表</div>
+                <div class="sub-tab">开奖记录</div>
+                <div class="sub-tab">投注历史</div>
+              </div>
+
+              <!-- Main Betting Layout (Split Sidebar Left, Odds items grid on right) -->
+              <div class="game-betting-main">
+                <!-- Left Play Selector -->
+                <div class="game-play-sidebar">
+                  <div class="play-side-tab active" data-play="twoside">特码两面</div>
+                  <div class="play-side-tab" data-play="colorwave">特码色波</div>
+                  <div class="play-side-tab" data-play="zodiac">特码生肖</div>
+                  <div class="play-side-tab" data-play="number">特码</div>
+                </div>
+
+                <!-- Right Odds Selection Cards Grid -->
+                <div class="game-odds-grid" id="mark6-odds-grid">
+                  <!-- Options are loaded dynamically or statically -->
+                  <div class="odds-card" data-name="单" data-odds="1.97">
+                    <span class="odds-name">单</span>
+                    <strong class="odds-value">1.97</strong>
+                  </div>
+                  <div class="odds-card" data-name="双" data-odds="1.97">
+                    <span class="odds-name">双</span>
+                    <strong class="odds-value">1.97</strong>
+                  </div>
+                  <div class="odds-card" data-name="大" data-odds="1.97">
+                    <span class="odds-name">大</span>
+                    <strong class="odds-value">1.97</strong>
+                  </div>
+                  <div class="odds-card" data-name="小" data-odds="1.97">
+                    <span class="odds-name">小</span>
+                    <strong class="odds-value">1.97</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Betting console -->
+              <div class="game-bet-console">
+                <div class="chips-scrolling-row" id="mark6-chips-row">
+                  <div class="game-chip" data-val="10">10</div>
+                  <div class="game-chip active" data-val="50">50</div>
+                  <div class="game-chip" data-val="100">100</div>
+                  <div class="game-chip" data-val="500">500</div>
+                  <div class="game-chip" data-val="1000">1K</div>
+                  <div class="game-chip" data-val="3000">3K</div>
+                  <div class="game-chip" data-val="5000">5K</div>
+                  <div class="game-chip" data-val="10000">10K</div>
+                </div>
+
+                <div class="bet-summary-bar">
+                  <div class="summary-left">
+                    共 <strong id="bet-selected-count" class="txt-gold">0</strong> 注, 
+                    共 <strong id="bet-total-cost" class="txt-gold">0</strong> 元
+                  </div>
+                  <div class="summary-right">
+                    <div class="custom-amount-input">
+                      <span class="custom-lbl">自定义:</span>
+                      <input type="number" id="mark6-input-amount" placeholder="输入金额">
+                    </div>
+                    <button class="game-submit-btn" id="btn-mark6-submit">立即投注</button>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- End Sub Game Page -->
+
+            <!-- SUB-PAGE: 一分快三 (One-Minute Fast Three - Matches Screenshot) -->
+            <div class="sub-game-page" id="page-fast-three">
+              <!-- Game Header -->
+              <div class="sub-game-header">
+                <button id="btn-back-to-lobby-fastthree" class="game-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <h3>一分快三</h3>
+                <div class="header-balance-box">
+                  <span id="fastthree-top-balance">1000.00</span>
+                  <i class="fa-solid fa-rotate" id="btn-refresh-fastthree-balance"></i>
+                </div>
+              </div>
+
+              <!-- Opening Result panel -->
+              <div class="opening-result-panel">
+                <div class="result-top-info">
+                  <span class="issue-number">第<strong id="fastthree-issue">202606051280</strong>期</span>
+                  <span class="countdown-clock">本期截止 <strong id="fastthree-timer">00 : 30</strong></span>
+                </div>
+                
+                <!-- Open Dice Numbers (CSS-drawn premium dice) -->
+                <div class="balls-row" id="fastthree-balls-container" style="justify-content: center; gap: 12px; padding: 4px 0;">
+                  <!-- Styled dice faces -->
+                  <div class="dice dice-1"><span class="dot red-dot"></span></div>
+                  <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                  <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                </div>
+
+                <!-- Opened tags (Sum / Size / Odd-Even) -->
+                <div class="balls-tags-row" id="fastthree-tags-container">
+                  <span class="tag-box bg-white" id="fastthree-sum-tag">10</span>
+                  <span class="tag-box bg-blue" id="fastthree-size-tag">小</span>
+                  <span class="tag-box bg-red" id="fastthree-oe-tag">双</span>
+                </div>
+              </div>
+
+              <!-- Quick Game Menu Tab Bar -->
+              <div class="game-sub-tabs">
+                <div class="sub-tab active">全部游戏</div>
+                <div class="sub-tab">玩法说明</div>
+                <div class="sub-tab">投注报表</div>
+                <div class="sub-tab">开奖记录</div>
+                <div class="sub-tab">投注历史</div>
+              </div>
+
+              <!-- Play Methods Top Tab Bar matching screenshot -->
+              <div class="fast3-play-tabs">
+                <div class="fast3-tab active" data-tab="two_sides">冠军两面</div>
+                <div class="fast3-tab" data-tab="sum">冠亚和</div>
+                <div class="fast3-tab" data-tab="single_num">冠军单码</div>
+              </div>
+
+              <!-- Main Betting Layout -->
+              <div class="fast3-betting-main">
+                
+                <!-- 1. 冠军两面 Layout -->
+                <div class="fast3-play-panel active" id="play-panel-two_sides">
+                  <div class="fast3-odds-cards-grid">
+                    
+                    <div class="fast3-odds-card" data-name="单" data-odds="1.97">
+                      <span class="odds-title text-gold">单</span>
+                      <span class="odds-value text-gold">1.97</span>
+                    </div>
+
+                    <div class="fast3-odds-card" data-name="双" data-odds="1.97">
+                      <span class="odds-title text-gold">双</span>
+                      <span class="odds-value text-gold">1.97</span>
+                    </div>
+
+                    <div class="fast3-odds-card" data-name="大" data-odds="1.97">
+                      <span class="odds-title text-green">大</span>
+                      <span class="odds-value text-green">1.97</span>
+                    </div>
+
+                    <!-- Small card decorated with a gold dragon border & consecutive tag -->
+                    <div class="fast3-odds-card special-card-dragon" data-name="小" data-odds="1.97">
+                      <div class="dragon-bg-overlay"></div>
+                      <span class="odds-title text-green">小</span>
+                      <span class="odds-value text-green">1.97</span>
+                      <span class="special-consecutive-tag">连开2期</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 2. 冠亚和 Layout -->
+                <div class="fast3-play-panel" id="play-panel-sum">
+                  <div class="fast3-odds-cards-grid">
+                    
+                    <div class="fast3-odds-card" data-name="和单" data-odds="1.77">
+                      <span class="odds-title text-green">和单</span>
+                      <span class="odds-value text-green">1.77</span>
+                    </div>
+
+                    <div class="fast3-odds-card" data-name="和双" data-odds="2.20">
+                      <span class="odds-title text-green">和双</span>
+                      <span class="odds-value text-green">2.20</span>
+                    </div>
+
+                    <div class="fast3-odds-card" data-name="和大" data-odds="2.20">
+                      <span class="odds-title text-gold">和大</span>
+                      <span class="odds-value text-gold">2.20</span>
+                    </div>
+
+                    <div class="fast3-odds-card" data-name="和小" data-odds="1.77">
+                      <span class="odds-title text-gold">和小</span>
+                      <span class="odds-value text-gold">1.77</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- 3. 冠军单码 Layout -->
+                <div class="fast3-play-panel" id="play-panel-single_num">
+                  <div class="fast3-odds-single-grid">
+                    
+                    <div class="fast3-odds-card single-num-card" data-name="01" data-odds="9.60">
+                      <span class="num-val">01</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="02" data-odds="9.60">
+                      <span class="num-val">02</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="03" data-odds="9.60">
+                      <span class="num-val">03</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="04" data-odds="9.60">
+                      <span class="num-val">04</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="05" data-odds="9.60">
+                      <span class="num-val">05</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="06" data-odds="9.60">
+                      <span class="num-val">06</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="07" data-odds="9.60">
+                      <span class="num-val">07</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="08" data-odds="9.60">
+                      <span class="num-val">08</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="09" data-odds="9.60">
+                      <span class="num-val">09</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                    <div class="fast3-odds-card single-num-card" data-name="10" data-odds="9.60">
+                      <span class="num-val">10</span>
+                      <span class="odds-val">9.6</span>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Quick action controls matching screenshot -->
+              <div class="fast3-bet-actions-row">
+                <button class="fast3-action-btn" id="btn-fast3-last-bet">上次下注</button>
+                <button class="fast3-action-btn" id="btn-fast3-double">X2</button>
+                <button class="fast3-action-btn" id="btn-fast3-cancel">取消</button>
+                <button class="fast3-action-btn confirm-btn" id="btn-fast3-confirm">确定</button>
+              </div>
+
+              <!-- Bottom Betting console -->
+              <div class="game-bet-console" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+                <div class="chips-scrolling-row" id="fastthree-chips-row">
+                  <div class="game-chip" data-val="10">10</div>
+                  <div class="game-chip active" data-val="50">50</div>
+                  <div class="game-chip" data-val="100">100</div>
+                  <div class="game-chip" data-val="500">500</div>
+                  <div class="game-chip" data-val="1000">1K</div>
+                  <div class="game-chip" data-val="3000">3K</div>
+                  <div class="game-chip" data-val="5000">5K</div>
+                  <div class="game-chip" data-val="10000">10K</div>
+                </div>
+
+                <div class="bet-summary-bar">
+                  <div class="summary-left">
+                    共 <strong id="fastthree-selected-count" class="txt-gold">0</strong> 注, 
+                    共 <strong id="fastthree-total-cost" class="txt-gold">0</strong> 元
+                  </div>
+                  <div class="summary-right">
+                    <div class="custom-amount-input">
+                      <span class="custom-lbl">自定义:</span>
+                      <input type="number" id="fastthree-input-amount" placeholder="输入金额">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- End Sub Game Page -->
+
+            <!-- APP BOTTOM NAVIGATION BAR (Replicating exact layout in original image) -->
+            <div class="bottom-nav">
+              <div class="nav-btn" data-target="page-videos">
+                <i class="fa-solid fa-circle-play"></i>
+                <span>视频</span>
+              </div>
+              <div class="nav-btn" data-target="page-dramas">
+                <i class="fa-solid fa-clapperboard"></i>
+                <span>短剧</span>
+              </div>
+              <div class="nav-btn" data-target="page-chats">
+                <div class="btn-chat-wrapper">
+                  <i class="fa-solid fa-comments"></i>
+                  <span class="chat-badge">9+</span>
+                </div>
+                <span>聊天</span>
+              </div>
+              <div class="nav-btn" data-target="page-sports">
+                <i class="fa-solid fa-football"></i>
+                <span>体育</span>
+              </div>
+              <div class="nav-btn active" data-target="page-games">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>游戏</span>
+              </div>
+              <div class="nav-btn" data-target="page-profile">
+                <i class="fa-solid fa-user"></i>
+                <span>我的</span>
+              </div>
+            </div>
+
+            <!-- Video Player Overlay View (Splits screen: top video player, bottom interactive game) -->
+            <div class="video-player-overlay" id="video-player-modal">
+              <div class="split-player-container">
+                
+                <!-- 1/3 Top Mock Video Player -->
+                <div class="mock-player-box">
+                  <img id="modal-player-still" src="assets/sports_cover.png" alt="播放视频">
+                  <div class="player-hud-top">
+                    <button id="btn-close-player" class="player-close-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span class="video-watermark-overlay">激情裸聊 1v1</span>
+                  </div>
+                  <div class="player-hud-center">
+                    <i class="fa-solid fa-circle-play player-btn-main"></i>
+                  </div>
+                  <div class="player-hud-bottom">
+                    <i class="fa-solid fa-pause"></i>
+                    <div class="player-progress-track">
+                      <div class="progress-indicator" style="width: 32%;"></div>
+                    </div>
+                    <span class="time-lbl">02:18 / 95:00</span>
+                  </div>
+                </div>
+
+                <!-- 2/3 Scrollable Video Info & Games Content -->
+                <div class="player-scroll-content">
+                  <!-- Video Info Block -->
+                  <div class="player-video-info">
+                    <div class="info-top-row">
+                      <span class="info-tag-introduction">简介</span>
+                      <div class="info-actions">
+                        <button class="info-btn-pill"><i class="fa-solid fa-shuffle"></i> 普通线路</button>
+                        <button class="info-btn-pill"><i class="fa-solid fa-star"></i> 收藏</button>
+                      </div>
+                    </div>
+                    <h3 class="player-video-title" id="modal-player-title">DVDMS-437 催眠术でご近所の巨乳妻を90日間にわたってオーガズム洗脳</h3>
+                  </div>
+
+                  <!-- Middle Games Carousel Selection Bar -->
+                  <div class="player-games-carousel-section">
+                    <p class="carousel-title">🔥 伴播极速游戏 (点击切换下方游戏)</p>
+                    <div class="horizontal-games-carousel">
+                      <div class="carousel-game-item" data-game="baccarat">
+                        <img src="assets/lego.png" alt="百家乐">
+                        <span>百家乐</span>
+                      </div>
+                      <div class="carousel-game-item" data-game="mahjong">
+                        <img src="assets/game_mahjong.png" alt="麻将胡了">
+                        <span>麻将胡了</span>
+                      </div>
+                      <div class="carousel-game-item" data-game="racing">
+                        <img src="assets/sports_cover.png" alt="一分赛车">
+                        <span>一分赛车</span>
+                      </div>
+                      <div class="carousel-game-item" data-game="fish">
+                        <img src="assets/chat_cover.png" alt="财神捕鱼">
+                        <span>财神捕鱼</span>
+                      </div>
+                      <div class="carousel-game-item" data-game="niuniu">
+                        <img src="assets/drawing.png" alt="百人牛牛">
+                        <span>百人牛牛</span>
+                      </div>
+                      <div class="carousel-game-item active" data-game="fast3">
+                        <img src="assets/game_fast3.png" alt="一分快三">
+                        <span>一分快三</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bottom Embedded Betting Panel (Fast Three) -->
+                  <div class="player-embedded-game-panel" id="embedded-game-panel">
+                    <div class="embedded-game-header">
+                      <span id="btn-close-embedded-game" class="close-embedded-btn"><i class="fa-solid fa-xmark"></i> 点击关闭游戏</span>
+                      <div class="header-pill-tabs">
+                        <span>玩法说明</span>
+                        <span>投注记录</span>
+                        <span>开奖记录</span>
+                        <span>投注历史</span>
+                      </div>
+                    </div>
+
+                    <!-- Fast Three Interactive Game Block -->
+                    <div class="embedded-game-body" id="fast3-game-view">
+                      
+                      <!-- Drawing Result Summary row -->
+                      <div class="fast3-result-row">
+                        <div class="fast3-logo-box">
+                          <img src="assets/game_fast3.png" alt="快三">
+                          <span>一分快三</span>
+                        </div>
+                        <div class="fast3-draw-balls" id="fast3-balls-row">
+                          <div class="dice-box">1</div>
+                          <div class="dice-box">3</div>
+                          <div class="dice-box">6</div>
+                        </div>
+                        <div class="fast3-result-tags" id="fast3-tags-row">
+                          <span class="tag-box bg-red" id="fast3-sum-tag">10</span>
+                          <span class="tag-box bg-red" id="fast3-size-tag">小</span>
+                          <span class="tag-box bg-red" id="fast3-oe-tag">双</span>
+                        </div>
+                      </div>
+
+                      <!-- Countdown & Issue meta row -->
+                      <div class="fast3-meta-row">
+                        <span class="countdown-lbl">本期截止：<strong id="fast3-timer" class="txt-red">00 : 09</strong></span>
+                        <span class="issue-lbl" id="fast3-issue">202606051274期</span>
+                      </div>
+
+                      <!-- Play tabs (大小 / 总和 / etc) -->
+                      <div class="fast3-play-tabs">
+                        <div class="play-tab active">大小</div>
+                        <div class="play-tab">总和</div>
+                        <div class="play-tab">单骰</div>
+                        <div class="play-tab">对子</div>
+                        <div class="play-tab">豹顺</div>
+                      </div>
+
+                      <!-- Betting Odds selection grid -->
+                      <div class="fast3-odds-grid" id="fast3-odds-grid">
+                        <div class="odds-card" data-name="单" data-odds="1.97">
+                          <span class="odds-name">单</span>
+                          <strong class="odds-value">1.97</strong>
+                        </div>
+                        <div class="odds-card" data-name="双" data-odds="1.97">
+                          <span class="odds-name">双</span>
+                          <strong class="odds-value">1.97</strong>
+                        </div>
+                        <div class="odds-card" data-name="大" data-odds="1.97">
+                          <span class="odds-name">大</span>
+                          <strong class="odds-value">1.97</strong>
+                        </div>
+                        <div class="odds-card" data-name="小" data-odds="1.97">
+                          <span class="odds-name">小</span>
+                          <strong class="odds-value">1.97</strong>
+                        </div>
+                      </div>
+
+                      <!-- Embedded game betting console -->
+                      <div class="embedded-bet-console">
+                        <div class="chips-scrolling-row" id="fast3-chips-row">
+                          <div class="game-chip" data-val="10">10</div>
+                          <div class="game-chip active" data-val="50">50</div>
+                          <div class="game-chip" data-val="100">100</div>
+                          <div class="game-chip" data-val="500">500</div>
+                          <div class="game-chip" data-val="1000">1K</div>
+                          <div class="game-chip" data-val="5000">5K</div>
+                        </div>
+
+                        <div class="bet-summary-bar">
+                          <div class="summary-left">
+                            共 <strong id="fast3-selected-count" class="txt-gold">0</strong> 注, 
+                            共 <strong id="fast3-total-cost" class="txt-gold">0</strong> 元
+                          </div>
+                          <div class="summary-right">
+                            <input type="number" id="fast3-input-amount" placeholder="单注金额" value="50" style="width: 65px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #fff; padding: 4px 6px; border-radius: 6px; outline: none; font-size: 0.72rem; text-align: center;">
+                            <button class="game-submit-btn" id="btn-fast3-submit">立即投注</button>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Floating Chat bubble matching user screenshot -->
+                <div class="floating-chat-btn" id="btn-floating-chat">
+                  <div class="chat-dot"></div>
+                  <div class="chat-dot"></div>
+                  <div class="chat-dot"></div>
+                </div>
+
+              </div>
+            </div>
+
+          </div> <!-- End App Body -->
+          
+          <!-- iPhone Home Indicator Bar -->
+          <div class="home-indicator"></div>
+          
+        </div> <!-- End Phone Screen -->
+      </div> <!-- End Phone -->
+    </div> <!-- End Phone Wrapper -->
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
