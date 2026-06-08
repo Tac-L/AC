@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=1.3">
+  <link rel="stylesheet" href="styles.css?v=1.4">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -883,20 +883,94 @@
 
             <!-- PAGE 0: 首页 (Home Portal Map) -->
             <div class="app-page active" id="page-home">
-              <!-- Home Header -->
-              <div class="home-header">
-                <img src="assets/black_panther_logo.png" class="home-logo" alt="LOGO">
-                <div class="home-header-info">
-                  <h2>黑豹娱乐城</h2>
-                  <span>BLACK PANTHER CASINO</span>
+              <!-- Home Top Search & Header Row -->
+              <div class="home-search-row">
+                <div class="home-search-input-box">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input type="text" id="home-search-input" placeholder="搜索彩种 / 主播 / 短剧" readonly>
+                </div>
+                <div class="home-header-icons">
+                  <div class="header-icon-btn" id="btn-home-customer-service"><i class="fa-solid fa-headset"></i></div>
+                  <div class="header-icon-btn" id="btn-home-notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge-dot"></span>
+                  </div>
                 </div>
               </div>
 
               <div class="scroll-content" style="padding-bottom: 24px;">
+                <!-- User Profile Panel -->
+                <div class="home-user-panel">
+                  <div class="user-panel-left">
+                    <div class="user-avatar-circle">用</div>
+                    <div class="user-profile-details">
+                      <span class="user-nickname">极光用户_8821</span>
+                      <div class="vip-badge-row">
+                        <span class="vip-label">V5 · 普通</span>
+                        <div class="vip-progress-container">
+                          <div class="vip-progress-bar" style="width: 60%;"></div>
+                        </div>
+                        <span class="vip-upgrade-hint">升级还差 ¥880</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="user-panel-right">
+                    <span class="balance-lbl">余额</span>
+                    <strong class="balance-amount" id="home-user-balance-display">¥1000.00</strong>
+                  </div>
+                </div>
+
+                <!-- Hero Promo Banner (一分时时彩) -->
+                <div class="home-hero-banner">
+                  <div class="hero-left">
+                    <div class="hero-tag"><i class="fa-solid fa-fire"></i> 主推</div>
+                    <h3 class="hero-title">一分时时彩</h3>
+                    <span class="hero-period-label">第 <span id="home-ssc-period">284</span> 期 · 距封盘</span>
+                    <div class="hero-countdown" id="home-ssc-countdown">00:32</div>
+                  </div>
+                  <div class="hero-right">
+                    <span class="hero-history-label">上期 #<span id="home-ssc-history-num">41</span></span>
+                    <div class="hero-balls-row" id="home-ssc-balls">
+                      <div class="ssc-ball">3</div>
+                      <div class="ssc-ball">8</div>
+                      <div class="ssc-ball">1</div>
+                      <div class="ssc-ball">5</div>
+                      <div class="ssc-ball">7</div>
+                    </div>
+                    <button class="hero-bet-btn" id="btn-home-bet-ssc">立即下注 <i class="fa-solid fa-arrow-right"></i></button>
+                  </div>
+                </div>
+
+                <!-- Middle Scrolling Ticker -->
+                <div class="home-winning-ticker">
+                  <div class="ticker-prefix"><i class="fa-solid fa-bullhorn text-gold"></i> 中奖喜报</div>
+                  <div class="ticker-marquee-container">
+                    <div class="ticker-marquee-text">
+                      球中 <span class="txt-gold">¥12,400</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                      Yuki**** 在 <span class="txt-cyan">PK10·冠军</span> 中 <span class="txt-gold">¥8,200</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                      老王**** 在 <span class="txt-cyan">一分快三</span> 中 <span class="txt-gold">¥15,400</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                      小李**** 在 <span class="txt-cyan">一分时时彩</span> 中 <span class="txt-gold">¥24,800</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                      阿强**** 在 <span class="txt-cyan">一分六合彩</span> 中 <span class="txt-gold">¥9,600</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Newbie Deposit Banner -->
+                <div class="home-deposit-banner" id="btn-home-deposit-promo">
+                  <div class="deposit-left">
+                    <div class="deposit-icon-box">🎁</div>
+                    <div class="deposit-info">
+                      <h4>新人首充 +20%</h4>
+                      <p>充 ¥100 送 ¥20 · 解锁所有玩法</p>
+                    </div>
+                  </div>
+                  <button class="deposit-btn">立即首充 ›</button>
+                </div>
+
                 <!-- Description Card -->
                 <div class="home-intro-card">
                   <h4>💡 平台简介</h4>
-                  <p>黑豹娱乐城（BLACK PANTHER CASINO）是全球领先的综合数字娱乐平台，集高清体育直播、院线影视大片、精品原创短剧、一分快开彩票、PG电子游艺和高能互动聊天社区于一体。完美还原极致娱乐体验，余额多端互通，即刻开启尊贵游艺之旅！</p>
+                  <p>黑豹娱乐城（BLACK PANTHER CASINO）是全球领先 of 综合数字娱乐平台，集高清体育直播、院线影视大片、精品原创短剧、一分快开彩票、PG电子游艺和高能互动聊天社区于一体。完美还原极致娱乐体验，余额多端互通，即刻开启尊贵游艺之旅！</p>
                 </div>
 
                 <!-- 3x2 Portal Grid -->

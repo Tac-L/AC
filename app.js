@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('game-top-balance').textContent = balance.toFixed(2);
     const fastthreeTopBal = document.getElementById('fastthree-top-balance');
     if (fastthreeTopBal) fastthreeTopBal.textContent = balance.toFixed(2);
+    const homeUserBal = document.getElementById('home-user-balance-display');
+    if (homeUserBal) homeUserBal.textContent = formatted;
   }
 
   // Initial balance update
@@ -177,6 +179,116 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ==========================================
+  // Homepage Interactive Features & SSC Countdown
+  // ==========================================
+  
+  // Search bar
+  const homeSearchInput = document.getElementById('home-search-input');
+  if (homeSearchInput) {
+    homeSearchInput.addEventListener('click', () => {
+      showPopupToast("提示：【搜索功能】正在对接中，敬请期待！");
+    });
+  }
+
+  // Customer Service Icon
+  const btnHomeCS = document.getElementById('btn-home-customer-service');
+  if (btnHomeCS) {
+    btnHomeCS.addEventListener('click', () => {
+      showPopupToast("正在为您连接在线客服，请稍候...");
+    });
+  }
+
+  // Notification Bell Icon
+  const btnHomeNotif = document.getElementById('btn-home-notifications');
+  if (btnHomeNotif) {
+    btnHomeNotif.addEventListener('click', () => {
+      showPopupToast("您有 3 条未读公告消息！");
+    });
+  }
+
+  // "立即下注" (SSC Hero Bet Button) -> Routes to Fast Three Room
+  const btnHomeBetSSC = document.getElementById('btn-home-bet-ssc');
+  if (btnHomeBetSSC) {
+    btnHomeBetSSC.addEventListener('click', () => {
+      const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+      if (gamesBtn) {
+        gamesBtn.click();
+        const fastThree = document.querySelector('.lobby-game-card[data-game-id="fast_three"]');
+        if (fastThree) {
+          setTimeout(() => {
+            fastThree.click();
+            showPopupToast("已为您推荐进入【一分快三】热门游戏房！");
+          }, 150);
+        }
+      }
+    });
+  }
+
+  // "立即首充" (Newbie Deposit Banner) -> Adds ¥120 to balance
+  const btnHomeDepositPromo = document.getElementById('btn-home-deposit-promo');
+  if (btnHomeDepositPromo) {
+    btnHomeDepositPromo.addEventListener('click', () => {
+      updateBalance(120);
+      showPopupToast("首充成功！充值金额 ¥100 及送首充红利 ¥20 已打入您的虚拟账户。");
+    });
+  }
+
+  // 一分时时彩 Countdown Loop
+  const sscPeriod = document.getElementById('home-ssc-period');
+  const sscCountdown = document.getElementById('home-ssc-countdown');
+  const sscHistoryNum = document.getElementById('home-ssc-history-num');
+  const sscBallsContainer = document.getElementById('home-ssc-balls');
+
+  let sscTimeLeft = 45;
+  let sscCurrentPeriodNum = 284;
+  let sscHistoryNumVal = 41;
+
+  function updateSSCCountdown() {
+    if (!sscCountdown) return;
+
+    let m = Math.floor(sscTimeLeft / 60);
+    let s = sscTimeLeft % 60;
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    sscCountdown.textContent = `${m}:${s}`;
+
+    if (sscTimeLeft <= 0) {
+      // Trigger Draw Animation
+      sscCountdown.textContent = "开奖中";
+      
+      setTimeout(() => {
+        // Generate 5 random balls
+        const balls = [];
+        for (let i = 0; i < 5; i++) {
+          balls.push(Math.floor(Math.random() * 10));
+        }
+
+        // Update Balls DOM
+        if (sscBallsContainer) {
+          sscBallsContainer.innerHTML = balls.map(num => `<div class="ssc-ball">${num}</div>`).join('');
+        }
+
+        // Update Period & History
+        sscHistoryNumVal = sscCurrentPeriodNum % 1000;
+        if (sscHistoryNum) sscHistoryNum.textContent = sscHistoryNumVal;
+
+        sscCurrentPeriodNum++;
+        if (sscPeriod) sscPeriod.textContent = sscCurrentPeriodNum;
+
+        sscTimeLeft = 45;
+        updateSSCCountdown();
+      }, 2000);
+    } else {
+      sscTimeLeft--;
+      setTimeout(updateSSCCountdown, 1000);
+    }
+  }
+
+  if (sscCountdown) {
+    updateSSCCountdown();
+  }
 
   // Deposit/Withdraw buttons triggers
   const depositBtns = [
