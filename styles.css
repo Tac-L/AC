@@ -97,17 +97,7 @@ body {
 
 /* Left Admin/Control Panel */
 .control-panel {
-  flex: 1;
-  max-width: 440px;
-  background: rgba(24, 23, 38, 0.75);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: var(--shadow-casino);
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  display: none !important;
 }
 
 .logo {
@@ -4164,4 +4154,50 @@ input:checked + .slider:before {
   padding: 0 2px;
 }
 
-
+/* Responsive Real Mobile Viewport Override */
+@media (max-width: 500px) {
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    background: #0b0a11 !important;
+  }
+  
+  .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    gap: 0 !important;
+  }
+  
+  .phone-wrapper {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  
+  .phone {
+    width: 100vw !important;
+    height: 100vh !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: var(--bg-body) !important;
+  }
+  
+  .phone-notch,
+  .phone-btn {
+    display: none !important;
+  }
+  
+  .phone-screen {
+    border-radius: 0 !important;
+  }
+  
+  .status-bar {
+    padding-top: 6px !important;
+    height: 28px !important;
+  }
+}
