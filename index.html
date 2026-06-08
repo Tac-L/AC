@@ -881,8 +881,86 @@
               </div>
             </div>
 
+            <!-- PAGE 0: 首页 (Home Portal Map) -->
+            <div class="app-page active" id="page-home">
+              <!-- Home Header -->
+              <div class="home-header">
+                <img src="assets/black_panther_logo.png" class="home-logo" alt="LOGO">
+                <div class="home-header-info">
+                  <h2>黑豹娱乐城</h2>
+                  <span>BLACK PANTHER CASINO</span>
+                </div>
+              </div>
+
+              <div class="scroll-content" style="padding-bottom: 24px;">
+                <!-- Description Card -->
+                <div class="home-intro-card">
+                  <h4>💡 平台简介</h4>
+                  <p>黑豹娱乐城（BLACK PANTHER CASINO）是全球领先的综合数字娱乐平台，集高清体育直播、院线影视大片、精品原创短剧、一分快开彩票、PG电子游艺和高能互动聊天社区于一体。完美还原极致娱乐体验，余额多端互通，即刻开启尊贵游艺之旅！</p>
+                </div>
+
+                <!-- 3x2 Portal Grid -->
+                <h4 class="home-section-title">🗺️ 平台大图导航</h4>
+                <div class="home-map-grid">
+                  <!-- Sports Card -->
+                  <div class="home-map-card" data-route="page-sports" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/sports_cover.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-futbol"></i></div>
+                      <span class="card-title">体育直播</span>
+                      <span class="card-subtitle">4.2万在线</span>
+                    </div>
+                  </div>
+
+                  <!-- Video Card -->
+                  <div class="home-map-card" data-route="page-videos" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/banner.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-circle-play"></i></div>
+                      <span class="card-title">影视大厅</span>
+                      <span class="card-subtitle">2.5亿播放</span>
+                    </div>
+                  </div>
+
+                  <!-- Chats Card -->
+                  <div class="home-map-card" data-route="page-chats" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/chat_cover.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-comments"></i></div>
+                      <span class="card-title">交流社区</span>
+                      <span class="card-subtitle">3.8万在线</span>
+                    </div>
+                  </div>
+
+                  <!-- Lottery Card -->
+                  <div class="home-map-card" data-route="page-games-lottery" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/gold_dragon_bg.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-ticket"></i></div>
+                      <span class="card-title">一分彩票</span>
+                      <span class="card-subtitle">极速秒秒开奖</span>
+                    </div>
+                  </div>
+
+                  <!-- Slots Card -->
+                  <div class="home-map-card" data-route="page-games-slots" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/game_mahjong.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-gamepad"></i></div>
+                      <span class="card-title">电子游艺</span>
+                      <span class="card-subtitle">RTP 97.5%</span>
+                    </div>
+                  </div>
+
+                  <!-- Dramas Card -->
+                  <div class="home-map-card" data-route="page-dramas" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.78)), url('assets/drama_still1.png');">
+                    <div class="card-inner">
+                      <div class="card-icon"><i class="fa-solid fa-clapperboard"></i></div>
+                      <span class="card-title">精品短剧</span>
+                      <span class="card-subtitle">海量独家剧集</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- PAGE 5: 游戏 (Main Games Hall - Matches First Screenshot) -->
-            <div class="app-page active" id="page-games">
+            <div class="app-page" id="page-games">
               <!-- Header Bar (Matches Screenshot) -->
               <div class="lobby-header-bar">
                 <div class="lobby-logo-title">
@@ -1485,6 +1563,10 @@
 
             <!-- APP BOTTOM NAVIGATION BAR (Replicating exact layout in original image) -->
             <div class="bottom-nav">
+              <div class="nav-btn active" data-target="page-home">
+                <i class="fa-solid fa-house"></i>
+                <span>首页</span>
+              </div>
               <div class="nav-btn" data-target="page-videos">
                 <i class="fa-solid fa-circle-play"></i>
                 <span>视频</span>
@@ -1504,7 +1586,7 @@
                 <i class="fa-solid fa-football"></i>
                 <span>体育</span>
               </div>
-              <div class="nav-btn active" data-target="page-games">
+              <div class="nav-btn" data-target="page-games">
                 <i class="fa-solid fa-gamepad"></i>
                 <span>游戏</span>
               </div>

@@ -462,17 +462,18 @@ body {
   color: var(--text-grey);
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 48px;
+  width: 42px;
 }
 
 .nav-btn i {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   margin-bottom: 2px;
 }
 
 .nav-btn span {
-  font-size: 0.62rem;
+  font-size: 0.56rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .nav-btn.active {
@@ -3972,4 +3973,154 @@ input:checked + .slider:before {
 .fast3-action-btn.confirm-btn:active {
   background: linear-gradient(135deg, #d4af37, #ffa502);
 }
+
+/* ==========================================================================
+   12. Home Lobby Portal Page Styling (首页大图导览)
+   ========================================================================== */
+#page-home {
+  background-color: var(--bg-body);
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px 14px 16px;
+  background-color: var(--bg-dark);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.home-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+}
+
+.home-header-info h2 {
+  font-size: 1.12rem;
+  background: linear-gradient(135deg, #fff 30%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.home-header-info span {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  display: block;
+  margin-top: 1px;
+}
+
+.home-intro-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 14px 14px 8px 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.home-intro-card h4 {
+  font-size: 0.78rem;
+  color: var(--color-gold-light);
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.home-intro-card p {
+  font-size: 0.64rem;
+  color: var(--text-grey);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.home-section-title {
+  font-size: 0.78rem;
+  color: #fff;
+  margin: 16px 14px 8px 14px;
+  font-weight: bold;
+}
+
+.home-map-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 14px;
+}
+
+.home-map-card {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.22s ease-in-out;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-map-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  transition: background-color 0.22s ease;
+}
+
+.home-map-card:hover {
+  transform: scale(0.96);
+  border-color: var(--color-gold-light);
+}
+
+.home-map-card:hover::before {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.home-map-card .card-inner {
+  width: 100%;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.home-map-card .card-icon {
+  font-size: 1.15rem;
+  color: var(--color-gold-light);
+  margin-bottom: 2px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.home-map-card .card-title {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1.5px 3px rgba(0,0,0,0.9);
+  white-space: nowrap;
+}
+
+.home-map-card .card-subtitle {
+  font-size: 0.52rem;
+  color: #e5e9f0;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+  white-space: nowrap;
+  margin-top: 1.5px;
+}
+
 

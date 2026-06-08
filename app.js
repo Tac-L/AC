@@ -75,6 +75,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Homepage Portal Map Cards Routing
+  const homeMapCards = document.querySelectorAll('#page-home .home-map-card');
+  homeMapCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const route = card.getAttribute('data-route');
+      if (!route) return;
+
+      if (route === 'page-games-lottery') {
+        // Switch to games page
+        const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+        if (gamesBtn) {
+          gamesBtn.click();
+          // Switch tab to lottery
+          const lotteryTab = document.querySelector('.menu-tab-item[data-category="lottery"]');
+          if (lotteryTab) lotteryTab.click();
+          // Trigger 一分快三 click
+          const fastThree = document.querySelector('.lobby-game-card[data-game-id="fast_three"]');
+          if (fastThree) {
+            setTimeout(() => {
+              fastThree.click();
+            }, 150);
+          }
+        }
+      } else if (route === 'page-games-slots') {
+        // Switch to games page
+        const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+        if (gamesBtn) {
+          gamesBtn.click();
+          // Switch tab to pg (slots)
+          const pgTab = document.querySelector('.menu-tab-item[data-category="pg"]');
+          if (pgTab) pgTab.click();
+        }
+      } else {
+        // General page routing
+        const targetBtn = document.querySelector(`.bottom-nav .nav-btn[data-target="${route}"]`);
+        if (targetBtn) {
+          targetBtn.click();
+        }
+      }
+    });
+  });
+
   // Deposit/Withdraw buttons triggers
   const depositBtns = [
     document.getElementById('btn-sidebar-deposit'),
