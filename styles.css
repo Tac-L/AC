@@ -4067,12 +4067,12 @@ input:checked + .slider:before {
 }
 
 .user-avatar-circle {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background-color: #4d4c5c;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -4083,22 +4083,26 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  overflow: hidden;
 }
 
 .user-nickname {
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: bold;
   color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vip-badge-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .vip-label {
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   color: #a4b0be;
   background: rgba(255, 255, 255, 0.1);
   padding: 1px 4px;
@@ -4107,7 +4111,7 @@ input:checked + .slider:before {
 }
 
 .vip-progress-container {
-  width: 50px;
+  width: 36px;
   height: 4px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
@@ -4120,7 +4124,7 @@ input:checked + .slider:before {
 }
 
 .vip-upgrade-hint {
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   color: #a4b0be;
   white-space: nowrap;
 }
@@ -4130,15 +4134,17 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex-shrink: 0;
+  margin-left: 8px;
 }
 
 .balance-lbl {
-  font-size: 0.58rem;
+  font-size: 0.54rem;
   color: #a4b0be;
 }
 
 .balance-amount {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: bold;
   color: #fff;
   font-family: var(--font-display);
