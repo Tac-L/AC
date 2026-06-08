@@ -117,6 +117,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Homepage Recommended Live Stream Cards Routing
+  const homeLiveCards = document.querySelectorAll('#page-home .home-live-card');
+  homeLiveCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const roomName = card.getAttribute('data-room-name');
+      if (!roomName) return;
+
+      // Navigate to chat tab
+      const chatBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-chats"]');
+      if (chatBtn) {
+        chatBtn.click();
+        // Enter the chatroom
+        enterChatroom(roomName);
+      }
+    });
+  });
+
+  // Homepage Recommended Movie Cards Routing
+  const homeMovieCards = document.querySelectorAll('#page-home .home-movie-card');
+  homeMovieCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.getAttribute('data-video-title');
+      const img = card.getAttribute('data-img');
+      if (!title || !img) return;
+
+      // Open video player overlay modal
+      const videoPlayerModal = document.getElementById('video-player-modal');
+      const modalPlayerStill = document.getElementById('modal-player-still');
+      const modalPlayerTitle = document.getElementById('modal-player-title');
+      
+      if (videoPlayerModal && modalPlayerStill && modalPlayerTitle) {
+        modalPlayerStill.src = img;
+        modalPlayerTitle.textContent = title;
+        videoPlayerModal.classList.add('active');
+      }
+    });
+  });
+
+  // Homepage Recommended Game Cards Routing
+  const homeGameCards = document.querySelectorAll('#page-home .home-game-card');
+  homeGameCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const gameTarget = card.getAttribute('data-game-target');
+      if (!gameTarget) return;
+
+      // Switch to games page tab
+      const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+      if (gamesBtn) {
+        gamesBtn.click();
+
+        // Trigger corresponding game click
+        setTimeout(() => {
+          const gameCard = document.querySelector(`.lobby-game-card[data-game-id="${gameTarget}"]`);
+          if (gameCard) {
+            gameCard.click();
+          }
+        }, 150);
+      }
+    });
+  });
+
   // Deposit/Withdraw buttons triggers
   const depositBtns = [
     document.getElementById('btn-sidebar-deposit'),

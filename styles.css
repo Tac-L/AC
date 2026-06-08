@@ -4052,7 +4052,10 @@ input:checked + .slider:before {
   padding: 0 14px;
 }
 
-.home-map-card {
+.home-map-card,
+.home-live-card,
+.home-movie-card,
+.home-game-card {
   aspect-ratio: 1 / 1;
   border-radius: 10px;
   background-size: cover;
@@ -4066,7 +4069,10 @@ input:checked + .slider:before {
   overflow: hidden;
 }
 
-.home-map-card::before {
+.home-map-card::before,
+.home-live-card::before,
+.home-movie-card::before,
+.home-game-card::before {
   content: '';
   position: absolute;
   top: 0;
@@ -4078,13 +4084,26 @@ input:checked + .slider:before {
   transition: background-color 0.22s ease;
 }
 
-.home-map-card:hover {
+.home-map-card:hover,
+.home-live-card:hover,
+.home-movie-card:hover,
+.home-game-card:hover {
   transform: scale(0.96);
   border-color: var(--color-gold-light);
 }
 
-.home-map-card:hover::before {
+.home-map-card:hover::before,
+.home-live-card:hover::before,
+.home-movie-card:hover::before,
+.home-game-card:hover::before {
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+.home-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 16px 14px 8px 14px;
+  opacity: 0.4;
 }
 
 .home-map-card .card-inner {
