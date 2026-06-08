@@ -4197,7 +4197,6 @@ input:checked + .slider:before {
   }
   
   .status-bar {
-    padding-top: 6px !important;
-    height: 28px !important;
+    display: none !important;
   }
 }
