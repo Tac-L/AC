@@ -4106,7 +4106,10 @@ input:checked + .slider:before {
   opacity: 0.4;
 }
 
-.home-map-card .card-inner {
+.home-map-card .card-inner,
+.home-live-card .card-inner,
+.home-movie-card .card-inner,
+.home-game-card .card-inner {
   width: 100%;
   padding: 8px 4px;
   display: flex;
@@ -4118,28 +4121,47 @@ input:checked + .slider:before {
   box-sizing: border-box;
 }
 
-.home-map-card .card-icon {
+.home-map-card .card-icon,
+.home-live-card .card-icon,
+.home-movie-card .card-icon,
+.home-game-card .card-icon {
   font-size: 1.15rem;
   color: var(--color-gold-light);
   margin-bottom: 2px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
-.home-map-card .card-title {
-  font-size: 0.65rem;
+.home-map-card .card-title,
+.home-live-card .card-title,
+.home-movie-card .card-title,
+.home-game-card .card-title {
+  font-size: 0.58rem;
   font-weight: bold;
   color: #fff;
   text-shadow: 0 1.5px 3px rgba(0,0,0,0.9);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 2px;
 }
 
-.home-map-card .card-subtitle {
-  font-size: 0.52rem;
-  color: #e5e9f0;
-  opacity: 0.95;
+.home-map-card .card-subtitle,
+.home-live-card .card-subtitle,
+.home-movie-card .card-subtitle,
+.home-game-card .card-subtitle {
+  font-size: 0.46rem;
+  color: #ffffff;
+  opacity: 1;
   text-shadow: 0 1px 2px rgba(0,0,0,0.9);
   white-space: nowrap;
-  margin-top: 1.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin-top: 2px;
+  box-sizing: border-box;
+  padding: 0 2px;
 }
 
 
