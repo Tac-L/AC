@@ -2954,5 +2954,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Run initial timer
   startF3CountdownTimer();
+
+  // ── 首页卡片轮播图 ──────────────────────────────────────────
+  function initHomeCardCarousels() {
+    const slideshows = document.querySelectorAll('.home-card-slideshow');
+    slideshows.forEach(function(ss) {
+      const slides = ss.querySelectorAll('.slide');
+      if (slides.length < 2) return;
+      let current = 0;
+      setInterval(function() {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+      }, 2000);
+    });
+  }
+  initHomeCardCarousels();
 });
+
 
