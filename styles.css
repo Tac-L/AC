@@ -4151,19 +4151,90 @@ input:checked + .slider:before {
 }
 
 /* Hero Promo Banner (一分时时彩) */
-.home-hero-banner {
-  background: linear-gradient(135deg, #ff4757 0%, #ff6b81 40%, #ff7f50 100%);
-  border-radius: 16px;
-  padding: 16px;
+/* Hero Promo Carousel container */
+.home-hero-carousel {
+  position: relative;
   margin: 10px 14px 8px 14px;
+  height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
   box-shadow: 0 6px 16px rgba(255, 71, 87, 0.25);
+}
+
+.carousel-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Hero Promo Banner (now used as slides) */
+.home-hero-banner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
   overflow: hidden;
   color: #fff;
   box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  z-index: 1;
+}
+
+.home-hero-banner.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.carousel-indicators .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carousel-indicators .dot.active {
+  background: #ffffff;
+  width: 12px;
+  border-radius: 2.5px;
+}
+
+/* LHC specific smaller balls for homepage */
+.lhc-ball {
+  width: 16px !important;
+  height: 16px !important;
+  font-size: 0.55rem !important;
+  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.lhc-special-ball {
+  animation: special-pulse 2s infinite ease-in-out;
+}
+
+@keyframes special-pulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.08); filter: brightness(1.15); }
+  100% { transform: scale(1); filter: brightness(1); }
 }
 
 /* Decorative glowing circle inside hero */

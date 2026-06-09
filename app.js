@@ -208,10 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // "立即下注" (SSC Hero Bet Button) -> Routes to Fast Three Room
-  const btnHomeBetSSC = document.getElementById('btn-home-bet-ssc');
-  if (btnHomeBetSSC) {
-    btnHomeBetSSC.addEventListener('click', () => {
+  // Homepage Carousel Slides Click Event Listeners
+  // 1. 一分快三 Bet Button
+  const btnHomeBetK3 = document.getElementById('btn-home-bet-k3');
+  if (btnHomeBetK3) {
+    btnHomeBetK3.addEventListener('click', () => {
       const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
       if (gamesBtn) {
         gamesBtn.click();
@@ -226,6 +227,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 2. 一分时时彩 Bet Button
+  const btnHomeBetSSC = document.getElementById('btn-home-bet-ssc');
+  if (btnHomeBetSSC) {
+    btnHomeBetSSC.addEventListener('click', () => {
+      const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+      if (gamesBtn) {
+        gamesBtn.click();
+        const fastThree = document.querySelector('.lobby-game-card[data-game-id="fast_three"]');
+        if (fastThree) {
+          setTimeout(() => {
+            fastThree.click();
+            showPopupToast("已为您推荐进入【一分时时彩】热门房间！");
+          }, 150);
+        }
+      }
+    });
+  }
+
+  // 3. 一分六合彩 Bet Button
+  const btnHomeBetLHC = document.getElementById('btn-home-bet-lhc');
+  if (btnHomeBetLHC) {
+    btnHomeBetLHC.addEventListener('click', () => {
+      const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+      if (gamesBtn) {
+        gamesBtn.click();
+        const markSix = document.querySelector('.lobby-game-card[data-game-id="mark_six"]');
+        if (markSix) {
+          setTimeout(() => {
+            markSix.click();
+            showPopupToast("已为您推荐进入【一分六合彩】经典游戏房！");
+          }, 150);
+        }
+      }
+    });
+  }
+
+  // 4. 广告1 (Promo Ad 1 Action) -> Profile page
+  const btnHomeAd1 = document.getElementById('btn-home-ad1-action');
+  if (btnHomeAd1) {
+    btnHomeAd1.addEventListener('click', () => {
+      const profileBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-profile"]');
+      if (profileBtn) {
+        profileBtn.click();
+        showPopupToast("欢迎查看每周首充返利特权！");
+      }
+    });
+  }
+
+  // 5. 广告2 (Sports Ad 2 Action) -> Sports page
+  const btnHomeAd2 = document.getElementById('btn-home-ad2-action');
+  if (btnHomeAd2) {
+    btnHomeAd2.addEventListener('click', () => {
+      const sportsBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-sports"]');
+      if (sportsBtn) {
+        sportsBtn.click();
+        showPopupToast("已为您加载顶级赛事，尊享体育返水特权！");
+      }
+    });
+  }
+
   // "立即首充" (Newbie Deposit Banner) -> Adds ¥120 to balance
   const btnHomeDepositPromo = document.getElementById('btn-home-deposit-promo');
   if (btnHomeDepositPromo) {
@@ -235,7 +296,81 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 一分时时彩 Countdown Loop
+  // ==========================================
+  // Multi-Lottery countdown loops & Carousel
+  // ==========================================
+
+  // 1. 一分快三 (K3)
+  const homeK3Period = document.getElementById('home-k3-period');
+  const homeK3Countdown = document.getElementById('home-k3-countdown');
+  const homeK3HistoryNum = document.getElementById('home-k3-history-num');
+  const homeK3BallsContainer = document.getElementById('home-k3-balls');
+
+  let k3TimeLeft = 30;
+  let k3CurrentPeriodNum = 20260609128;
+  let k3HistoryNumVal = 127;
+
+  function updateK3Countdown() {
+    if (!homeK3Countdown) return;
+
+    let m = Math.floor(k3TimeLeft / 60);
+    let s = k3TimeLeft % 60;
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    homeK3Countdown.textContent = `${m}:${s}`;
+
+    if (k3TimeLeft <= 0) {
+      homeK3Countdown.textContent = "开奖中";
+      setTimeout(() => {
+        const diceVals = [
+          Math.floor(Math.random() * 6) + 1,
+          Math.floor(Math.random() * 6) + 1,
+          Math.floor(Math.random() * 6) + 1
+        ];
+
+        if (homeK3BallsContainer) {
+          homeK3BallsContainer.innerHTML = diceVals.map(val => {
+            if (val === 1) {
+              return `<div class="dice dice-1"><span class="dot red-dot"></span></div>`;
+            }
+            let dots = '';
+            for (let i = 0; i < val; i++) {
+              dots += `<span class="dot"></span>`;
+            }
+            return `<div class="dice dice-${val}">${dots}</div>`;
+          }).join('');
+        }
+
+        const f3BallsContainer = document.getElementById('fastthree-balls-container');
+        if (f3BallsContainer) {
+          f3BallsContainer.innerHTML = diceVals.map(val => {
+            if (val === 1) {
+              return `<div class="dice dice-1"><span class="dot red-dot"></span></div>`;
+            }
+            let dots = '';
+            for (let i = 0; i < val; i++) {
+              dots += `<span class="dot"></span>`;
+            }
+            return `<div class="dice dice-${val}">${dots}</div>`;
+          }).join('');
+        }
+
+        k3HistoryNumVal = k3CurrentPeriodNum % 1000;
+        if (homeK3HistoryNum) homeK3HistoryNum.textContent = k3HistoryNumVal;
+
+        k3CurrentPeriodNum++;
+        if (homeK3Period) homeK3Period.textContent = k3CurrentPeriodNum;
+
+        k3TimeLeft = 30;
+        updateK3Countdown();
+      }, 2000);
+    } else {
+      k3TimeLeft--;
+      setTimeout(updateK3Countdown, 1000);
+    }
+  }
+
+  // 2. 一分时时彩 (SSC)
   const sscPeriod = document.getElementById('home-ssc-period');
   const sscCountdown = document.getElementById('home-ssc-countdown');
   const sscHistoryNum = document.getElementById('home-ssc-history-num');
@@ -255,22 +390,17 @@ document.addEventListener('DOMContentLoaded', () => {
     sscCountdown.textContent = `${m}:${s}`;
 
     if (sscTimeLeft <= 0) {
-      // Trigger Draw Animation
       sscCountdown.textContent = "开奖中";
-      
       setTimeout(() => {
-        // Generate 5 random balls
         const balls = [];
         for (let i = 0; i < 5; i++) {
           balls.push(Math.floor(Math.random() * 10));
         }
 
-        // Update Balls DOM
         if (sscBallsContainer) {
           sscBallsContainer.innerHTML = balls.map(num => `<div class="ssc-ball">${num}</div>`).join('');
         }
 
-        // Update Period & History
         sscHistoryNumVal = sscCurrentPeriodNum % 1000;
         if (sscHistoryNum) sscHistoryNum.textContent = sscHistoryNumVal;
 
@@ -286,8 +416,108 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (sscCountdown) {
-    updateSSCCountdown();
+  // 3. 一分六合彩 (LHC)
+  const homeLHCPeriod = document.getElementById('home-lhc-period');
+  const homeLHCCountdown = document.getElementById('home-lhc-countdown');
+  const homeLHCHistoryNum = document.getElementById('home-lhc-history-num');
+  const homeLHCBallsContainer = document.getElementById('home-lhc-balls');
+
+  let lhcTimeLeft = 55;
+  let lhcCurrentPeriodNum = 2026060;
+  let lhcHistoryNumVal = 88;
+
+  function updateLHCCountdown() {
+    if (!homeLHCCountdown) return;
+
+    let m = Math.floor(lhcTimeLeft / 60);
+    let s = lhcTimeLeft % 60;
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    homeLHCCountdown.textContent = `${m}:${s}`;
+
+    if (lhcTimeLeft <= 0) {
+      homeLHCCountdown.textContent = "开奖中";
+      setTimeout(() => {
+        const balls = [];
+        for (let i = 0; i < 7; i++) {
+          let num = Math.floor(Math.random() * 49) + 1;
+          let numStr = num < 10 ? '0' + num : '' + num;
+          balls.push(numStr);
+        }
+
+        if (homeLHCBallsContainer) {
+          let html = '';
+          for (let i = 0; i < 6; i++) {
+            html += `<div class="ssc-ball lhc-ball">${balls[i]}</div>`;
+          }
+          html += `<span style="color: #fff; font-size: 0.7rem; font-weight: bold; align-self: center;">+</span>`;
+          const colors = ['#eb3b5a', '#20bf6b', '#10ac84', '#2e86de', '#e67e22'];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          html += `<div class="ssc-ball lhc-ball lhc-special-ball" style="background: ${randomColor};">${balls[6]}</div>`;
+          homeLHCBallsContainer.innerHTML = html;
+        }
+
+        lhcHistoryNumVal = lhcCurrentPeriodNum % 1000;
+        if (homeLHCHistoryNum) homeLHCHistoryNum.textContent = lhcHistoryNumVal;
+
+        lhcCurrentPeriodNum++;
+        if (homeLHCPeriod) homeLHCPeriod.textContent = lhcCurrentPeriodNum;
+
+        lhcTimeLeft = 55;
+        updateLHCCountdown();
+      }, 2000);
+    } else {
+      lhcTimeLeft--;
+      setTimeout(updateLHCCountdown, 1000);
+    }
+  }
+
+  // Start Countdowns
+  if (homeK3Countdown) updateK3Countdown();
+  if (sscCountdown) updateSSCCountdown();
+  if (homeLHCCountdown) updateLHCCountdown();
+
+  // Carousel slider rotation logic (Randomly switches slides every 2.5 seconds)
+  const homeCarouselSlides = document.querySelectorAll('.home-hero-carousel .home-hero-banner');
+  const homeCarouselDots = document.querySelectorAll('.home-hero-carousel .carousel-indicators .dot');
+  let currentCarouselSlideIndex = 0;
+  let homeCarouselInterval = null;
+
+  function switchCarouselToSlide(index) {
+    if (index < 0 || index >= homeCarouselSlides.length) return;
+
+    homeCarouselSlides.forEach(slide => slide.classList.remove('active'));
+    homeCarouselDots.forEach(dot => dot.classList.remove('active'));
+
+    homeCarouselSlides[index].classList.add('active');
+    homeCarouselDots[index].classList.add('active');
+    currentCarouselSlideIndex = index;
+  }
+
+  function startHomeCarouselRotation() {
+    if (homeCarouselInterval) clearInterval(homeCarouselInterval);
+    homeCarouselInterval = setInterval(() => {
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * homeCarouselSlides.length);
+      } while (nextIndex === currentCarouselSlideIndex);
+      
+      switchCarouselToSlide(nextIndex);
+    }, 2500);
+  }
+
+  // Dot manual click handlers
+  homeCarouselDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const slideIndex = parseInt(dot.getAttribute('data-slide'));
+      switchCarouselToSlide(slideIndex);
+      startHomeCarouselRotation(); // reset timer
+    });
+  });
+
+  // Start Carousel
+  if (homeCarouselSlides.length > 0) {
+    startHomeCarouselRotation();
   }
 
   // Deposit/Withdraw buttons triggers

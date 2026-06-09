@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=1.6">
+  <link rel="stylesheet" href="styles.css?v=1.7">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -920,24 +920,111 @@
                   </div>
                 </div>
 
-                <!-- Hero Promo Banner (一分时时彩) -->
-                <div class="home-hero-banner">
-                  <div class="hero-left">
-                    <div class="hero-tag"><i class="fa-solid fa-fire"></i> 主推</div>
-                    <h3 class="hero-title">一分时时彩</h3>
-                    <span class="hero-period-label">第 <span id="home-ssc-period">284</span> 期 · 距封盘</span>
-                    <div class="hero-countdown" id="home-ssc-countdown">00:32</div>
-                  </div>
-                  <div class="hero-right">
-                    <span class="hero-history-label">上期 #<span id="home-ssc-history-num">41</span></span>
-                    <div class="hero-balls-row" id="home-ssc-balls">
-                      <div class="ssc-ball">3</div>
-                      <div class="ssc-ball">8</div>
-                      <div class="ssc-ball">1</div>
-                      <div class="ssc-ball">5</div>
-                      <div class="ssc-ball">7</div>
+                <!-- Hero Promo Carousel (一分快三, 一分时时彩, 一分六合彩, 广告1, 广告2) -->
+                <div class="home-hero-carousel">
+                  <div class="carousel-track">
+                    <!-- Slide 0: 一分快三 -->
+                    <div class="home-hero-banner active" data-slide-index="0" style="background: linear-gradient(135deg, #70a1ff 0%, #1e90ff 100%);">
+                      <div class="hero-left">
+                        <div class="hero-tag"><i class="fa-solid fa-dice"></i> 热门</div>
+                        <h3 class="hero-title">一分快三</h3>
+                        <span class="hero-period-label">第 <span id="home-k3-period">20260609128</span> 期 · 距封盘</span>
+                        <div class="hero-countdown" id="home-k3-countdown">00:30</div>
+                      </div>
+                      <div class="hero-right">
+                        <span class="hero-history-label">上期 #<span id="home-k3-history-num">127</span></span>
+                        <div class="hero-balls-row" id="home-k3-balls" style="gap: 6px;">
+                          <div class="dice dice-1"><span class="dot red-dot"></span></div>
+                          <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                          <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                        </div>
+                        <button class="hero-bet-btn" id="btn-home-bet-k3" style="color: #1e90ff;">立即下注 <i class="fa-solid fa-arrow-right"></i></button>
+                      </div>
                     </div>
-                    <button class="hero-bet-btn" id="btn-home-bet-ssc">立即下注 <i class="fa-solid fa-arrow-right"></i></button>
+
+                    <!-- Slide 1: 一分时时彩 -->
+                    <div class="home-hero-banner" data-slide-index="1" style="background: linear-gradient(135deg, #ff4757 0%, #ff6b81 40%, #ff7f50 100%);">
+                      <div class="hero-left">
+                        <div class="hero-tag"><i class="fa-solid fa-fire"></i> 主推</div>
+                        <h3 class="hero-title">一分时时彩</h3>
+                        <span class="hero-period-label">第 <span id="home-ssc-period">284</span> 期 · 距封盘</span>
+                        <div class="hero-countdown" id="home-ssc-countdown">00:45</div>
+                      </div>
+                      <div class="hero-right">
+                        <span class="hero-history-label">上期 #<span id="home-ssc-history-num">41</span></span>
+                        <div class="hero-balls-row" id="home-ssc-balls">
+                          <div class="ssc-ball">3</div>
+                          <div class="ssc-ball">8</div>
+                          <div class="ssc-ball">1</div>
+                          <div class="ssc-ball">5</div>
+                          <div class="ssc-ball">7</div>
+                        </div>
+                        <button class="hero-bet-btn" id="btn-home-bet-ssc" style="color: #ff4757;">立即下注 <i class="fa-solid fa-arrow-right"></i></button>
+                      </div>
+                    </div>
+
+                    <!-- Slide 2: 一分六合彩 -->
+                    <div class="home-hero-banner" data-slide-index="2" style="background: linear-gradient(135deg, #2ed573 0%, #20bf6b 100%);">
+                      <div class="hero-left">
+                        <div class="hero-tag"><i class="fa-solid fa-star"></i> 经典</div>
+                        <h3 class="hero-title">一分六合彩</h3>
+                        <span class="hero-period-label">第 <span id="home-lhc-period">2026060</span> 期 · 距封盘</span>
+                        <div class="hero-countdown" id="home-lhc-countdown">00:55</div>
+                      </div>
+                      <div class="hero-right">
+                        <span class="hero-history-label">上期 #<span id="home-lhc-history-num">88</span></span>
+                        <div class="hero-balls-row" id="home-lhc-balls" style="gap: 3px;">
+                          <div class="ssc-ball lhc-ball">06</div>
+                          <div class="ssc-ball lhc-ball">12</div>
+                          <div class="ssc-ball lhc-ball">24</div>
+                          <div class="ssc-ball lhc-ball">33</div>
+                          <div class="ssc-ball lhc-ball">41</div>
+                          <div class="ssc-ball lhc-ball">48</div>
+                          <span style="color: #fff; font-size: 0.7rem; font-weight: bold; align-self: center;">+</span>
+                          <div class="ssc-ball lhc-ball lhc-special-ball" style="background: #eb3b5a;">08</div>
+                        </div>
+                        <button class="hero-bet-btn" id="btn-home-bet-lhc" style="color: #2ed573;">立即下注 <i class="fa-solid fa-arrow-right"></i></button>
+                      </div>
+                    </div>
+
+                    <!-- Slide 3: 广告1 -->
+                    <div class="home-hero-banner" data-slide-index="3" style="background: linear-gradient(135deg, #3742fa 0%, #5352ed 100%);">
+                      <div class="hero-left">
+                        <div class="hero-tag"><i class="fa-solid fa-gift"></i> 优惠</div>
+                        <h3 class="hero-title" style="font-size: 1.1rem;">每周首充返利 20%</h3>
+                        <span class="hero-period-label">全网最高优惠 · 限时狂欢</span>
+                        <div class="hero-countdown" style="font-size: 0.76rem; margin-top: 10px; font-family: inherit; font-weight: 500; opacity: 0.95;">升级VIP专享高达 ¥88,888 红包</div>
+                      </div>
+                      <div class="hero-right" style="justify-content: center; gap: 8px;">
+                        <span class="hero-history-label" style="opacity: 0.8; margin-bottom: 2px;">黑豹俱乐部</span>
+                        <div style="font-size: 0.76rem; font-weight: bold; color: #ffeaa7; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-gem"></i> VIP 专享特权</div>
+                        <button class="hero-bet-btn" id="btn-home-ad1-action" style="color: #3742fa;">立即查看 <i class="fa-solid fa-arrow-right"></i></button>
+                      </div>
+                    </div>
+
+                    <!-- Slide 4: 广告2 -->
+                    <div class="home-hero-banner" data-slide-index="4" style="background: linear-gradient(135deg, #ffa502 0%, #ff7f50 100%);">
+                      <div class="hero-left">
+                        <div class="hero-tag"><i class="fa-solid fa-trophy"></i> 体育</div>
+                        <h3 class="hero-title" style="font-size: 1.1rem;">顶级体育赛事推荐</h3>
+                        <span class="hero-period-label">滾球盤口 · 實時動態返水</span>
+                        <div class="hero-countdown" style="font-size: 0.76rem; margin-top: 10px; font-family: inherit; font-weight: 500; opacity: 0.95;">每日投注即享 2.0% 返水无上限</div>
+                      </div>
+                      <div class="hero-right" style="justify-content: center; gap: 8px;">
+                        <span class="hero-history-label" style="opacity: 0.8; margin-bottom: 2px;">全球精彩赛程</span>
+                        <div style="font-size: 0.76rem; font-weight: bold; color: #ffeaa7; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-football"></i> 返水無上限</div>
+                        <button class="hero-bet-btn" id="btn-home-ad2-action" style="color: #ff7f50;">立即前往 <i class="fa-solid fa-arrow-right"></i></button>
+                      </div>
+                    </div>
+
+                  </div>
+                  
+                  <div class="carousel-indicators">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                    <span class="dot" data-slide="3"></span>
+                    <span class="dot" data-slide="4"></span>
                   </div>
                 </div>
 
@@ -1939,6 +2026,6 @@
     </div> <!-- End Phone Wrapper -->
   </div>
 
-  <script src="app.js?v=1.6"></script>
+  <script src="app.js?v=1.7"></script>
 </body>
 </html>
