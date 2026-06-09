@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fastthreeBal) fastthreeBal.textContent = balance.toFixed(2);
     const modalBal = document.getElementById('details-modal-balance-val');
     if (modalBal) modalBal.textContent = balance.toFixed(2);
+    const liveFast3Bal = document.getElementById('live-fast3-balance');
+    if (liveFast3Bal) liveFast3Bal.textContent = balance.toFixed(2);
   }
 
   // Initial balance update
@@ -994,6 +996,219 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') sendMyMessage();
     });
   }
+
+  // ==========================================
+  // 5a. Live Room Betting Panel (一分快三)
+  // ==========================================
+  const btnPlaySameGame = document.getElementById('btn-play-same-game');
+  const btnCloseLiveBetting = document.getElementById('btn-close-live-betting');
+  const liveBettingPanel = document.getElementById('live-betting-panel');
+  const liveChatViewContainer = document.getElementById('live-chat-view-container');
+  const livePlayTabs = document.querySelectorAll('.live-play-tab');
+  const liveOddsCards = document.querySelectorAll('.live-odds-card');
+  const liveFast3TotalCost = document.getElementById('live-fast3-total-cost');
+  const liveFast3ManualAmount = document.getElementById('live-fast3-input-amount');
+  const btnLiveFast3Cancel = document.getElementById('btn-live-fast3-cancel');
+  const btnLiveFast3Submit = document.getElementById('btn-live-fast3-submit');
+  const liveFast3BalanceEl = document.getElementById('live-fast3-balance');
+  const btnLiveFast3RefreshBalance = document.getElementById('btn-live-fast3-refresh-balance');
+  const btnLiveFast3EditQuick = document.getElementById('btn-live-fast3-edit-quick');
+
+  let liveFast3SelectedOdds = new Set();
+  let liveFast3BetAmount = 50; // default active quick amount is 50
+
+  // 1. Toggle between Chat view and Betting Panel view
+  if (btnPlaySameGame) {
+    btnPlaySameGame.addEventListener('click', () => {
+      if (liveChatViewContainer) liveChatViewContainer.style.display = 'none';
+      if (liveBettingPanel) liveBettingPanel.style.display = 'flex';
+      updateLiveFast3Balance();
+      // Select Size tab by default
+      const defaultTab = document.querySelector('.live-play-tab[data-play-cat="size"]');
+      if (defaultTab) defaultTab.click();
+    });
+  }
+
+  if (btnCloseLiveBetting) {
+    btnCloseLiveBetting.addEventListener('click', () => {
+      if (liveBettingPanel) liveBettingPanel.style.display = 'none';
+      if (liveChatViewContainer) liveChatViewContainer.style.display = 'flex';
+    });
+  }
+
+  // 2. Play Sub-tab switching logic
+  livePlayTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Deactivate all play tabs
+      livePlayTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Hide all grids
+      const grids = document.querySelectorAll('.live-betting-options-grid');
+      grids.forEach(g => {
+        g.style.display = 'none';
+        g.classList.remove('active');
+      });
+
+      // Show targeted grid
+      const cat = tab.getAttribute('data-play-cat');
+      const targetGrid = document.getElementById(`live-fast3-grid-${cat}`);
+      if (targetGrid) {
+        targetGrid.style.display = 'grid';
+        targetGrid.classList.add('active');
+      }
+    });
+  });
+
+  // 3. Selection of Odds Cards
+  liveOddsCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      const name = card.getAttribute('data-name');
+      if (card.classList.contains('selected')) {
+        liveFast3SelectedOdds.add(name);
+      } else {
+        liveFast3SelectedOdds.delete(name);
+      }
+      updateLiveFast3Summary();
+    });
+  });
+
+  // 4. Balance Syncing Helper
+  function updateLiveFast3Balance() {
+    if (liveFast3BalanceEl) {
+      liveFast3BalanceEl.textContent = Number(balance).toFixed(2);
+    }
+  }
+
+  if (btnLiveFast3RefreshBalance) {
+    btnLiveFast3RefreshBalance.addEventListener('click', () => {
+      updateLiveFast3Balance();
+      showPopupToast("余额已刷新");
+    });
+  }
+
+  // 5. Quick Segmented Amounts Click binding
+  const liveQuickAmountsBar = document.getElementById('live-fast3-quick-amounts');
+  if (liveQuickAmountsBar) {
+    liveQuickAmountsBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.quick-amount-btn');
+      if (!btn) return;
+
+      const buttons = liveQuickAmountsBar.querySelectorAll('.quick-amount-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const val = parseInt(btn.getAttribute('data-val')) || 0;
+      liveFast3BetAmount = val;
+      if (liveFast3ManualAmount) liveFast3ManualAmount.value = ''; // clear manual input
+      updateLiveFast3Summary();
+    });
+  }
+
+  // 7. Manual Input Field
+  if (liveFast3ManualAmount) {
+    liveFast3ManualAmount.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value) || 0;
+      liveFast3BetAmount = val;
+      // Deactivate all quick amount buttons
+      if (liveQuickAmountsBar) {
+        const buttons = liveQuickAmountsBar.querySelectorAll('.quick-amount-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+      }
+      updateLiveFast3Summary();
+    });
+  }
+
+  // 8. Update Summary Calculations
+  function updateLiveFast3Summary() {
+    const count = liveFast3SelectedOdds.size;
+    const total = count * liveFast3BetAmount;
+    if (liveFast3TotalCost) liveFast3TotalCost.textContent = total.toFixed(2);
+
+    // Toggle submit button active class
+    if (count > 0 && liveFast3BetAmount > 0) {
+      btnLiveFast3Submit.classList.add('active');
+    } else {
+      btnLiveFast3Submit.classList.remove('active');
+    }
+  }
+
+  // 9. Reset Betting state ("撤回")
+  function resetLiveFast3Bets() {
+    liveFast3SelectedOdds.clear();
+    liveOddsCards.forEach(card => card.classList.remove('selected'));
+    if (liveFast3ManualAmount) liveFast3ManualAmount.value = '';
+    
+    // Reset to default quick amount
+    if (liveQuickAmountsBar) {
+      const buttons = liveQuickAmountsBar.querySelectorAll('.quick-amount-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+      const defaultBtn = liveQuickAmountsBar.querySelector('.quick-amount-btn');
+      if (defaultBtn) {
+        defaultBtn.classList.add('active');
+        liveFast3BetAmount = parseInt(defaultBtn.getAttribute('data-val')) || 50;
+      } else {
+        liveFast3BetAmount = 50;
+      }
+    }
+    updateLiveFast3Summary();
+  }
+
+  if (btnLiveFast3Cancel) {
+    btnLiveFast3Cancel.addEventListener('click', () => {
+      resetLiveFast3Bets();
+      showPopupToast("已撤回所有投注选择");
+    });
+  }
+
+  // 10. Submit Bets Opens Shared Bet Details modal
+  if (btnLiveFast3Submit) {
+    btnLiveFast3Submit.addEventListener('click', () => {
+      const count = liveFast3SelectedOdds.size;
+      if (count <= 0) {
+        showPopupToast("请选择投注盘口！");
+        return;
+      }
+      if (isNaN(liveFast3BetAmount) || liveFast3BetAmount <= 0) {
+        showPopupToast("请输入或选择有效的投注金额！");
+        return;
+      }
+
+      const activePlayTab = document.querySelector('.live-play-tabs-row .live-play-tab.active');
+      const category = activePlayTab ? activePlayTab.textContent.trim() : '大小';
+
+      const items = [];
+      const selectedCards = document.querySelectorAll('.live-odds-card.selected');
+      selectedCards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const odds = card.getAttribute('data-odds');
+        items.push({ name, odds, baseVal: liveFast3BetAmount, category });
+      });
+
+      // Open details modal using fast_three_embedded type
+      openBetDetailsModal('fast_three_embedded', items);
+    });
+  }
+
+  // 11. Follow bets ("跟单") clicks in the chat messages list
+  const betCardFollowButtons = document.querySelectorAll('.bet-card-follow-btn');
+  betCardFollowButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.live-bet-slip-card');
+      if (!card) return;
+
+      const name = card.getAttribute('data-selection');
+      const odds = card.getAttribute('data-odds');
+      const amount = parseFloat(card.getAttribute('data-amount')) || 10;
+      const play = card.getAttribute('data-play');
+
+      // Immediately stage this single follow bet in the confirmation modal!
+      const items = [{ name, odds, baseVal: amount, category: play }];
+      openBetDetailsModal('fast_three_embedded', items);
+    });
+  });
 
   // ==========================================
   // 6. Sports Betting Dashboard
@@ -2229,12 +2444,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render Quick Amounts bar on game bottom consoles
   function renderQuickAmountsBars() {
-    const prefixes = ['mark6', 'fast3', 'fastthree'];
+    const prefixes = ['mark6', 'fast3', 'fastthree', 'live-fast3'];
     prefixes.forEach(prefix => {
       const bar = document.getElementById(`${prefix}-quick-amounts`);
       if (!bar) return;
 
-      const editBtn = document.getElementById(`btn-edit-${prefix}-quick`);
+      let editBtn = document.getElementById(`btn-edit-${prefix}-quick`);
+      if (!editBtn && prefix === 'live-fast3') {
+        editBtn = document.getElementById('btn-live-fast3-edit-quick');
+      }
       bar.innerHTML = '';
 
       // Re-append edit button
@@ -2259,6 +2477,9 @@ document.addEventListener('DOMContentLoaded', () => {
           } else if (prefix === 'fastthree') {
             f3BetAmount = amt;
             updateF3Summary();
+          } else if (prefix === 'live-fast3') {
+            liveFast3BetAmount = amt;
+            if (typeof updateLiveFast3Summary === 'function') updateLiveFast3Summary();
           }
         }
 
@@ -2283,6 +2504,9 @@ document.addEventListener('DOMContentLoaded', () => {
           } else if (prefix === 'fastthree') {
             f3BetAmount = val;
             updateF3Summary();
+          } else if (prefix === 'live-fast3') {
+            liveFast3BetAmount = val;
+            if (typeof updateLiveFast3Summary === 'function') updateLiveFast3Summary();
           }
         });
 
@@ -2305,7 +2529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const editQuickBtns = ['btn-edit-mark6-quick', 'btn-edit-fast3-quick', 'btn-edit-fastthree-quick'];
+  const editQuickBtns = ['btn-edit-mark6-quick', 'btn-edit-fast3-quick', 'btn-edit-fastthree-quick', 'btn-live-fast3-edit-quick'];
   editQuickBtns.forEach(id => {
     const btn = document.getElementById(id);
     if (btn) {
@@ -2460,9 +2684,15 @@ document.addEventListener('DOMContentLoaded', () => {
         renderBetOddsCards(activePlayType);
         updateBetSummaryCalculation();
       } else if (currentActiveGame === 'fast_three_embedded') {
-        fast3SelectedOdds.clear();
-        fast3OddsCards.forEach(c => c.classList.remove('selected'));
-        updateFast3Summary();
+        // Clear video modal fast3 selections if active
+        if (typeof fast3SelectedOdds !== 'undefined' && fast3SelectedOdds.clear) fast3SelectedOdds.clear();
+        if (typeof fast3OddsCards !== 'undefined') fast3OddsCards.forEach(c => c.classList.remove('selected'));
+        if (typeof updateFast3Summary === 'function') updateFast3Summary();
+
+        // Clear live room fast3 selections if active
+        if (typeof liveFast3SelectedOdds !== 'undefined' && liveFast3SelectedOdds.clear) liveFast3SelectedOdds.clear();
+        if (typeof liveOddsCards !== 'undefined') liveOddsCards.forEach(c => c.classList.remove('selected'));
+        if (typeof updateLiveFast3Summary === 'function') updateLiveFast3Summary();
       } else if (currentActiveGame === 'fast_three') {
         f3SelectedOdds.clear();
         f3OddsCards.forEach(c => c.classList.remove('selected'));

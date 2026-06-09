@@ -5322,3 +5322,652 @@ input:checked + .slider:before {
   color: #fff !important;
   box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3) !important;
 }
+
+/* Redesigned Entered Live Room & Play Same Game Betting Panel */
+.live-stream-player-box {
+  width: 100%;
+  height: 40%;
+  background-color: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.live-stream-player-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.live-back-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0,0,0,0.5);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.live-back-btn:hover {
+  background-color: rgba(0,0,0,0.7);
+}
+
+.live-room-tabs-bar {
+  height: 48px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.live-tabs-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.live-tab {
+  font-size: 0.82rem;
+  color: #57606f;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.live-tab.active {
+  background-color: #eceffd;
+  color: #5f3cf6;
+}
+
+.live-play-same-btn {
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  padding: 5px 12px;
+  font-size: 0.74rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4);
+  transition: opacity 0.2s;
+}
+
+.live-play-same-btn:hover {
+  opacity: 0.9;
+}
+
+.live-chat-view-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #f1f2f6;
+}
+
+.live-chat-view-container .split-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.live-msg-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  width: 90%;
+}
+
+.live-msg-user-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.user-level-badge {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: #fff;
+  font-size: 0.55rem;
+  padding: 1px 5px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: bold;
+}
+
+.live-msg-username {
+  font-size: 0.7rem;
+  color: #0984e3;
+  font-weight: bold;
+}
+
+.live-bet-slip-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e1e8ed;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  width: 100%;
+  max-width: 280px;
+}
+
+.bet-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 26px;
+  background-color: #fafbfc;
+  border-bottom: 1px solid #f1f2f6;
+  padding-right: 8px;
+}
+
+.bet-card-title {
+  background: linear-gradient(135deg, #e1b12c, #fbc531);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 14px 0 8px;
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
+}
+
+.bet-card-game-info {
+  font-size: 0.62rem;
+  color: #a5b1c2;
+}
+
+.bet-card-body {
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.bet-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bet-card-play-type {
+  font-size: 0.68rem;
+  color: #a5b1c2;
+}
+
+.bet-card-odds-detail {
+  font-size: 0.74rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.bet-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bet-card-amount {
+  font-size: 0.76rem;
+  font-weight: bold;
+  color: #eb2f06;
+}
+
+.bet-card-follow-btn {
+  background-color: #dfb288;
+  border: none;
+  border-radius: 12px;
+  color: #5d3f2e;
+  padding: 3px 12px;
+  font-size: 0.68rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.bet-card-follow-btn:hover {
+  opacity: 0.9;
+}
+
+.live-system-message-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-self: flex-start;
+  padding: 2px 4px;
+}
+
+.sys-msg-label {
+  font-size: 0.72rem;
+  color: #0984e3;
+  font-weight: bold;
+}
+
+.sys-msg-content {
+  font-size: 0.72rem;
+  color: #57606f;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.sys-msg-content .anchor-badge {
+  background-color: #ff4757;
+  color: #fff;
+  font-size: 0.58rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.sys-msg-content .anchor-name {
+  color: #ff4757;
+  font-weight: bold;
+}
+
+.live-chat-input-bar {
+  height: 52px;
+  background-color: #ffffff;
+  border-top: 1px solid #e1e8ed;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.live-smiley-btn {
+  background: none;
+  border: none;
+  color: #a5b1c2;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.live-chat-text-input {
+  flex: 1;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #f1f2f6;
+  border: none;
+  padding: 0 12px;
+  font-size: 0.72rem;
+  outline: none;
+}
+
+.live-chat-text-input::placeholder {
+  color: #a5b1c2;
+}
+
+.live-right-icons {
+  display: flex;
+  gap: 6px;
+}
+
+.live-gift-btn, .live-heart-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.live-gift-btn:active, .live-heart-btn:active {
+  transform: scale(0.9);
+}
+
+.live-gift-btn {
+  background: linear-gradient(135deg, #ff7675, #ff4757);
+}
+
+.live-heart-btn {
+  background: linear-gradient(135deg, #fd79a8, #e84393);
+}
+
+/* Betting Panel Styles */
+.live-betting-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 60%;
+  overflow: hidden;
+  background-color: #f1f2f6;
+}
+
+.live-betting-header {
+  height: 44px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.live-betting-title-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.live-betting-status-tag {
+  background-color: #fff2e6;
+  border: 1.5px solid #ffa502;
+  color: #ff7f50;
+  font-size: 0.65rem;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.live-betting-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-playbook-btn {
+  background: none;
+  border: none;
+  color: #ffa502;
+  font-size: 0.72rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.live-close-betting-btn {
+  background: none;
+  border: none;
+  color: #a5b1c2;
+  font-size: 1.05rem;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-betting-subheader {
+  height: 36px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.live-issue-number {
+  font-size: 0.72rem;
+  color: #7f8c8d;
+}
+
+.live-dice-results-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #a5b1c2;
+  font-size: 0.72rem;
+}
+
+.live-dice-balls {
+  display: flex;
+  gap: 4px;
+}
+
+.live-dice-balls .dice {
+  border: 1px solid #cbd5e0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.live-play-tabs-row {
+  display: flex;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e1e8ed;
+  padding: 8px 12px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.live-play-tab {
+  flex: 1;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 4px;
+  color: #57606f;
+  font-size: 0.72rem;
+  padding: 5px 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.live-play-tab.active {
+  background-color: #1e90ff;
+  border-color: #1e90ff;
+  color: #fff;
+  font-weight: bold;
+}
+
+.live-betting-options-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+.live-betting-options-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.live-odds-card {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 105px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.live-odds-card .odds-card-name {
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+
+.live-odds-card .odds-card-val {
+  font-size: 0.7rem;
+  color: #7f8c8d;
+}
+
+.live-odds-card.selected {
+  border-color: #1e90ff;
+  background-color: #e8f0fe;
+}
+
+.live-odds-card.selected .odds-card-name {
+  color: #1e90ff;
+}
+
+.live-odds-card.selected .odds-card-val {
+  color: #1e90ff;
+}
+
+.live-bet-console {
+  background-color: #ffffff;
+  border-top: 1px solid #e1e8ed;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.live-bet-console .console-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: #2c3e50;
+}
+
+.live-bet-console .console-balance {
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.live-bet-console .console-bet-summary {
+  font-weight: 500;
+}
+
+.live-bet-console .bet-cost-value {
+  color: #eb2f06;
+  font-weight: bold;
+}
+
+.live-bet-console .console-amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-bet-console .console-amount-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-bet-console .console-edit-amount-btn {
+  background: none;
+  border: 1px solid #e1e8ed;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.live-bet-console .console-quick-amounts {
+  display: flex;
+  gap: 4px;
+}
+
+.live-bet-console .quick-amount-btn {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.live-bet-console .quick-amount-btn.active {
+  background-color: #1e90ff;
+  border-color: #1e90ff;
+  color: #fff;
+  font-weight: bold;
+}
+
+.live-bet-console .console-manual-input {
+  width: 76px;
+  border: 1px solid #e1e8ed;
+  border-radius: 4px;
+  padding: 5px 6px;
+  font-size: 0.72rem;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.live-bet-console .console-action-row {
+  display: flex;
+  gap: 10px;
+}
+
+.live-bet-console .console-cancel-btn {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 6px;
+  color: #7f8c8d;
+  padding: 8px 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.live-bet-console .console-submit-btn {
+  flex: 2;
+  background-color: #a5b1c2;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  padding: 8px 0;
+  font-size: 0.78rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.live-bet-console .console-submit-btn.active {
+  background: linear-gradient(135deg, #1e90ff, #3742fa);
+}
+

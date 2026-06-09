@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=3.3">
+  <link rel="stylesheet" href="styles.css?v=3.4">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -512,113 +512,280 @@
               <!-- Split View Screen (1/3 Top recommended, 2/3 Bottom Chat) -->
               <div class="chat-split-room" id="chat-split-room">
                 
-                <!-- Chatroom Header matching screenshot -->
-                <div class="split-room-header">
-                  <button id="btn-leave-chat" class="chat-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                  <div class="header-center-info">
-                    <h4 id="split-current-room-name">爱情买卖厅</h4>
-                    <span class="online-status-lbl"><i class="fa-solid fa-user-group"></i> <span id="chat-online-count">17076</span>人在线</span>
-                  </div>
-                  <div class="header-right-actions">
-                    <span class="reward-btn"><i class="fa-solid fa-gift"></i> 打赏</span>
-                    <span class="queue-lbl"><i class="fa-solid fa-rotate"></i> 排队0</span>
-                  </div>
+                <!-- Live stream player box with overlayed back button -->
+                <div class="live-stream-player-box">
+                  <img src="assets/game_fast3.png" alt="Live Stream" class="live-stream-player-img">
+                  <button id="btn-leave-chat" class="live-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
                 </div>
-                
-                <!-- Top 2-Row Grid of Hostesses matching screenshot -->
-                <div class="hostess-grid-section">
-                  <div class="hostess-grid">
-                    
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/drama_still1.png" alt="迷儿19岁">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 迷儿19岁</span>
-                    </div>
 
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/chat_cover.png" alt="奶胸蜜桃吖">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 蜜桃吖</span>
-                    </div>
-
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/origami.png" alt="主持人薄冰">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge admin-tag">管 主持人薄冰</span>
-                    </div>
-
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/drawing.png" alt="红太狼">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 红太狼</span>
-                    </div>
-
-                    <!-- Row 2 -->
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/science.png" alt="晴雯子">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 晴雯子</span>
-                    </div>
-
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/lego.png" alt="00后安琪拉">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 安琪拉</span>
-                    </div>
-
-                    <div class="hostess-slot">
-                      <div class="hostess-avatar-box">
-                        <img src="assets/sports_cover.png" alt="可爱小雨">
-                        <span class="mic-status-icon"><i class="fa-solid fa-microphone"></i></span>
-                      </div>
-                      <span class="hostess-name-badge live-tag">播 可爱小雨</span>
-                    </div>
-
-                    <div class="hostess-slot join-slot" id="btn-join-call">
-                      <div class="hostess-avatar-box join-box">
-                        <i class="fa-solid fa-plus"></i>
-                      </div>
-                      <span class="hostess-name-badge">加入连线</span>
-                    </div>
-
+                <!-- Sub-tabs bar below the stream -->
+                <div class="live-room-tabs-bar">
+                  <div class="live-tabs-left">
+                    <div class="live-tab active" data-tab="chat">聊天</div>
+                    <div class="live-tab" data-tab="follow">跟注</div>
+                    <div class="live-tab" data-tab="plan">计划</div>
+                    <div class="live-tab" data-tab="more">更多</div>
                   </div>
+                  <button class="live-play-same-btn" id="btn-play-same-game">
+                    <img src="assets/black_panther_logo.png" alt="icon" style="width: 14px; height: 14px; display: none; object-fit: contain;">
+                    <i class="fa-solid fa-gamepad" style="margin-right: 4px;"></i>玩同款
+                  </button>
                 </div>
-                
-                <!-- Bottom Chat Log & Action Bar -->
-                <div class="split-chat-area">
+
+                <!-- Live Chat View Container (default bottom layout) -->
+                <div class="live-chat-view-container" id="live-chat-view-container">
                   <div class="split-chat-messages" id="split-chat-log">
-                    <!-- Messages flow in real-time -->
+                    <!-- Preset Mock Messages matching first screenshot -->
+                    <!-- dcryyu11 Bet Card -->
+                    <div class="live-msg-wrapper">
+                      <div class="live-msg-user-header">
+                        <span class="user-level-badge"><i class="fa-solid fa-diamond"></i> 1</span>
+                        <span class="live-msg-username">dcryyu11:</span>
+                      </div>
+                      <div class="live-bet-slip-card" data-game="fast_three" data-play="三不同" data-selection="123" data-odds="35.28" data-amount="3">
+                        <div class="bet-card-header">
+                          <span class="bet-card-title">注单</span>
+                          <span class="bet-card-game-info">一分快三 202606050833</span>
+                        </div>
+                        <div class="bet-card-body">
+                          <div class="bet-card-left">
+                            <span class="bet-card-play-type">三不同</span>
+                            <span class="bet-card-odds-detail">三不同 【123】 @35.28</span>
+                          </div>
+                          <div class="bet-card-right">
+                            <span class="bet-card-amount">¥3</span>
+                            <button class="bet-card-follow-btn">跟单</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- test0327 Bet Card -->
+                    <div class="live-msg-wrapper">
+                      <div class="live-msg-user-header">
+                        <span class="user-level-badge"><i class="fa-solid fa-diamond"></i> 1</span>
+                        <span class="live-msg-username">test0327:</span>
+                      </div>
+                      <div class="live-bet-slip-card" data-game="fast_three" data-play="全骰" data-selection="111" data-odds="200.88" data-amount="50">
+                        <div class="bet-card-header">
+                          <span class="bet-card-title">注单</span>
+                          <span class="bet-card-game-info">一分快三 202606061190</span>
+                        </div>
+                        <div class="bet-card-body">
+                          <div class="bet-card-left">
+                            <span class="bet-card-play-type">全骰</span>
+                            <span class="bet-card-odds-detail">全骰 【111】 @200.88</span>
+                          </div>
+                          <div class="bet-card-right">
+                            <span class="bet-card-amount">¥50</span>
+                            <button class="bet-card-follow-btn">跟单</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- System messages -->
+                    <div class="live-system-message-row">
+                      <span class="sys-msg-label">系统消息:</span>
+                      <div class="sys-msg-content">
+                        <span class="anchor-badge">主播</span>
+                        <span class="anchor-name">XCM-阿英:</span>欢迎来到【XCM-阿英】的直播间，
+                      </div>
+                    </div>
                   </div>
-                  
-                  <!-- Chat input bar matching screenshot -->
-                  <div class="screenshot-chat-input-bar">
-                    <button class="icon-input-btn"><i class="fa-solid fa-circle-plus"></i></button>
-                    <button class="icon-input-btn"><i class="fa-solid fa-volume-high"></i></button>
-                    <input type="text" id="split-chat-input" placeholder="还需充值50元可以发言">
-                    <button class="icon-input-btn"><i class="fa-regular fa-face-smile"></i></button>
-                    <div class="clear-screen-toggle">
-                      <span>清屏</span>
-                      <label class="switch">
-                        <input type="checkbox" id="toggle-clear-screen">
-                        <span class="slider round"></span>
-                      </label>
+
+                  <!-- Bottom Chat input bar matching first screenshot -->
+                  <div class="live-chat-input-bar">
+                    <button class="live-smiley-btn"><i class="fa-regular fa-face-smile"></i></button>
+                    <input type="text" id="split-chat-input" class="live-chat-text-input" placeholder="还需充值50元可以发言">
+                    <div class="live-right-icons">
+                      <button class="live-gift-btn"><i class="fa-solid fa-gift"></i></button>
+                      <button class="live-heart-btn"><i class="fa-solid fa-heart"></i></button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Betting Panel for Fast Three (Hidden by default) -->
+                <div class="live-betting-panel" id="live-betting-panel" style="display: none;">
+                  <!-- Header matching second screenshot -->
+                  <div class="live-betting-header">
+                    <div class="live-betting-title-left">
+                      <i class="fa-solid fa-chevron-up"></i>
+                      <span>一分快三</span>
+                    </div>
+                    <span class="live-betting-status-tag">开奖中</span>
+                    <div class="live-betting-actions-right">
+                      <button class="live-playbook-btn"><i class="fa-regular fa-lightbulb"></i> 玩法</button>
+                      <button class="live-close-betting-btn" id="btn-close-live-betting"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                  </div>
+
+                  <!-- Subheader with issue number and dice drawing -->
+                  <div class="live-betting-subheader">
+                    <span class="live-issue-number">第 <span id="live-fast3-issue">202606090622</span> 期</span>
+                    <div class="live-dice-results-row">
+                      <div class="live-dice-balls" id="live-fast3-balls-row">
+                        <!-- Custom CSS dice elements -->
+                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
+                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
+                      </div>
+                      <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                  </div>
+
+                  <!-- Betting Tabs for categories -->
+                  <div class="live-play-tabs-row">
+                    <div class="live-play-tab active" data-play-cat="size">大小</div>
+                    <div class="live-play-tab" data-play-cat="pair">对子</div>
+                    <div class="live-play-tab" data-play-cat="triple">豹子</div>
+                    <div class="live-play-tab" data-play-cat="sum">总和</div>
+                    <div class="live-play-tab" data-play-cat="single">单骰</div>
+                  </div>
+
+                  <!-- Betting Options Grid -->
+                  <div class="live-betting-options-container">
+                    <!-- Size Tab Options -->
+                    <div class="live-betting-options-grid active" id="live-fast3-grid-size">
+                      <div class="live-odds-card" data-name="大" data-odds="9.75">
+                        <div class="odds-card-name">大</div>
+                        <div class="odds-card-val">9.75</div>
+                      </div>
+                      <div class="live-odds-card" data-name="小" data-odds="9.75">
+                        <div class="odds-card-name">小</div>
+                        <div class="odds-card-val">9.75</div>
+                      </div>
+                      <div class="live-odds-card" data-name="单" data-odds="9.75">
+                        <div class="odds-card-name">单</div>
+                        <div class="odds-card-val">9.75</div>
+                      </div>
+                      <div class="live-odds-card" data-name="双" data-odds="9.75">
+                        <div class="odds-card-name">双</div>
+                        <div class="odds-card-val">9.75</div>
+                      </div>
+                    </div>
+
+                    <!-- Pair Tab Options (Hidden by default) -->
+                    <div class="live-betting-options-grid" id="live-fast3-grid-pair" style="display: none;">
+                      <div class="live-odds-card" data-name="11" data-odds="12.5">
+                        <div class="odds-card-name">11</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                      <div class="live-odds-card" data-name="22" data-odds="12.5">
+                        <div class="odds-card-name">22</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                      <div class="live-odds-card" data-name="33" data-odds="12.5">
+                        <div class="odds-card-name">33</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                      <div class="live-odds-card" data-name="44" data-odds="12.5">
+                        <div class="odds-card-name">44</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                      <div class="live-odds-card" data-name="55" data-odds="12.5">
+                        <div class="odds-card-name">55</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                      <div class="live-odds-card" data-name="66" data-odds="12.5">
+                        <div class="odds-card-name">66</div>
+                        <div class="odds-card-val">12.5</div>
+                      </div>
+                    </div>
+
+                    <!-- Triple Tab Options (Hidden by default) -->
+                    <div class="live-betting-options-grid" id="live-fast3-grid-triple" style="display: none;">
+                      <div class="live-odds-card" data-name="111" data-odds="200.0">
+                        <div class="odds-card-name">111</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="222" data-odds="200.0">
+                        <div class="odds-card-name">222</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="333" data-odds="200.0">
+                        <div class="odds-card-name">333</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="444" data-odds="200.0">
+                        <div class="odds-card-name">444</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="555" data-odds="200.0">
+                        <div class="odds-card-name">555</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="666" data-odds="200.0">
+                        <div class="odds-card-name">666</div>
+                        <div class="odds-card-val">200.0</div>
+                      </div>
+                      <div class="live-odds-card" data-name="任意豹子" data-odds="35.0">
+                        <div class="odds-card-name">任意豹子</div>
+                        <div class="odds-card-val">35.0</div>
+                      </div>
+                    </div>
+
+                    <!-- Sum Tab Options (Hidden by default) -->
+                    <div class="live-betting-options-grid" id="live-fast3-grid-sum" style="display: none;">
+                      <div class="live-odds-card" data-name="和值4" data-odds="80.0"><div class="odds-card-name">和值4</div><div class="odds-card-val">80.0</div></div>
+                      <div class="live-odds-card" data-name="和值5" data-odds="40.0"><div class="odds-card-name">和值5</div><div class="odds-card-val">40.0</div></div>
+                      <div class="live-odds-card" data-name="和值6" data-odds="25.0"><div class="odds-card-name">和值6</div><div class="odds-card-val">25.0</div></div>
+                      <div class="live-odds-card" data-name="和值7" data-odds="16.0"><div class="odds-card-name">和值7</div><div class="odds-card-val">16.0</div></div>
+                      <div class="live-odds-card" data-name="和值8" data-odds="12.0"><div class="odds-card-name">和值8</div><div class="odds-card-val">12.0</div></div>
+                      <div class="live-odds-card" data-name="和值9" data-odds="9.0"><div class="odds-card-name">和值9</div><div class="odds-card-val">9.0</div></div>
+                      <div class="live-odds-card" data-name="和值10" data-odds="9.0"><div class="odds-card-name">和值10</div><div class="odds-card-val">9.0</div></div>
+                      <div class="live-odds-card" data-name="和值11" data-odds="9.0"><div class="odds-card-name">和值11</div><div class="odds-card-val">9.0</div></div>
+                      <div class="live-odds-card" data-name="和值12" data-odds="9.0"><div class="odds-card-name">和值12</div><div class="odds-card-val">9.0</div></div>
+                      <div class="live-odds-card" data-name="和值13" data-odds="12.0"><div class="odds-card-name">和值13</div><div class="odds-card-val">12.0</div></div>
+                      <div class="live-odds-card" data-name="和值14" data-odds="16.0"><div class="odds-card-name">和值14</div><div class="odds-card-val">16.0</div></div>
+                      <div class="live-odds-card" data-name="和值15" data-odds="25.0"><div class="odds-card-name">和值15</div><div class="odds-card-val">25.0</div></div>
+                      <div class="live-odds-card" data-name="和值16" data-odds="40.0"><div class="odds-card-name">和值16</div><div class="odds-card-val">40.0</div></div>
+                      <div class="live-odds-card" data-name="和值17" data-odds="80.0"><div class="odds-card-name">和值17</div><div class="odds-card-val">80.0</div></div>
+                    </div>
+
+                    <!-- Single Tab Options (Hidden by default) -->
+                    <div class="live-betting-options-grid" id="live-fast3-grid-single" style="display: none;">
+                      <div class="live-odds-card" data-name="单骰1" data-odds="2.0"><div class="odds-card-name">1</div><div class="odds-card-val">2.0</div></div>
+                      <div class="live-odds-card" data-name="单骰2" data-odds="2.0"><div class="odds-card-name">2</div><div class="odds-card-val">2.0</div></div>
+                      <div class="live-odds-card" data-name="单骰3" data-odds="2.0"><div class="odds-card-name">3</div><div class="odds-card-val">2.0</div></div>
+                      <div class="live-odds-card" data-name="单骰4" data-odds="2.0"><div class="odds-card-name">4</div><div class="odds-card-val">2.0</div></div>
+                      <div class="live-odds-card" data-name="单骰5" data-odds="2.0"><div class="odds-card-name">5</div><div class="odds-card-val">2.0</div></div>
+                      <div class="live-odds-card" data-name="单骰6" data-odds="2.0"><div class="odds-card-name">6</div><div class="odds-card-val">2.0</div></div>
+                    </div>
+                  </div>
+
+                  <!-- Betting Console Footer -->
+                  <div class="live-bet-console">
+                    <!-- Row 1: Balance & Selected Bets Summary -->
+                    <div class="console-info-row">
+                      <span class="console-balance">余额: <span id="live-fast3-balance">6684.98</span> <i class="fa-solid fa-rotate-right" id="btn-live-fast3-refresh-balance" style="cursor: pointer; font-size: 0.7rem; margin-left: 2px;"></i></span>
+                      <span class="console-bet-summary">下注金额: <span id="live-fast3-total-cost" class="bet-cost-value">0</span></span>
+                    </div>
+
+                    <!-- Row 2: Segemented Quick amount control, manual amount input -->
+                    <div class="console-amount-row">
+                      <div class="console-amount-left">
+                        <button class="console-edit-amount-btn" id="btn-live-fast3-edit-quick"><i class="fa-solid fa-pencil"></i></button>
+                        <div class="console-quick-amounts" id="live-fast3-quick-amounts">
+                          <button class="quick-amount-btn active" data-val="50">50</button>
+                          <button class="quick-amount-btn" data-val="100">100</button>
+                          <button class="quick-amount-btn" data-val="500">500</button>
+                          <button class="quick-amount-btn" data-val="1000">1000</button>
+                        </div>
+                      </div>
+                      <input type="number" id="live-fast3-manual-amount" class="console-manual-input" placeholder="输入金额">
+                    </div>
+
+                    <!-- Row 3: Action Buttons -->
+                    <div class="console-action-row">
+                      <button class="console-cancel-btn" id="btn-live-fast3-cancel"><i class="fa-solid fa-rotate-left"></i> 撤回</button>
+                      <button class="console-submit-btn" id="btn-live-fast3-submit">提交</button>
                     </div>
                   </div>
                 </div>
 
               </div>
+            </div>
             </div>
 
             <!-- PAGE 4: 体育 (Sports Schedule & Betting) -->
@@ -2207,6 +2374,6 @@
     </div> <!-- End Phone Wrapper -->
   </div>
 
-  <script src="app.js?v=3.3"></script>
+  <script src="app.js?v=3.4"></script>
 </body>
 </html>
