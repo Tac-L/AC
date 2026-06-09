@@ -45,6 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalBal) modalBal.textContent = balance.toFixed(2);
     const liveFast3Bal = document.getElementById('live-fast3-balance');
     if (liveFast3Bal) liveFast3Bal.textContent = balance.toFixed(2);
+
+    // Deposit, Withdraw, and Profile Header balance displays
+    const depHeaderBal = document.getElementById('deposit-header-balance-display');
+    if (depHeaderBal) depHeaderBal.textContent = balance.toFixed(2);
+    const depCardBal = document.getElementById('deposit-card-balance-display');
+    if (depCardBal) depCardBal.textContent = formatted;
+    const withdrawBalEl = document.getElementById('withdraw-balance-display');
+    if (withdrawBalEl) withdrawBalEl.textContent = balance.toFixed(2);
+    const profileHeaderBal = document.getElementById('profile-header-balance-display');
+    if (profileHeaderBal) profileHeaderBal.textContent = formatted;
   }
 
   // Initial balance update
@@ -547,24 +557,27 @@ document.addEventListener('DOMContentLoaded', () => {
   depositBtns.forEach(btn => {
     if (btn) {
       btn.addEventListener('click', () => {
-        updateBalance(500);
-        showPopupToast("充值成功！您的账户已打入 ¥500.00 元虚拟额度。");
+        if (window.openDepositPage) {
+          window.openDepositPage();
+        }
       });
     }
   });
 
-  const btnWithdraw = document.getElementById('btn-withdraw-popup');
-  if (btnWithdraw) {
-    btnWithdraw.addEventListener('click', () => {
-      if (balance <= 0) {
-        showPopupToast("提现失败：当前可用余额为 0 元。");
-        return;
-      }
-      const withdrawAmount = balance;
-      updateBalance(-withdrawAmount);
-      showPopupToast(`提现发起成功！提现金额 ¥${withdrawAmount.toFixed(2)} 元正在打包处理。`);
-    });
-  }
+  const withdrawBtns = [
+    document.getElementById('btn-withdraw-popup'),
+    document.getElementById('btn-profile-withdraw')
+  ];
+
+  withdrawBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', () => {
+        if (window.openWithdrawPage) {
+          window.openWithdrawPage();
+        }
+      });
+    }
+  });
 
   const btnOnekeyRetrieve = document.getElementById('btn-onekey-retrieve');
   if (btnOnekeyRetrieve) {
@@ -580,7 +593,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btnRefresh.style.transform = 'rotate(360deg)';
       setTimeout(() => {
         btnRefresh.style.transform = 'rotate(0deg)';
-        showPopupToast("余额刷新成功！");
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
       }, 500);
     });
   }
@@ -593,18 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const btnProfileWithdraw = document.getElementById('btn-profile-withdraw');
-  if (btnProfileWithdraw) {
-    btnProfileWithdraw.addEventListener('click', () => {
-      if (balance <= 0) {
-        showPopupToast("提现失败：当前可用余额为 0 元。");
-        return;
-      }
-      const withdrawAmount = balance;
-      updateBalance(-withdrawAmount);
-      showPopupToast(`提现发起成功！提现金额 ¥${withdrawAmount.toFixed(2)} 元正在打包处理。`);
-    });
-  }
+
 
   const btnEditUsername = document.getElementById('btn-edit-username');
   if (btnEditUsername) {
@@ -693,13 +696,18 @@ document.addEventListener('DOMContentLoaded', () => {
     'assets/science.png'
   ];
   const dramaTitles = [
+    '秘密日记',
     '《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽',
     '《真假千金的豪门较量》第十集：身份拆穿 #虐恋 #豪门 #高能',
-    '《战神重生成奶爸》第二集：我的萌宝是天才 #都市 #热血 #打脸',
-    '《回到古代当首富》第五集：开局买下盐铁专营 #穿越 #爽剧 #脑洞'
+    '《战神重生成奶爸》第二集：我的萌宝是天才 #都市 #热血 #打脸'
   ];
-  const dramaCreators = ['@小美剧场', '@经典剧场栏目', '@奶爸战神', '@爆款短剧屋'];
-  const dramaLikes = ['12.5w', '34.8w', '52.1w', '8.9w'];
+  const dramaCreators = [
+    '@陈名豪,谭盐盐,李一沐,伍雅露',
+    '@小美剧场',
+    '@经典剧场栏目',
+    '@奶爸战神'
+  ];
+  const dramaLikes = ['0', '12.5w', '34.8w', '52.1w'];
 
   let currentDramaIdx = 0;
   const dramaBgImg = document.getElementById('drama-bg-img');
@@ -718,6 +726,12 @@ document.addEventListener('DOMContentLoaded', () => {
       dramaCreator.textContent = dramaCreators[index];
       dramaTitle.textContent = dramaTitles[index];
       dramaLikesCount.textContent = dramaLikes[index];
+      
+      const icon = btnLikeDrama.querySelector('i');
+      if (icon) {
+        icon.className = 'fa-regular fa-heart';
+        icon.style.color = '';
+      }
       btnLikeDrama.classList.remove('liked');
       dramaBgImg.style.opacity = 1;
     }, 200);
@@ -735,12 +749,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Like Toggle
   btnLikeDrama.addEventListener('click', () => {
+    const icon = btnLikeDrama.querySelector('i');
     btnLikeDrama.classList.toggle('liked');
     const isLiked = btnLikeDrama.classList.contains('liked');
-    if (isLiked) {
-      showPopupToast("点赞成功 ❤️");
+    if (icon) {
+      if (isLiked) {
+        icon.className = 'fa-solid fa-heart';
+        icon.style.color = '#ff4757';
+        dramaLikesCount.textContent = (parseInt(dramaLikesCount.textContent) || 0) + 1;
+        showPopupToast("点赞成功 ❤️");
+      } else {
+        icon.className = 'fa-regular fa-heart';
+        icon.style.color = '';
+        dramaLikesCount.textContent = Math.max(0, (parseInt(dramaLikesCount.textContent) || 1) - 1);
+      }
     }
   });
+
+  // Mute Toggle Listener
+  const btnDramaMute = document.getElementById('btn-drama-mute');
+  let dramaMuted = true;
+  if (btnDramaMute) {
+    btnDramaMute.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dramaMuted = !dramaMuted;
+      const icon = btnDramaMute.querySelector('i');
+      if (icon) {
+        if (dramaMuted) {
+          icon.className = 'fa-solid fa-volume-xmark';
+          showPopupToast("声音已静音 🔇");
+        } else {
+          icon.className = 'fa-solid fa-volume-high';
+          showPopupToast("声音已开启 🔊");
+        }
+      }
+    });
+  }
+
+  // Promo Close Listener
+  const btnCloseDramaPromo = document.getElementById('btn-close-drama-promo');
+  const dramaPromoBadge = document.getElementById('drama-promo-badge');
+  if (btnCloseDramaPromo && dramaPromoBadge) {
+    btnCloseDramaPromo.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dramaPromoBadge.style.display = 'none';
+    });
+  }
+
+  // Game Redirection Listener
+  const dramaGameRedirect = document.getElementById('drama-game-redirect');
+  if (dramaGameRedirect) {
+    dramaGameRedirect.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const gamesBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-games"]');
+      if (gamesBtn) {
+        gamesBtn.click();
+        setTimeout(() => {
+          const lotteryTab = document.querySelector('.menu-tab-item[data-category="lottery"]');
+          if (lotteryTab) lotteryTab.click();
+          setTimeout(() => {
+            const fastThree = document.querySelector('.lobby-game-card[data-game-id="fast_three"]');
+            if (fastThree) fastThree.click();
+          }, 150);
+        }, 150);
+      }
+    });
+  }
 
   // Mouse wheel scroll to switch vertical short drama
   const dramaArea = document.getElementById('drama-player-area');
@@ -1105,8 +1179,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnLiveFast3RefreshBalance) {
     btnLiveFast3RefreshBalance.addEventListener('click', () => {
-      updateLiveFast3Balance();
-      showPopupToast("余额已刷新");
+      updateBalance(3000, false);
+      showPopupToast("余额已刷新为 ¥3000.00！");
     });
   }
 
@@ -1741,8 +1815,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btnRefreshGameBalance.style.transform = 'rotate(360deg)';
       setTimeout(() => {
         btnRefreshGameBalance.style.transform = 'rotate(0deg)';
-        updateBalance(0);
-        showPopupToast("余额同步成功！");
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
       }, 400);
     });
   }
@@ -1752,8 +1826,32 @@ document.addEventListener('DOMContentLoaded', () => {
       btnRefreshFastThreeBalance.style.transform = 'rotate(360deg)';
       setTimeout(() => {
         btnRefreshFastThreeBalance.style.transform = 'rotate(0deg)';
-        updateBalance(0);
-        showPopupToast("余额同步成功！");
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
+      }, 400);
+    });
+  }
+
+  const btnRefreshMark6Balance = document.getElementById('btn-refresh-mark6-balance');
+  if (btnRefreshMark6Balance) {
+    btnRefreshMark6Balance.addEventListener('click', () => {
+      btnRefreshMark6Balance.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        btnRefreshMark6Balance.style.transform = 'rotate(0deg)';
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
+      }, 400);
+    });
+  }
+
+  const btnRefreshDetailsBalance = document.getElementById('btn-refresh-details-balance');
+  if (btnRefreshDetailsBalance) {
+    btnRefreshDetailsBalance.addEventListener('click', () => {
+      btnRefreshDetailsBalance.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        btnRefreshDetailsBalance.style.transform = 'rotate(0deg)';
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
       }, 400);
     });
   }
@@ -2105,8 +2203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showWinNotification(name, amount, gameType);
   }
 
-  // Set interval to periodically trigger player wins every 10 seconds
-  setInterval(triggerRandomWinNotification, 10000);
+  // Set interval to periodically trigger player wins every 10 seconds - disabled per user request
+  // setInterval(triggerRandomWinNotification, 10000);
 
   // Switch phone theme skins (Dark/Gold/Purple/Coral) via sidebar
   const mobileDevice = document.getElementById('mobile-device');
@@ -2263,6 +2361,19 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       }
+    });
+  }
+
+  // Refresh balance for embedded Fast Three console
+  const btnRefreshFast3Balance = document.getElementById('btn-refresh-fast3-balance');
+  if (btnRefreshFast3Balance) {
+    btnRefreshFast3Balance.addEventListener('click', () => {
+      btnRefreshFast3Balance.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        btnRefreshFast3Balance.style.transform = 'rotate(0deg)';
+        updateBalance(3000, false);
+        showPopupToast("余额已刷新为 ¥3000.00！");
+      }, 400);
     });
   }
 
@@ -3054,8 +3165,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var refreshBalBtn = pageFastThreeNew.querySelector('#btn-refresh-fastthree-console-balance');
     if (refreshBalBtn) {
       refreshBalBtn.addEventListener('click', function() {
-        updateBalance(0);
-        showPopupToast('余额已同步！');
+        updateBalance(3000, false);
+        showPopupToast('余额已刷新为 ¥3000.00！');
       });
     }
 
@@ -3091,6 +3202,423 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   initHomeCardCarousels();
+
+  // ==========================================
+  // 13. Recharge Center & Withdrawal Center Logic
+  // ==========================================
+  (function() {
+    // 1. Recharge Center Elements
+    const pageDeposit = document.getElementById('page-deposit');
+    const btnDepositBack = document.getElementById('btn-deposit-back');
+    const btnDepositClose = document.getElementById('btn-deposit-close');
+    const btnRefreshDepositBalance = document.getElementById('btn-refresh-deposit-balance');
+    const btnDepositRecord = document.getElementById('btn-deposit-record');
+    const btnDepositCopyId = document.getElementById('btn-deposit-copy-id');
+    const selectedChannelName = document.getElementById('selected-channel-name');
+    const depositSubchannelsContainer = document.getElementById('deposit-subchannels-container');
+    const channelItems = document.querySelectorAll('.channel-grid-item');
+    const depositTabs = document.querySelectorAll('.deposit-tab');
+
+    // Dialog components
+    const depositMockDialog = document.getElementById('deposit-mock-dialog');
+    const depositDialogTitle = document.getElementById('deposit-dialog-title');
+    const depositDialogLimitText = document.getElementById('deposit-dialog-limit-text');
+    const depositInputAmount = document.getElementById('deposit-input-amount');
+    const btnCloseDepositDialog = document.getElementById('btn-close-deposit-dialog');
+    const btnCancelDepositDialog = document.getElementById('btn-cancel-deposit-dialog');
+    const btnConfirmDepositDialog = document.getElementById('btn-confirm-deposit-dialog');
+    const dialogQuickBtns = document.querySelectorAll('.deposit-dialog-quick-btn');
+
+    let activeSubchannel = null;
+
+    // Open/Close page
+    function openDepositPage() {
+      const allPages = document.querySelectorAll('.app-page');
+      allPages.forEach(p => p.classList.remove('active'));
+      if (pageDeposit) pageDeposit.classList.add('active');
+      
+      const navButtons = document.querySelectorAll('.bottom-nav .nav-btn');
+      navButtons.forEach(b => b.classList.remove('active'));
+      const profileNavBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-profile"]');
+      if (profileNavBtn) {
+        profileNavBtn.classList.add('active');
+      }
+      
+      updateBalance(0); // sync balance display
+      
+      const defaultChannel = document.querySelector('.channel-grid-item[data-channel="alipay_scan"]');
+      if (defaultChannel) {
+        defaultChannel.click();
+      }
+    }
+
+    window.openDepositPage = openDepositPage; // Expose globally
+
+    function closeDepositPage() {
+      if (pageDeposit) pageDeposit.classList.remove('active');
+      const pageProfile = document.getElementById('page-profile');
+      if (pageProfile) pageProfile.classList.add('active');
+    }
+
+    if (btnDepositBack) btnDepositBack.addEventListener('click', closeDepositPage);
+    if (btnDepositClose) btnDepositClose.addEventListener('click', closeDepositPage);
+
+    // Refresh balance button
+    if (btnRefreshDepositBalance) {
+      btnRefreshDepositBalance.addEventListener('click', () => {
+        btnRefreshDepositBalance.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+          btnRefreshDepositBalance.style.transform = 'rotate(0deg)';
+          updateBalance(3000, false);
+          showPopupToast("余额已刷新为 ¥3000.00！");
+        }, 400);
+      });
+    }
+
+    // Copy ID button
+    if (btnDepositCopyId) {
+      btnDepositCopyId.addEventListener('click', () => {
+        showPopupToast("ID复制成功！ID: 301636280");
+      });
+    }
+
+    // Mock record button
+    if (btnDepositRecord) {
+      btnDepositRecord.addEventListener('click', () => {
+        showPopupToast("提示：充值记录为空");
+      });
+    }
+
+    // Tabs switching (在线充值 vs 钱包直充)
+    depositTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        depositTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const tabType = tab.getAttribute('data-tab');
+        if (tabType === 'wallet') {
+          showPopupToast("【钱包直充】通道正在维护中，已为您默认选择【在线充值】！");
+          setTimeout(() => {
+            depositTabs.forEach(t => {
+              if (t.getAttribute('data-tab') === 'online') t.classList.add('active');
+              else t.classList.remove('active');
+            });
+          }, 1500);
+        }
+      });
+    });
+
+    const subchannelsData = {
+      alipay_scan: [
+        { name: "支付宝", limit: "200-2000元", badge: "小额", badgeType: "cyan", min: 200, max: 2000 },
+        { name: "支付宝 通道2", limit: "200-2000元", badge: "推荐", badgeType: "orange", min: 200, max: 2000 },
+        { name: "支付宝 通道3", limit: "100-2000元", badge: "推荐", badgeType: "orange", min: 100, max: 2000 },
+        { name: "支付宝 通道4", limit: "20-500元", badge: "小额", badgeType: "cyan", min: 20, max: 500 },
+        { name: "支付宝 通道7", limit: "200-50000元", badge: "大额", badgeType: "yellow", min: 200, max: 50000 },
+        { name: "支付宝 通道8", limit: "2000-50000元", badge: "大额", badgeType: "yellow", min: 2000, max: 50000 },
+        { name: "支付宝 通道9", limit: "100-500元", badge: "推荐", badgeType: "orange", min: 100, max: 500 },
+        { name: "支付宝 通道10", limit: "10-500元", badge: "小额", badgeType: "cyan", min: 10, max: 500 },
+        { name: "支付宝 通道14", limit: "10-500元", badge: "小额", badgeType: "cyan", min: 10, max: 500 },
+        { name: "支付宝 通道15", limit: "300-10000元", badge: "火热", badgeType: "red", min: 300, max: 10000 }
+      ],
+      unionpay_scan: [
+        { name: "银联扫码1", limit: "500-5000元", badge: "小额", badgeType: "cyan", min: 500, max: 5000 },
+        { name: "银联扫码 通道2", limit: "1000-10000元", badge: "推荐", badgeType: "orange", min: 1000, max: 10000 },
+        { name: "银联扫码 通道3", limit: "500-20000元", badge: "大额", badgeType: "yellow", min: 500, max: 20000 }
+      ],
+      digital_rmb: [
+        { name: "数币直通车", limit: "50-1000元", badge: "极速", badgeType: "red", min: 50, max: 1000 },
+        { name: "数币 通道2", limit: "100-2000元", badge: "推荐", badgeType: "cyan", min: 100, max: 2000 }
+      ],
+      wechat_scan: [
+        { name: "微信扫码1", limit: "100-1000元", badge: "限时", badgeType: "cyan", min: 100, max: 1000 },
+        { name: "微信扫码 通道2", limit: "50-500元", badge: "推荐", badgeType: "orange", min: 50, max: 500 },
+        { name: "微信 通道3", limit: "200-3000元", badge: "大额", badgeType: "yellow", min: 200, max: 3000 }
+      ],
+      alipay_transfer: [
+        { name: "网银快捷转账", limit: "500-50000元", badge: "推荐", badgeType: "orange", min: 500, max: 50000 },
+        { name: "支付宝大额转账", limit: "1000-100000元", badge: "大额", badgeType: "yellow", min: 1000, max: 100000 }
+      ],
+      virtual_wallet: [
+        { name: "数字钱包充值", limit: "100-5000元", badge: "极速", badgeType: "red", min: 100, max: 5000 }
+      ],
+      usdt_deposit: [
+        { name: "USDT-TRC20", limit: "10-50000元", badge: "汇率优惠", badgeType: "yellow", min: 10, max: 50000 },
+        { name: "USDT-ERC20", limit: "100-100000元", badge: "安全", badgeType: "cyan", min: 100, max: 100000 }
+      ],
+      cloud_pay: [
+        { name: "云闪付 通道1", limit: "200-2000元", badge: "小额", badgeType: "cyan", min: 20, max: 2000 },
+        { name: "云闪付 通道2", limit: "500-5000元", badge: "推荐", badgeType: "orange", min: 500, max: 5000 }
+      ],
+      douyin_pay: [
+        { name: "抖音支付1", limit: "10-1000元", badge: "推荐", badgeType: "orange", min: 10, max: 1000 }
+      ],
+      qq_scan: [
+        { name: "QQ钱包扫码", limit: "20-500元", badge: "小额", badgeType: "cyan", min: 20, max: 500 }
+      ],
+      taobao_pay: [
+        { name: "淘宝代付", limit: "100-5000元", badge: "推荐", badgeType: "orange", min: 100, max: 5000 }
+      ],
+      special_wechat: [
+        { name: "特权微信号充值", limit: "100-2000元", badge: "送礼包", badgeType: "orange", min: 100, max: 2000 }
+      ],
+      special_alipay: [
+        { name: "特权支付宝充值", limit: "200-5000元", badge: "返利", badgeType: "yellow", min: 200, max: 5000 }
+      ],
+      comprehensive_channel: [
+        { name: "极速综合充值", limit: "50-10000元", badge: "推荐", badgeType: "orange", min: 50, max: 10000 }
+      ]
+    };
+
+    // Render sub-channels function
+    function renderSubchannels(channelKey) {
+      if (!depositSubchannelsContainer) return;
+      depositSubchannelsContainer.innerHTML = '';
+      
+      const subchannels = subchannelsData[channelKey] || [];
+      subchannels.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = 'subchannel-card';
+        
+        let badgeClass = 'badge-cyan';
+        if (sub.badgeType === 'orange') badgeClass = 'badge-orange';
+        if (sub.badgeType === 'yellow') badgeClass = 'badge-yellow';
+        if (sub.badgeType === 'red') badgeClass = 'badge-red';
+
+        card.innerHTML = `
+          <span class="subchannel-card-badge ${badgeClass}">${sub.badge}</span>
+          <div class="subchannel-name-row">
+            <span class="subchannel-name">${sub.name}</span>
+          </div>
+          <span class="subchannel-limit">单笔限额：${sub.limit}</span>
+        `;
+        
+        card.addEventListener('click', () => {
+          activeSubchannel = sub;
+          openDepositDialog(sub);
+        });
+
+        depositSubchannelsContainer.appendChild(card);
+      });
+    }
+
+    // Payment channel grid items click listener
+    channelItems.forEach(item => {
+      item.addEventListener('click', () => {
+        channelItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        const channelKey = item.getAttribute('data-channel');
+        const name = item.querySelector('span').textContent;
+        if (selectedChannelName) selectedChannelName.textContent = name;
+        
+        renderSubchannels(channelKey);
+      });
+    });
+
+    // Dialog opening and actions
+    function openDepositDialog(subchannel) {
+      if (depositMockDialog) {
+        if (depositDialogTitle) depositDialogTitle.textContent = `${subchannel.name} 充值`;
+        if (depositDialogLimitText) depositDialogLimitText.textContent = subchannel.limit;
+        if (depositInputAmount) depositInputAmount.value = subchannel.min;
+        
+        depositMockDialog.style.display = 'flex';
+      }
+    }
+
+    function closeDepositDialog() {
+      if (depositMockDialog) depositMockDialog.style.display = 'none';
+    }
+
+    if (btnCloseDepositDialog) btnCloseDepositDialog.addEventListener('click', closeDepositDialog);
+    if (btnCancelDepositDialog) btnCancelDepositDialog.addEventListener('click', closeDepositDialog);
+
+    // Dialog quick amounts buttons listener
+    dialogQuickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        if (depositInputAmount) depositInputAmount.value = val;
+      });
+    });
+
+    // Confirm deposit action
+    if (btnConfirmDepositDialog) {
+      btnConfirmDepositDialog.addEventListener('click', () => {
+        if (!activeSubchannel) return;
+        
+        const amount = parseFloat(depositInputAmount.value);
+        if (isNaN(amount) || amount < activeSubchannel.min || amount > activeSubchannel.max) {
+          alert(`请输入在限额范围 ${activeSubchannel.limit} 内的有效金额！`);
+          return;
+        }
+
+        // Add to balance
+        updateBalance(amount);
+        
+        // Show success popup toast
+        showPopupToast(`🎉 充值成功！您的虚拟账户已存入 ¥${amount.toFixed(2)}`);
+        
+        // Close dialog
+        closeDepositDialog();
+      });
+    }
+
+    // 2. Withdrawal Center Elements & Events
+    const pageWithdraw = document.getElementById('page-withdraw');
+    const btnWithdrawBack = document.getElementById('btn-withdraw-back');
+    const btnRefreshWithdrawBalance = document.getElementById('btn-refresh-withdraw-balance');
+    const btnWithdrawCollect = document.getElementById('btn-withdraw-collect');
+    const withdrawBalanceDisplay = document.getElementById('withdraw-balance-display');
+    const withdrawInputAmount = document.getElementById('withdraw-input-amount');
+    const withdrawActualArrival = document.getElementById('withdraw-actual-arrival');
+    const btnWithdrawSubmit = document.getElementById('btn-withdraw-submit');
+    const withdrawQuickBtns = document.querySelectorAll('.withdraw-quick-btn');
+
+    // Dialog elements
+    const withdrawPasswordDialog = document.getElementById('withdraw-password-dialog');
+    const btnWithdrawDialogCancel = document.getElementById('btn-withdraw-dialog-cancel');
+    const btnWithdrawDialogConfirm = document.getElementById('btn-withdraw-dialog-confirm');
+
+    function openWithdrawPage() {
+      const allPages = document.querySelectorAll('.app-page');
+      allPages.forEach(p => p.classList.remove('active'));
+      if (pageWithdraw) pageWithdraw.classList.add('active');
+
+      const navButtons = document.querySelectorAll('.bottom-nav .nav-btn');
+      navButtons.forEach(b => b.classList.remove('active'));
+      const profileNavBtn = document.querySelector('.bottom-nav .nav-btn[data-target="page-profile"]');
+      if (profileNavBtn) {
+        profileNavBtn.classList.add('active');
+      }
+
+      // Sync withdrawal balance display
+      if (withdrawBalanceDisplay) {
+        withdrawBalanceDisplay.textContent = Number(balance).toFixed(2);
+      }
+      
+      // Update actual arrival
+      updateWithdrawActualVal();
+
+      // Show warm reminder password setup dialog initially
+      if (withdrawPasswordDialog) {
+        withdrawPasswordDialog.style.display = 'flex';
+      }
+    }
+
+    window.openWithdrawPage = openWithdrawPage; // Expose globally
+
+    function closeWithdrawPage() {
+      if (pageWithdraw) pageWithdraw.classList.remove('active');
+      const pageProfile = document.getElementById('page-profile');
+      if (pageProfile) pageProfile.classList.add('active');
+    }
+
+    if (btnWithdrawBack) btnWithdrawBack.addEventListener('click', closeWithdrawPage);
+
+    // Refresh balance button inside withdraw
+    if (btnRefreshWithdrawBalance) {
+      btnRefreshWithdrawBalance.addEventListener('click', () => {
+        btnRefreshWithdrawBalance.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+          btnRefreshWithdrawBalance.style.transform = 'rotate(0deg)';
+          updateBalance(3000, false);
+          if (withdrawBalanceDisplay) {
+            withdrawBalanceDisplay.textContent = Number(balance).toFixed(2);
+          }
+          showPopupToast("余额已刷新为 ¥3000.00！");
+        }, 400);
+      });
+    }
+
+    // One-click collection
+    if (btnWithdrawCollect) {
+      btnWithdrawCollect.addEventListener('click', () => {
+        showPopupToast("余额一键归集成功！");
+      });
+    }
+
+    // Quick amounts selection
+    withdrawQuickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        withdrawQuickBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const val = btn.getAttribute('data-val');
+        if (withdrawInputAmount) {
+          withdrawInputAmount.value = val;
+          updateWithdrawActualVal();
+        }
+      });
+    });
+
+    // Update actual arrival on keyup/change
+    if (withdrawInputAmount) {
+      withdrawInputAmount.addEventListener('input', updateWithdrawActualVal);
+    }
+
+    function updateWithdrawActualVal() {
+      if (withdrawInputAmount && withdrawActualArrival) {
+        const val = parseFloat(withdrawInputAmount.value) || 0;
+        withdrawActualArrival.textContent = val.toFixed(2);
+      }
+    }
+
+    // Submit withdrawal
+    if (btnWithdrawSubmit) {
+      btnWithdrawSubmit.addEventListener('click', () => {
+        const amount = parseFloat(withdrawInputAmount.value) || 0;
+        if (amount <= 0) {
+          showPopupToast("请输入有效的取款金额！");
+          return;
+        }
+        if (amount > balance) {
+          showPopupToast("取款失败：取款金额超出可用系统余额！");
+          return;
+        }
+
+        updateBalance(-amount);
+        if (withdrawBalanceDisplay) {
+          withdrawBalanceDisplay.textContent = Number(balance).toFixed(2);
+        }
+        showPopupToast(`🎉 提交取款申请成功！正在出款中：¥${amount.toFixed(2)}`);
+      });
+    }
+
+    // Modal buttons actions
+    if (btnWithdrawDialogCancel) {
+      btnWithdrawDialogCancel.addEventListener('click', () => {
+        if (withdrawPasswordDialog) {
+          withdrawPasswordDialog.style.display = 'none';
+        }
+      });
+    }
+
+    if (btnWithdrawDialogConfirm) {
+      btnWithdrawDialogConfirm.addEventListener('click', () => {
+        if (withdrawPasswordDialog) {
+          withdrawPasswordDialog.style.display = 'none';
+        }
+        showPopupToast("请输入新交易密码，设置成功！");
+      });
+    }
+
+    // Explicit binding to ensure "充值" in profile page opens the Recharge Center
+    const profileDepositBtn = document.getElementById('btn-profile-deposit');
+    if (profileDepositBtn) {
+      profileDepositBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDepositPage();
+      });
+    }
+
+    // Explicit binding to ensure "提现" in profile page opens the Withdrawal Center
+    const profileWithdrawBtn = document.getElementById('btn-profile-withdraw');
+    if (profileWithdrawBtn) {
+      profileWithdrawBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openWithdrawPage();
+      });
+    }
+  })();
 });
 
 

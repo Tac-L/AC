@@ -250,34 +250,96 @@
             </div>
 
             <!-- PAGE 2: 短剧 (Short Drama) -->
-            <div class="app-page" id="page-dramas">
+            <div class="app-page active" id="page-dramas">
               <div class="short-drama-container" id="drama-player-area">
                 <!-- Vertical still background -->
                 <img id="drama-bg-img" src="assets/drama_still1.png" alt="短剧画面" class="drama-still-bg">
                 
+                <!-- Top Tabs Header Overlay -->
+                <div class="drama-top-header">
+                  <div class="drama-top-tabs">
+                    <span class="drama-tab-item">视频</span>
+                    <span class="drama-tab-item">抖阴</span>
+                    <span class="drama-tab-item active">短剧</span>
+                    <span class="drama-tab-item">影视</span>
+                    <span class="drama-tab-item">游戏</span>
+                  </div>
+                  <i class="fa-solid fa-magnifying-glass drama-search-btn"></i>
+                </div>
+
+                <!-- Left Promo Gift Badge -->
+                <div class="drama-left-promo" id="drama-promo-badge">
+                  <div class="drama-promo-close" id="btn-close-drama-promo">×</div>
+                  <div class="drama-promo-title">开通特权</div>
+                  <div class="drama-promo-sub">送钱 <span class="withdraw-tag">可提现</span></div>
+                  <div class="drama-promo-footer">
+                    <span class="promo-tag">可约炮</span>
+                    <span class="promo-tag">可游戏</span>
+                  </div>
+                </div>
+
+                <!-- Right Mute Toggle Button -->
+                <div class="drama-mute-toggle" id="btn-drama-mute">
+                  <i class="fa-solid fa-volume-xmark"></i>
+                </div>
+
+
+
                 <!-- Overlay HUD details -->
                 <div class="drama-overlay-right">
                   <div class="drama-author-avatar">
-                    <img src="assets/banner.png" alt="作者">
+                    <img src="assets/drama_author.png" alt="作者">
                     <i class="fa-solid fa-plus add-author-icon"></i>
                   </div>
                   <div class="hud-action-icon" id="btn-like-drama">
-                    <i class="fa-solid fa-heart"></i>
-                    <span id="drama-likes-count">12.5w</span>
+                    <i class="fa-regular fa-heart"></i>
+                    <span id="drama-likes-count">0</span>
                   </div>
                   <div class="hud-action-icon">
                     <i class="fa-solid fa-comment-dots"></i>
-                    <span>4851</span>
+                    <span>0</span>
                   </div>
                   <div class="hud-action-icon">
-                    <i class="fa-solid fa-share-nodes"></i>
-                    <span>9540</span>
+                    <i class="fa-regular fa-star"></i>
+                    <span>0</span>
+                  </div>
+                  <div class="hud-action-icon">
+                    <i class="fa-solid fa-share"></i>
+                    <span style="font-size: 0.55rem; margin-top: 2px;">分享</span>
                   </div>
                 </div>
                 
                 <div class="drama-overlay-bottom">
-                  <h3 id="drama-creator">@小美剧场</h3>
-                  <p id="drama-title">《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽</p>
+                  <!-- Game link button -->
+                  <div class="drama-game-link-pill" id="drama-game-redirect">
+                    <div class="game-link-logo">
+                      <img src="assets/game_fast3.png" alt="快三">
+                    </div>
+                    <span>一分快三 · 立即游戏</span>
+                  </div>
+                  
+                  <!-- Time code -->
+                  <div class="drama-timecode">00:10:09</div>
+
+                  <!-- Creator name -->
+                  <h3 id="drama-creator">@陈名豪,谭盐盐,李一沐,伍雅露</h3>
+                  
+                  <!-- Title -->
+                  <p id="drama-title">秘密日记</p>
+                  
+                  <!-- Series episodes list link -->
+                  <div class="drama-episodes-link">
+                    <span>全9集 进入剧集</span>
+                    <i class="fa-solid fa-chevron-right" style="margin-left: 4px;"></i>
+                  </div>
+
+                  <!-- Upgrade member button -->
+                  <button class="drama-member-upgrade-btn">
+                    <i class="fa-solid fa-crown" style="color: #ffe066; margin-right: 6px;"></i>
+                    升级会员观看完整版 00:10:12
+                  </button>
+
+                  <!-- Progress Bar -->
                   <div class="progress-bar-drama">
                     <div class="progress-fill" style="width: 45%;"></div>
                   </div>
@@ -1154,7 +1216,7 @@
             </div>
 
             <!-- PAGE 0: 首页 (Home Portal Map) -->
-            <div class="app-page active" id="page-home">
+            <div class="app-page" id="page-home">
               <!-- Home Top Search & Header Row -->
               <div class="home-search-row">
                 <div class="home-search-input-box">
@@ -1171,26 +1233,6 @@
               </div>
 
               <div class="scroll-content" style="padding-bottom: 24px;">
-                <!-- User Profile Panel -->
-                <div class="home-user-panel">
-                  <div class="user-panel-left">
-                    <div class="user-avatar-circle">伯</div>
-                    <div class="user-profile-details">
-                      <span class="user-nickname">伯人心贤oyo</span>
-                      <div class="vip-badge-row">
-                        <span class="vip-label">V5 · 普通</span>
-                        <div class="vip-progress-container">
-                          <div class="vip-progress-bar" style="width: 60%;"></div>
-                        </div>
-                        <span class="vip-upgrade-hint">升级还差 ¥880</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="user-panel-right">
-                    <span class="balance-lbl">余额</span>
-                    <strong class="balance-amount" id="home-user-balance-display">¥1000.00</strong>
-                  </div>
-                </div>
 
                 <!-- Hero Promo Carousel (一分快三, 一分时时彩, 一分六合彩, 广告1, 广告2) -->
                 <div class="home-hero-carousel">
@@ -1301,7 +1343,7 @@
                 </div>
 
                 <!-- Middle Scrolling Ticker -->
-                <div class="home-winning-ticker">
+                <!-- <div class="home-winning-ticker">
                   <div class="ticker-prefix"><i class="fa-solid fa-bullhorn text-gold"></i> 中奖喜报</div>
                   <div class="ticker-marquee-container">
                     <div class="ticker-marquee-text">
@@ -1312,7 +1354,7 @@
                       阿强**** 在 <span class="txt-cyan">一分六合彩</span> 中 <span class="txt-gold">¥9,600</span>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
                 <!-- Newbie Deposit Banner -->
                 <div class="home-deposit-banner" id="btn-home-deposit-promo">
@@ -1688,25 +1730,42 @@
             <div class="app-page" id="page-profile">
               <!-- Top Header Section -->
               <div class="profile-header-container">
-                <div class="profile-user-info">
-                  <div class="profile-avatar-wrapper">
-                    <img src="assets/chat_cover.png" alt="头像">
-                    <span class="profile-avatar-camera"><i class="fa-solid fa-camera"></i></span>
-                  </div>
-                  <div class="profile-meta">
-                    <div class="profile-username-row">
-                      <h3 id="profile-username-lbl">伯人心贤oyo</h3>
-                      <i class="fa-regular fa-pen-to-square" id="btn-edit-username"></i>
+                <div class="profile-header-top-row">
+                  <div class="profile-user-info">
+                    <div class="profile-avatar-wrapper">
+                      <img src="assets/chat_cover.png" alt="头像">
+                      <span class="profile-avatar-camera"><i class="fa-solid fa-camera"></i></span>
                     </div>
-                    <div class="profile-id-row">
-                      <span>ID:301636280</span>
-                      <i class="fa-regular fa-copy" id="btn-copy-id"></i>
+                    <div class="profile-meta">
+                      <div class="profile-username-row">
+                        <h3 id="profile-username-lbl">伯人心贤oyo</h3>
+                        <i class="fa-regular fa-pen-to-square" id="btn-edit-username"></i>
+                      </div>
+                      <div class="profile-id-row">
+                        <span>ID:301636280</span>
+                        <i class="fa-regular fa-copy" id="btn-copy-id"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="profile-header-right-box">
+                    <div class="profile-header-right" id="btn-profile-notifications">
+                      <i class="fa-regular fa-bell"></i>
+                      <span class="profile-bell-badge">3</span>
+                    </div>
+                    <div class="profile-header-balance-box">
+                      <span class="balance-lbl">余额</span>
+                      <strong class="balance-amount" id="profile-header-balance-display">¥1000.00</strong>
                     </div>
                   </div>
                 </div>
-                <div class="profile-header-right" id="btn-profile-notifications">
-                  <i class="fa-regular fa-bell"></i>
-                  <span class="profile-bell-badge">3</span>
+                
+                <!-- Integrated VIP Progress Row from Home Page -->
+                <div class="profile-vip-progress-row">
+                  <span class="vip-label">V5 · 普通</span>
+                  <div class="vip-progress-container">
+                    <div class="vip-progress-bar" style="width: 60%;"></div>
+                  </div>
+                  <span class="vip-upgrade-hint">升级还差 ¥880</span>
                 </div>
               </div>
 
@@ -1850,6 +1909,303 @@
                   </div>
                 </div>
 
+              </div>
+            </div>
+
+            <!-- PAGE 7: 充值中心 (Recharge Center) -->
+            <div class="app-page" id="page-deposit">
+              <!-- Header Bar -->
+              <div class="deposit-header-bar">
+                <div class="deposit-header-left">
+                  <i class="fa-solid fa-chevron-left" id="btn-deposit-back"></i>
+                  <span class="deposit-header-title">充值中心</span>
+                  <span class="deposit-header-balance-val">¥<span id="deposit-header-balance-display">1000.00</span></span>
+                  <i class="fa-solid fa-rotate" id="btn-refresh-deposit-balance"></i>
+                </div>
+                <div class="deposit-header-right">
+                  <i class="fa-solid fa-file-invoice-dollar" id="btn-deposit-record" title="充值记录"></i>
+                  <i class="fa-solid fa-xmark" id="btn-deposit-close"></i>
+                </div>
+              </div>
+
+              <div class="scroll-content" style="padding-bottom: 24px;">
+                <!-- Duplicated Premium Profile Header Card (User Card) -->
+                <div class="deposit-profile-card">
+                  <div class="profile-header-container" style="border-bottom: none;">
+                    <div class="profile-header-top-row">
+                      <div class="profile-user-info">
+                        <div class="profile-avatar-wrapper">
+                          <img src="assets/chat_cover.png" alt="头像">
+                          <span class="profile-avatar-camera"><i class="fa-solid fa-camera"></i></span>
+                        </div>
+                        <div class="profile-meta">
+                          <div class="profile-username-row">
+                            <h3>伯人心贤oyo</h3>
+                          </div>
+                          <div class="profile-id-row">
+                            <span>ID:301636280</span>
+                            <i class="fa-regular fa-copy" id="btn-deposit-copy-id"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="profile-header-right-box">
+                        <div class="profile-header-balance-box">
+                          <span class="balance-lbl">余额</span>
+                          <strong class="balance-amount" id="deposit-card-balance-display">¥1000.00</strong>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="profile-vip-progress-row">
+                      <span class="vip-label">V5 · 普通</span>
+                      <div class="vip-progress-container">
+                        <div class="vip-progress-bar" style="width: 60%;"></div>
+                      </div>
+                      <span class="vip-upgrade-hint">升级还差 ¥880</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recharge Category Tabs -->
+                <div class="deposit-tabs-row">
+                  <div class="deposit-tab active" data-tab="online">
+                    <span class="deposit-tab-badge">豪送8888元</span>
+                    <i class="fa-solid fa-bolt" style="color: #ff9f43; margin-right: 4px;"></i>在线充值
+                  </div>
+                  <div class="deposit-tab" data-tab="wallet">
+                    <span class="deposit-tab-badge nft-badge">NFT</span>
+                    <i class="fa-solid fa-wallet" style="color: #54a0ff; margin-right: 4px;"></i>钱包直充
+                  </div>
+                </div>
+
+                <!-- Payment Channels Grid -->
+                <div class="deposit-channels-grid">
+                  <div class="channel-grid-item active" data-channel="alipay_scan">
+                    <span class="channel-badge hot">热</span>
+                    <div class="channel-icon-box alipay-color">
+                      <i class="fa-brands fa-alipay"></i>
+                    </div>
+                    <span>支付宝扫码</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="unionpay_scan">
+                    <div class="channel-icon-box unionpay-color">
+                      <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <span>银联扫码</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="digital_rmb">
+                    <span class="channel-badge fast">快</span>
+                    <div class="channel-icon-box rmb-color">
+                      <i class="fa-solid fa-yen-sign"></i>
+                    </div>
+                    <span>数字人民币</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="wechat_scan">
+                    <div class="channel-icon-box wechat-color">
+                      <i class="fa-brands fa-weixin"></i>
+                    </div>
+                    <span>微信扫码</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="alipay_transfer">
+                    <div class="channel-icon-box alipay-color">
+                      <i class="fa-brands fa-alipay"></i>
+                    </div>
+                    <span>支付宝转账</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="virtual_wallet">
+                    <div class="channel-icon-box crypto-color">
+                      <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <span>虚拟钱包</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="usdt_deposit">
+                    <span class="channel-badge hot">热</span>
+                    <div class="channel-icon-box usdt-color">
+                      <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <span>USDT充值</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="cloud_pay">
+                    <span class="channel-badge fast">快</span>
+                    <div class="channel-icon-box cloudpay-color">
+                      <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <span>云闪付</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="douyin_pay">
+                    <div class="channel-icon-box douyin-color">
+                      <i class="fa-brands fa-tiktok"></i>
+                    </div>
+                    <span>抖音</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="qq_scan">
+                    <div class="channel-icon-box qq-color">
+                      <i class="fa-brands fa-qq"></i>
+                    </div>
+                    <span>QQ扫码</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="taobao_pay">
+                    <div class="channel-icon-box taobao-color">
+                      <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <span>淘宝支付</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="special_wechat">
+                    <div class="channel-icon-box wechat-color">
+                      <i class="fa-brands fa-weixin"></i>
+                    </div>
+                    <span>撩骚 空投专用微信</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="special_alipay">
+                    <div class="channel-icon-box alipay-color">
+                      <i class="fa-brands fa-alipay"></i>
+                    </div>
+                    <span>空投 撩骚 专用-支付宝</span>
+                  </div>
+                  <div class="channel-grid-item" data-channel="comprehensive_channel">
+                    <div class="channel-icon-box mix-color">
+                      <i class="fa-solid fa-circle-nodes"></i>
+                    </div>
+                    <span>空投 撩骚 综合通道</span>
+                  </div>
+                </div>
+
+                <!-- Channel Details List (Shown below based on selection) -->
+                <div class="deposit-details-section">
+                  <h4 class="deposit-details-title" id="selected-channel-name">支付宝</h4>
+                  <div class="deposit-subchannels-grid" id="deposit-subchannels-container">
+                    <!-- Dynamic rendering of sub-channels based on selected grid item -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Mock Recharge Dialog (Popup inside the page) -->
+              <div class="deposit-dialog-overlay" id="deposit-mock-dialog" style="display: none;">
+                <div class="deposit-dialog-box">
+                  <div class="deposit-dialog-header">
+                    <h4 id="deposit-dialog-title">支付宝通道充值</h4>
+                    <i class="fa-solid fa-xmark" id="btn-close-deposit-dialog"></i>
+                  </div>
+                  <div class="deposit-dialog-body">
+                    <div class="deposit-dialog-limit-lbl">单笔限额：<span id="deposit-dialog-limit-text">200-2000元</span></div>
+                    <div class="deposit-input-row">
+                      <span class="deposit-currency-symbol">¥</span>
+                      <input type="number" id="deposit-input-amount" placeholder="输入充值金额" value="500">
+                    </div>
+                    <!-- Quick amounts selection in dialog -->
+                    <div class="deposit-dialog-quick-row">
+                      <span class="deposit-dialog-quick-btn" data-val="200">200</span>
+                      <span class="deposit-dialog-quick-btn" data-val="500">500</span>
+                      <span class="deposit-dialog-quick-btn" data-val="1000">1000</span>
+                      <span class="deposit-dialog-quick-btn" data-val="2000">2000</span>
+                    </div>
+                  </div>
+                  <div class="deposit-dialog-footer">
+                    <button class="deposit-dialog-cancel-btn" id="btn-cancel-deposit-dialog">取消</button>
+                    <button class="deposit-dialog-confirm-btn" id="btn-confirm-deposit-dialog">确认充值</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 8: 提款中心 (Withdrawal Center) -->
+            <div class="app-page" id="page-withdraw">
+              <!-- Header Bar -->
+              <div class="withdraw-header-bar">
+                <i class="fa-solid fa-chevron-left" id="btn-withdraw-back"></i>
+                <span class="withdraw-header-title">在线取款</span>
+                <div></div> <!-- Spacer for flex-between alignment -->
+              </div>
+
+              <div class="scroll-content" style="padding: 16px; padding-bottom: 30px;">
+                <!-- Balance & Collect Row -->
+                <div class="withdraw-balance-row">
+                  <div class="withdraw-bal-left">
+                    <span>系统余额：</span>
+                    <span class="withdraw-bal-val"><span id="withdraw-balance-display">3000.00</span></span>
+                    <i class="fa-solid fa-rotate" id="btn-refresh-withdraw-balance"></i>
+                  </div>
+                  <button class="withdraw-collect-btn" id="btn-withdraw-collect">余额一键归集</button>
+                </div>
+
+                <!-- VIPPay Wallet Card -->
+                <div class="withdraw-card">
+                  <div class="withdraw-card-header">
+                    <div class="withdraw-card-brand">
+                      <div class="vippay-logo">VP</div>
+                      <span>VIPPay</span>
+                    </div>
+                    <button class="change-card-btn">更换银行卡</button>
+                  </div>
+                  <div class="withdraw-card-body">
+                    <div class="withdraw-info-line">
+                      <span class="info-label">收款人：</span>
+                      <span class="info-value">钱*小</span>
+                    </div>
+                    <div class="withdraw-info-line" style="margin-top: 6px;">
+                      <span class="info-label">钱包地址：</span>
+                      <span class="info-value">2567 **** 7b97</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Amount Selection or Input Grid -->
+                <div class="withdraw-input-section">
+                  <span class="withdraw-section-label">取款金额</span>
+                  <div class="withdraw-input-box">
+                    <span class="withdraw-currency-symbol">¥</span>
+                    <input type="number" id="withdraw-input-amount" placeholder="请输入取款金额" value="100">
+                  </div>
+                  <!-- Quick Amounts Grid -->
+                  <div class="withdraw-quick-grid">
+                    <button class="withdraw-quick-btn" data-val="100">100</button>
+                    <button class="withdraw-quick-btn" data-val="500">500</button>
+                    <button class="withdraw-quick-btn" data-val="1000">1000</button>
+                    <button class="withdraw-quick-btn" data-val="3000">3000</button>
+                  </div>
+                </div>
+
+                <!-- Fee Details List -->
+                <div class="withdraw-details-list">
+                  <div class="detail-row">
+                    <span>手续费：</span>
+                    <span class="detail-val">0.00</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>行政费：</span>
+                    <span class="detail-val">0.00</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>优惠金额：</span>
+                    <span class="detail-val">0.00</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>扣除费用总计：</span>
+                    <span class="detail-val">0.00</span>
+                  </div>
+                  <div class="detail-audit-link">
+                    <span>查看稽核详情 ></span>
+                  </div>
+                  <div class="detail-row actual-arrival">
+                    <span>实际到账：</span>
+                    <span class="detail-val highlight" id="withdraw-actual-arrival">100.00</span>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button class="withdraw-submit-btn" id="btn-withdraw-submit">确认提交</button>
+              </div>
+
+              <!-- Warm Reminder Modal Popup -->
+              <div class="withdraw-dialog-overlay" id="withdraw-password-dialog" style="display: none;">
+                <div class="withdraw-dialog-box">
+                  <div class="withdraw-dialog-header">温馨提示</div>
+                  <div class="withdraw-dialog-body">请先设置取款密码，然后进行取款！</div>
+                  <div class="withdraw-dialog-footer">
+                    <button class="dialog-cancel-btn" id="btn-withdraw-dialog-cancel">取消</button>
+                    <button class="dialog-confirm-btn" id="btn-withdraw-dialog-confirm">去设置</button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2356,11 +2712,11 @@
 
             <!-- APP BOTTOM NAVIGATION BAR -->
             <div class="bottom-nav">
-              <div class="nav-btn active" data-target="page-home">
+              <div class="nav-btn" data-target="page-home" style="display: none !important;">
                 <i class="fa-solid fa-house"></i>
                 <span>首页</span>
               </div>
-              <div class="nav-btn" data-target="page-dramas">
+              <div class="nav-btn active" data-target="page-dramas">
                 <i class="fa-solid fa-clapperboard"></i>
                 <span>短剧</span>
               </div>
@@ -2460,70 +2816,104 @@
                   <!-- Bottom Embedded Betting Panel (Fast Three) -->
                   <div class="player-embedded-game-panel" id="embedded-game-panel">
                     <div class="embedded-game-header">
-                      <span id="btn-close-embedded-game" class="close-embedded-btn"><i class="fa-solid fa-xmark"></i> 点击关闭游戏</span>
-                      <div class="header-pill-tabs">
-                        <span>玩法说明</span>
-                        <span>投注记录</span>
-                        <span>开奖记录</span>
-                        <span>投注历史</span>
+                      <div class="feg-header-left">
+                        <i class="fa-solid fa-chevron-up feg-collapse" id="btn-collapse-embedded-game"></i>
+                        <span class="feg-title">一分快三</span>
+                      </div>
+                      <div class="feg-countdown" id="fast3-timer"></div>
+                      <div class="feg-header-right">
+                        <i class="fa-solid fa-list feg-menu" id="btn-fast3-menu"></i>
+                        <span id="btn-close-embedded-game" class="close-embedded-btn"><i class="fa-solid fa-xmark"></i></span>
+                        <div class="feg-dropdown" id="fast3-menu-dropdown">
+                          <div class="feg-dropdown-item">未结明细</div>
+                          <div class="feg-dropdown-item">今日已结</div>
+                          <div class="feg-dropdown-item">报表查询</div>
+                          <div class="feg-dropdown-item">开奖历史</div>
+                          <div class="feg-dropdown-item">活动规则</div>
+                        </div>
                       </div>
                     </div>
 
                     <!-- Fast Three Interactive Game Block -->
                     <div class="embedded-game-body" id="fast3-game-view">
                       
-                      <!-- Drawing Result Summary row -->
-                      <div class="fast3-result-row">
-                        <div class="fast3-logo-box">
-                          <img src="assets/game_fast3.png" alt="快三">
-                          <span>一分快三</span>
-                        </div>
-                        <div class="fast3-draw-balls" id="fast3-balls-row">
-                          <div class="dice-box">1</div>
-                          <div class="dice-box">3</div>
-                          <div class="dice-box">6</div>
-                        </div>
-                        <div class="fast3-result-tags" id="fast3-tags-row">
-                          <span class="tag-box bg-red" id="fast3-sum-tag">10</span>
-                          <span class="tag-box bg-red" id="fast3-size-tag">小</span>
-                          <span class="tag-box bg-red" id="fast3-oe-tag">双</span>
+                      <!-- Issue bar: period number + last draw dice -->
+                      <div class="fast3-issue-bar">
+                        <span class="fast3-issue-text">第 <span id="fast3-issue">202606041274期</span></span>
+                        <div class="fast3-issue-right">
+                          <div class="fast3-draw-balls" id="fast3-balls-row">
+                            <div class="dice-box">1</div>
+                            <div class="dice-box">3</div>
+                            <div class="dice-box">6</div>
+                          </div>
+                          <i class="fa-solid fa-chevron-down fast3-issue-chevron"></i>
                         </div>
                       </div>
 
-                      <!-- Countdown & Issue meta row -->
-                      <div class="fast3-meta-row">
-                        <span class="countdown-lbl">本期截止：<strong id="fast3-timer" class="txt-red">00 : 09</strong></span>
-                        <span class="issue-lbl" id="fast3-issue">202606051274期</span>
-                      </div>
+                       <!-- Play tabs - matching live style: 大小/对子/豹子/总和/单骰 -->
+                       <div class="live-play-tabs-row">
+                         <div class="live-play-tab active" data-vid-cat="size">大小</div>
+                         <div class="live-play-tab" data-vid-cat="pair">对子</div>
+                         <div class="live-play-tab" data-vid-cat="triple">豹子</div>
+                         <div class="live-play-tab" data-vid-cat="sum">总和</div>
+                         <div class="live-play-tab" data-vid-cat="single">单骰</div>
+                       </div>
 
-                      <!-- Play tabs (大小 / 总和 / etc) -->
-                      <div class="fast3-play-tabs">
-                        <div class="play-tab active">大小</div>
-                        <div class="play-tab">总和</div>
-                        <div class="play-tab">单骰</div>
-                        <div class="play-tab">对子</div>
-                        <div class="play-tab">豹顺</div>
-                      </div>
-
-                      <!-- Betting Odds selection grid -->
-                      <div class="fast3-odds-grid" id="fast3-odds-grid">
-                        <div class="odds-card" data-name="单" data-odds="1.97">
-                          <span class="odds-name">单</span>
-                          <strong class="odds-value">1.97</strong>
-                        </div>
-                        <div class="odds-card" data-name="双" data-odds="1.97">
-                          <span class="odds-name">双</span>
-                          <strong class="odds-value">1.97</strong>
-                        </div>
-                        <div class="odds-card" data-name="大" data-odds="1.97">
-                          <span class="odds-name">大</span>
-                          <strong class="odds-value">1.97</strong>
-                        </div>
-                        <div class="odds-card" data-name="小" data-odds="1.97">
-                          <span class="odds-name">小</span>
-                          <strong class="odds-value">1.97</strong>
-                        </div>
-                      </div>
+                       <!-- Betting Options Grid - live white-card style -->
+                       <div class="vid-fast3-options-wrap">
+                         <!-- 大小 grid -->
+                         <div class="live-betting-options-grid active" id="vid-fast3-grid-size">
+                           <div class="live-odds-card" data-name="大" data-odds="9.75"><div class="odds-card-name">大</div><div class="odds-card-val">9.75</div></div>
+                           <div class="live-odds-card" data-name="小" data-odds="9.75"><div class="odds-card-name">小</div><div class="odds-card-val">9.75</div></div>
+                           <div class="live-odds-card" data-name="单" data-odds="9.75"><div class="odds-card-name">单</div><div class="odds-card-val">9.75</div></div>
+                           <div class="live-odds-card" data-name="双" data-odds="9.75"><div class="odds-card-name">双</div><div class="odds-card-val">9.75</div></div>
+                         </div>
+                         <!-- 对子 grid -->
+                         <div class="live-betting-options-grid" id="vid-fast3-grid-pair" style="display:none;">
+                           <div class="live-odds-card" data-name="11" data-odds="12.5"><div class="odds-card-name">11</div><div class="odds-card-val">12.5</div></div>
+                           <div class="live-odds-card" data-name="22" data-odds="12.5"><div class="odds-card-name">22</div><div class="odds-card-val">12.5</div></div>
+                           <div class="live-odds-card" data-name="33" data-odds="12.5"><div class="odds-card-name">33</div><div class="odds-card-val">12.5</div></div>
+                           <div class="live-odds-card" data-name="44" data-odds="12.5"><div class="odds-card-name">44</div><div class="odds-card-val">12.5</div></div>
+                           <div class="live-odds-card" data-name="55" data-odds="12.5"><div class="odds-card-name">55</div><div class="odds-card-val">12.5</div></div>
+                           <div class="live-odds-card" data-name="66" data-odds="12.5"><div class="odds-card-name">66</div><div class="odds-card-val">12.5</div></div>
+                         </div>
+                         <!-- 豹子 grid -->
+                         <div class="live-betting-options-grid" id="vid-fast3-grid-triple" style="display:none;">
+                           <div class="live-odds-card" data-name="111" data-odds="200.0"><div class="odds-card-name">111</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="222" data-odds="200.0"><div class="odds-card-name">222</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="333" data-odds="200.0"><div class="odds-card-name">333</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="444" data-odds="200.0"><div class="odds-card-name">444</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="555" data-odds="200.0"><div class="odds-card-name">555</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="666" data-odds="200.0"><div class="odds-card-name">666</div><div class="odds-card-val">200.0</div></div>
+                           <div class="live-odds-card" data-name="任意豹子" data-odds="35.0"><div class="odds-card-name">任意豹子</div><div class="odds-card-val">35.0</div></div>
+                         </div>
+                         <!-- 总和 grid -->
+                         <div class="live-betting-options-grid" id="vid-fast3-grid-sum" style="display:none;">
+                           <div class="live-odds-card" data-name="和值4" data-odds="80.0"><div class="odds-card-name">和值4</div><div class="odds-card-val">80.0</div></div>
+                           <div class="live-odds-card" data-name="和值5" data-odds="40.0"><div class="odds-card-name">和值5</div><div class="odds-card-val">40.0</div></div>
+                           <div class="live-odds-card" data-name="和值6" data-odds="25.0"><div class="odds-card-name">和值6</div><div class="odds-card-val">25.0</div></div>
+                           <div class="live-odds-card" data-name="和值7" data-odds="16.0"><div class="odds-card-name">和值7</div><div class="odds-card-val">16.0</div></div>
+                           <div class="live-odds-card" data-name="和值8" data-odds="12.0"><div class="odds-card-name">和值8</div><div class="odds-card-val">12.0</div></div>
+                           <div class="live-odds-card" data-name="和值9" data-odds="9.0"><div class="odds-card-name">和值9</div><div class="odds-card-val">9.0</div></div>
+                           <div class="live-odds-card" data-name="和值10" data-odds="9.0"><div class="odds-card-name">和值10</div><div class="odds-card-val">9.0</div></div>
+                           <div class="live-odds-card" data-name="和值11" data-odds="9.0"><div class="odds-card-name">和值11</div><div class="odds-card-val">9.0</div></div>
+                           <div class="live-odds-card" data-name="和值12" data-odds="9.0"><div class="odds-card-name">和值12</div><div class="odds-card-val">9.0</div></div>
+                           <div class="live-odds-card" data-name="和值13" data-odds="12.0"><div class="odds-card-name">和值13</div><div class="odds-card-val">12.0</div></div>
+                           <div class="live-odds-card" data-name="和值14" data-odds="16.0"><div class="odds-card-name">和值14</div><div class="odds-card-val">16.0</div></div>
+                           <div class="live-odds-card" data-name="和值15" data-odds="25.0"><div class="odds-card-name">和值15</div><div class="odds-card-val">25.0</div></div>
+                           <div class="live-odds-card" data-name="和值16" data-odds="40.0"><div class="odds-card-name">和值16</div><div class="odds-card-val">40.0</div></div>
+                           <div class="live-odds-card" data-name="和值17" data-odds="80.0"><div class="odds-card-name">和值17</div><div class="odds-card-val">80.0</div></div>
+                         </div>
+                         <!-- 单骰 grid -->
+                         <div class="live-betting-options-grid" id="vid-fast3-grid-single" style="display:none;">
+                           <div class="live-odds-card" data-name="单骰1" data-odds="2.0"><div class="odds-card-name">1</div><div class="odds-card-val">2.0</div></div>
+                           <div class="live-odds-card" data-name="单骰2" data-odds="2.0"><div class="odds-card-name">2</div><div class="odds-card-val">2.0</div></div>
+                           <div class="live-odds-card" data-name="单骰3" data-odds="2.0"><div class="odds-card-name">3</div><div class="odds-card-val">2.0</div></div>
+                           <div class="live-odds-card" data-name="单骰4" data-odds="2.0"><div class="odds-card-name">4</div><div class="odds-card-val">2.0</div></div>
+                           <div class="live-odds-card" data-name="单骰5" data-odds="2.0"><div class="odds-card-name">5</div><div class="odds-card-val">2.0</div></div>
+                           <div class="live-odds-card" data-name="单骰6" data-odds="2.0"><div class="odds-card-name">6</div><div class="odds-card-val">2.0</div></div>
+                         </div>
+                       </div>
 
                       <!-- Embedded game betting console -->
                       <div class="embedded-bet-console">
@@ -2554,7 +2944,7 @@
                         <!-- Bottom Button Row: Withdraw + Confirm -->
                         <div class="bet-console-buttons-row">
                           <button class="console-cancel-btn" id="btn-fast3-cancel"><i class="fa-solid fa-arrow-rotate-left"></i> 撤回</button>
-                          <button class="console-confirm-btn" id="btn-fast3-submit">确认投注</button>
+                          <button class="console-submit-btn" id="btn-fast3-submit">提交</button>
                         </div>
                       </div>
 
