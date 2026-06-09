@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=3.4">
+  <link rel="stylesheet" href="styles.css?v=3.5">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -835,167 +835,282 @@
               <div class="scroll-content">
                 <div class="sports-match-list" id="sports-match-list-container">
                   
-                  <!-- Soccer Match 1 -->
-                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="101" data-home="皇家马德里" data-away="巴塞罗那" data-score="2 - 1" data-time="68分钟" data-odds-h="1.85" data-odds-d="3.40" data-odds-a="2.10">
-                    <div class="match-meta">
-                      <span class="match-league">西班牙甲级联赛</span>
-                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 68'</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-shield-halved team-flag home-flag"></i>
-                        <span>皇家马德里</span>
+                  <!-- Soccer Match 1: Peru vs Spain -->
+                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="101" data-home="秘鲁" data-away="西班牙" data-league="国际友谊赛" data-odds-h="-" data-odds-d="-" data-odds-a="-">
+                    <div class="match-card-header">
+                      <div class="league-info">
+                        <i class="fa-solid fa-trophy league-icon"></i>
+                        <span class="match-league">国际友谊赛</span>
                       </div>
-                      <div class="score">2</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-shield-halved team-flag away-flag"></i>
-                        <span>巴塞罗那</span>
+                      <div class="market-headers">
+                        <span>独赢</span>
+                        <span>让球</span>
+                        <span>大小</span>
                       </div>
-                      <div class="score">1</div>
                     </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.85</button>
-                      <button class="odds-btn">平局 3.40</button>
-                      <button class="odds-btn">客胜 2.10</button>
+                    <div class="match-card-body">
+                      <div class="match-details-left">
+                        <div class="team-row">
+                          <span class="team-name"><span class="flag-icon">🇵🇪</span> 秘鲁</span>
+                          <span class="team-score">0</span>
+                        </div>
+                        <div class="team-row">
+                          <span class="team-name"><span class="flag-icon">🇪🇸</span> 西班牙</span>
+                          <span class="team-score active-score">2</span>
+                        </div>
+                        <div class="match-stats-row">
+                          <span>半 0:2</span>
+                          <span>角 0:2</span>
+                          <span>黄 0:0</span>
+                        </div>
+                      </div>
+                      <div class="match-odds-grid">
+                        <div class="odds-col col-1">
+                          <button class="odds-btn live-sports-odds-btn" data-type="主胜" data-odds="-">-</button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="客胜" data-odds="-">-</button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="和局" data-odds="-">-</button>
+                        </div>
+                        <div class="odds-col col-2">
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球主" data-handicap="+1/1.5" data-odds="1.78">
+                            <span class="opt-text">+1/1.5</span>
+                            <span class="odds-val">1.78</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球客" data-handicap="-1/1.5" data-odds="2.13">
+                            <span class="opt-text">-1/1.5</span>
+                            <span class="odds-val">2.13</span>
+                          </button>
+                        </div>
+                        <div class="odds-col col-3">
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小大" data-handicap="大 3.5/4" data-odds="1.88">
+                            <span class="opt-text">大 3.5/4</span>
+                            <span class="odds-val">1.88</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小小" data-handicap="小 3.5/4" data-odds="2">
+                            <span class="opt-text">小 3.5/4</span>
+                            <span class="odds-val">2</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="match-card-footer">
+                      <span class="match-time-elapsed">上半场 34:33</span>
+                      <span class="more-markets-btn">更多玩法 <i class="fa-solid fa-chevron-right"></i></span>
                     </div>
                   </div>
 
-                  <!-- Soccer Match 2 -->
-                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="102" data-home="曼彻斯特城" data-away="阿森纳" data-score="0 - 0" data-time="12分钟" data-odds-h="1.62" data-odds-d="3.80" data-odds-a="2.95">
-                    <div class="match-meta">
-                      <span class="match-league">英格兰超级联赛</span>
-                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 12'</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-shield-halved team-flag home-flag"></i>
-                        <span>曼彻斯特城</span>
+                  <!-- Soccer Match 2: Panama vs Jamaica -->
+                  <div class="match-card" data-sport="soccer" data-filter="live today hot" data-match-id="102" data-home="巴拿马 (女)" data-away="牙买加 (女)" data-league="女子国际友谊赛" data-odds-h="4.88" data-odds-d="1.41" data-odds-a="4.79">
+                    <div class="match-card-header">
+                      <div class="league-info">
+                        <i class="fa-solid fa-trophy league-icon"></i>
+                        <span class="match-league">女子国际友谊赛</span>
                       </div>
-                      <div class="score">0</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-shield-halved team-flag away-flag"></i>
-                        <span>阿森纳</span>
+                      <div class="market-headers">
+                        <span>独赢</span>
+                        <span>让球</span>
+                        <span>大小</span>
                       </div>
-                      <div class="score">0</div>
                     </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.62</button>
-                      <button class="odds-btn">平局 3.80</button>
-                      <button class="odds-btn">客胜 2.95</button>
+                    <div class="match-card-body">
+                      <div class="match-details-left">
+                        <div class="team-row">
+                          <span class="team-name"><span class="flag-icon">🇵🇦</span> 巴拿马 (女)</span>
+                          <span class="team-score">0</span>
+                        </div>
+                        <div class="team-row">
+                          <span class="team-name"><span class="flag-icon">🇯🇲</span> 牙买加 (女)</span>
+                          <span class="team-score">0</span>
+                        </div>
+                        <div class="match-stats-row">
+                          <span>半 0:0</span>
+                          <span>角 3:4</span>
+                          <span>黄 2:3</span>
+                        </div>
+                      </div>
+                      <div class="match-odds-grid">
+                        <div class="odds-col col-1">
+                          <button class="odds-btn live-sports-odds-btn" data-type="主胜" data-odds="4.88">
+                            <span class="opt-text">主队</span>
+                            <span class="odds-val">4.88</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="客胜" data-odds="4.79">
+                            <span class="opt-text">客队</span>
+                            <span class="odds-val">4.79</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="和局" data-odds="1.41">
+                            <span class="opt-text">平</span>
+                            <span class="odds-val">1.41</span>
+                          </button>
+                        </div>
+                        <div class="odds-col col-2">
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球主" data-handicap="0" data-odds="1.97">
+                            <span class="opt-text">0</span>
+                            <span class="odds-val">1.97</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球客" data-handicap="0" data-odds="1.81">
+                            <span class="opt-text">0</span>
+                            <span class="odds-val">1.81</span>
+                          </button>
+                        </div>
+                        <div class="odds-col col-3">
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小大" data-handicap="大 0.5" data-odds="2.25">
+                            <span class="opt-text">大 0.5</span>
+                            <span class="odds-val">2.25</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小小" data-handicap="小 0.5" data-odds="1.58">
+                            <span class="opt-text">小 0.5</span>
+                            <span class="odds-val">1.58</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="match-card-footer">
+                      <span class="match-time-elapsed">下半场 72:15</span>
+                      <span class="more-markets-btn">更多玩法 <i class="fa-solid fa-chevron-right"></i></span>
                     </div>
                   </div>
 
-                  <!-- Basketball Match 1 -->
-                  <div class="match-card" data-sport="basketball" data-filter="live today hot" data-match-id="201" data-home="洛杉矶湖人" data-away="金州勇士" data-score="102 - 98" data-time="第四节 8'" data-odds-h="1.72" data-odds-d="9.00" data-odds-a="2.25">
-                    <div class="match-meta">
-                      <span class="match-league">美职篮 NBA</span>
-                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 Q4 8'</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-basketball team-flag home-flag" style="color: #ffa502;"></i>
-                        <span>洛杉矶湖人</span>
+                  <!-- Basketball Match: Lakers vs Warriors -->
+                  <div class="match-card" data-sport="basketball" data-filter="live today hot" data-match-id="201" data-home="洛杉矶湖人" data-away="金州勇士" data-league="美职篮 NBA" data-odds-h="1.72" data-odds-d="-" data-odds-a="2.25">
+                    <div class="match-card-header">
+                      <div class="league-info">
+                        <i class="fa-solid fa-basketball league-icon" style="color: #ffa502;"></i>
+                        <span class="match-league">美职篮 NBA</span>
                       </div>
-                      <div class="score">102</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-basketball team-flag away-flag" style="color: #ffa502;"></i>
-                        <span>金州勇士</span>
+                      <div class="market-headers">
+                        <span>独赢</span>
+                        <span>让分</span>
+                        <span>总分</span>
                       </div>
-                      <div class="score">98</div>
                     </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.72</button>
-                      <button class="odds-btn">客胜 2.25</button>
+                    <div class="match-card-body">
+                      <div class="match-details-left">
+                        <div class="team-row">
+                          <span class="team-name">🏀 洛杉矶湖人</span>
+                          <span class="team-score active-score">102</span>
+                        </div>
+                        <div class="team-row">
+                          <span class="team-name">🏀 金州勇士</span>
+                          <span class="team-score">98</span>
+                        </div>
+                        <div class="match-stats-row">
+                          <span>Q4 08:33</span>
+                          <span>暂停 2:1</span>
+                          <span>犯规 12:14</span>
+                        </div>
+                      </div>
+                      <div class="match-odds-grid">
+                        <div class="odds-col col-1">
+                          <button class="odds-btn live-sports-odds-btn" data-type="主胜" data-odds="1.72">
+                            <span class="opt-text">主胜</span>
+                            <span class="odds-val">1.72</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="客胜" data-odds="2.25">
+                            <span class="opt-text">客胜</span>
+                            <span class="odds-val">2.25</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="和局" data-odds="-">-</button>
+                        </div>
+                        <div class="odds-col col-2">
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球主" data-handicap="-3.5" data-odds="1.85">
+                            <span class="opt-text">-3.5</span>
+                            <span class="odds-val">1.85</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球客" data-handicap="+3.5" data-odds="1.95">
+                            <span class="opt-text">+3.5</span>
+                            <span class="odds-val">1.95</span>
+                          </button>
+                        </div>
+                        <div class="odds-col col-3">
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小大" data-handicap="大 218.5" data-odds="1.90">
+                            <span class="opt-text">大 218.5</span>
+                            <span class="odds-val">1.90</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小小" data-handicap="小 218.5" data-odds="1.90">
+                            <span class="opt-text">小 218.5</span>
+                            <span class="odds-val">1.90</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="match-card-footer">
+                      <span class="match-time-elapsed">第四节 8:33</span>
+                      <span class="more-markets-btn">更多玩法 <i class="fa-solid fa-chevron-right"></i></span>
                     </div>
                   </div>
 
-                  <!-- Basketball Match 2 -->
-                  <div class="match-card" data-sport="basketball" data-filter="early today" data-match-id="202" data-home="波士顿凯尔特人" data-away="迈阿密热火" data-score="VS" data-time="今天 19:30" data-odds-h="1.45" data-odds-d="11.0" data-odds-a="2.80">
-                    <div class="match-meta">
-                      <span class="match-league">美职篮 NBA</span>
-                      <span class="match-time" style="color: var(--text-grey);"><i class="fa-regular fa-clock"></i> 未开始 今天 19:30</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-basketball team-flag home-flag" style="color: #ffa502;"></i>
-                        <span>波士顿凯尔特人</span>
+                  <!-- Tennis Match: Djokovic vs Nadal -->
+                  <div class="match-card" data-sport="tennis" data-filter="live today hot" data-match-id="301" data-home="德约科维奇" data-away="纳达尔" data-league="法国网球公开赛" data-odds-h="1.68" data-odds-d="-" data-odds-a="2.15">
+                    <div class="match-card-header">
+                      <div class="league-info">
+                        <i class="fa-solid fa-table-tennis-paddle-ball league-icon" style="color: #2ed573;"></i>
+                        <span class="match-league">法国网球公开赛</span>
                       </div>
-                      <div class="score">-</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-basketball team-flag away-flag" style="color: #ffa502;"></i>
-                        <span>迈阿密热火</span>
+                      <div class="market-headers">
+                        <span>独赢</span>
+                        <span>让盘</span>
+                        <span>总局</span>
                       </div>
-                      <div class="score">-</div>
                     </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.45</button>
-                      <button class="odds-btn">客胜 2.80</button>
-                    </div>
-                  </div>
-
-                  <!-- Tennis Match 1 -->
-                  <div class="match-card" data-sport="tennis" data-filter="live today hot" data-match-id="301" data-home="德约科维奇" data-away="纳达尔" data-score="2 - 1" data-time="第三盘 2-1" data-odds-h="1.68" data-odds-d="8.50" data-odds-a="2.15">
-                    <div class="match-meta">
-                      <span class="match-league">法国网球公开赛</span>
-                      <span class="match-time blink"><i class="fa-solid fa-circle-play"></i> 直播中 Set 3</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag home-flag" style="color: var(--color-success);"></i>
-                        <span>德约科维奇</span>
+                    <div class="match-card-body">
+                      <div class="match-details-left">
+                        <div class="team-row">
+                          <span class="team-name">🎾 德约科维奇</span>
+                          <span class="team-score active-score">2</span>
+                        </div>
+                        <div class="team-row">
+                          <span class="team-name">🎾 纳达尔</span>
+                          <span class="team-score">1</span>
+                        </div>
+                        <div class="match-stats-row">
+                          <span>Set 3</span>
+                          <span>盘局 2-1</span>
+                          <span>双误 1:3</span>
+                        </div>
                       </div>
-                      <div class="score">2</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag away-flag" style="color: var(--color-success);"></i>
-                        <span>纳达尔</span>
+                      <div class="match-odds-grid">
+                        <div class="odds-col col-1">
+                          <button class="odds-btn live-sports-odds-btn" data-type="主胜" data-odds="1.68">
+                            <span class="opt-text">主胜</span>
+                            <span class="odds-val">1.68</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="客胜" data-odds="2.15">
+                            <span class="opt-text">客胜</span>
+                            <span class="odds-val">2.15</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="和局" data-odds="-">-</button>
+                        </div>
+                        <div class="odds-col col-2">
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球主" data-handicap="-1.5" data-odds="1.80">
+                            <span class="opt-text">-1.5</span>
+                            <span class="odds-val">1.80</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="让球客" data-handicap="+1.5" data-odds="1.95">
+                            <span class="opt-text">+1.5</span>
+                            <span class="odds-val">1.95</span>
+                          </button>
+                        </div>
+                        <div class="odds-col col-3">
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小大" data-handicap="大 38.5" data-odds="1.88">
+                            <span class="opt-text">大 38.5</span>
+                            <span class="odds-val">1.88</span>
+                          </button>
+                          <button class="odds-btn live-sports-odds-btn" data-type="大小小" data-handicap="小 38.5" data-odds="2.02">
+                            <span class="opt-text">小 38.5</span>
+                            <span class="odds-val">2.02</span>
+                          </button>
+                        </div>
                       </div>
-                      <div class="score">1</div>
                     </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.68</button>
-                      <button class="odds-btn">客胜 2.15</button>
-                    </div>
-                  </div>
-
-                  <!-- Tennis Match 2 -->
-                  <div class="match-card" data-sport="tennis" data-filter="early today" data-match-id="302" data-home="阿尔卡拉斯" data-away="辛纳" data-score="VS" data-time="明天 14:00" data-odds-h="1.80" data-odds-d="7.50" data-odds-a="1.95">
-                    <div class="match-meta">
-                      <span class="match-league">温布尔登网球公开赛</span>
-                      <span class="match-time" style="color: var(--text-grey);"><i class="fa-regular fa-clock"></i> 未开始 明天 14:00</span>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag home-flag" style="color: var(--color-success);"></i>
-                        <span>阿尔卡拉斯</span>
-                      </div>
-                      <div class="score">-</div>
-                    </div>
-                    <div class="match-team-row">
-                      <div class="team">
-                        <i class="fa-solid fa-table-tennis-paddle-ball team-flag away-flag" style="color: var(--color-success);"></i>
-                        <span>辛纳</span>
-                      </div>
-                      <div class="score">-</div>
-                    </div>
-                    <div class="betting-odds-preview">
-                      <button class="odds-btn">主胜 1.80</button>
-                      <button class="odds-btn">客胜 1.95</button>
+                    <div class="match-card-footer">
+                      <span class="match-time-elapsed">第三盘 2-1</span>
+                      <span class="more-markets-btn">更多玩法 <i class="fa-solid fa-chevron-right"></i></span>
                     </div>
                   </div>
 
                   <!-- Empty state element -->
                   <div class="sports-empty-state" id="sports-empty-state-el" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.72rem;">
-                    <i class="fa-regular fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 8px; color: rgba(255,255,255,0.15); display: block;"></i>
+                    <i class="fa-regular fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 8px; color: rgba(0,0,0,0.15); display: block;"></i>
                     暂无进行中的比赛，敬请期待！
                   </div>
 
@@ -2374,6 +2489,6 @@
     </div> <!-- End Phone Wrapper -->
   </div>
 
-  <script src="app.js?v=3.4"></script>
+  <script src="app.js?v=3.5"></script>
 </body>
 </html>

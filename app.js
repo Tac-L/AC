@@ -1252,50 +1252,124 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedOddsValue = 1.85;
   let selectedOddsType = "主胜";
 
-  matchCards.forEach(card => {
-    // Bind click to open drawer
-    card.addEventListener('click', (e) => {
-      // If clicked odds buttons, handle selection
-      let clickedBtn = e.target.closest('.odds-btn');
-      
-      const home = card.getAttribute('data-home');
-      const away = card.getAttribute('data-away');
-      selectedBetMatchName = `${home} VS ${away}`;
-      
-      betDrawerLeague.textContent = card.querySelector('.match-league').textContent;
-      betDrawerMatchTeams.textContent = selectedBetMatchName;
-      
-      betDrawerOddsH.textContent = card.getAttribute('data-odds-h');
-      betDrawerOddsD.textContent = card.getAttribute('data-odds-d');
-      betDrawerOddsA.textContent = card.getAttribute('data-odds-a');
+  // Delegate click event to parent container #sports-match-list-container for odds button clicks
+  const sportsMatchListContainer = document.getElementById('sports-match-list-container');
+  if (sportsMatchListContainer) {
+    sportsMatchListContainer.addEventListener('click', (e) => {
+      const clickedBtn = e.target.closest('.live-sports-odds-btn');
+      if (!clickedBtn) return;
 
-      // Pre-select odds card
-      betOptCards.forEach(c => c.classList.remove('selected'));
-      if (clickedBtn) {
-        const txt = clickedBtn.textContent;
-        if (txt.includes("主胜")) {
-          betOptCards[0].classList.add('selected');
-          selectedOddsValue = parseFloat(card.getAttribute('data-odds-h'));
-          selectedOddsType = "主胜";
-        } else if (txt.includes("平局")) {
-          betOptCards[1].classList.add('selected');
-          selectedOddsValue = parseFloat(card.getAttribute('data-odds-d'));
-          selectedOddsType = "平局";
-        } else {
-          betOptCards[2].classList.add('selected');
-          selectedOddsValue = parseFloat(card.getAttribute('data-odds-a'));
-          selectedOddsType = "客胜";
-        }
-      } else {
-        // Default to Home win
-        betOptCards[0].classList.add('selected');
-        selectedOddsValue = parseFloat(card.getAttribute('data-odds-h'));
-        selectedOddsType = "主胜";
+      const card = clickedBtn.closest('.match-card');
+      if (!card) return;
+
+      const home = card.getAttribute('data-home') || '主队';
+      const away = card.getAttribute('data-away') || '客队';
+      const leagueName = card.querySelector('.match-league').textContent;
+      selectedBetMatchName = `${home} VS ${away}`;
+
+      betDrawerLeague.textContent = leagueName;
+      betDrawerMatchTeams.textContent = selectedBetMatchName;
+
+      const type = clickedBtn.getAttribute('data-type');
+      const optLabels = document.querySelectorAll('.bet-opt-card .opt-label');
+      const optOdds = document.querySelectorAll('.bet-opt-card .opt-odds');
+
+      betOptCards.forEach(c => c.classList.remove('selected', 'active'));
+
+      // If clicked value is suspended or empty "-", do not open drawer
+      const oddsText = clickedBtn.getAttribute('data-odds');
+      if (oddsText === '-') {
+        showPopupToast("该盘口已关盘，请选择其他盘口！");
+        return;
       }
+
+      if (type === '主胜' || type === '和局' || type === '客胜') {
+        optLabels[0].textContent = '主队';
+        optOdds[0].textContent = card.querySelector('[data-type="主胜"]').getAttribute('data-odds');
+        
+        optLabels[1].textContent = '平局';
+        optOdds[1].textContent = card.querySelector('[data-type="和局"]').getAttribute('data-odds');
+        
+        optLabels[2].textContent = '客队';
+        optOdds[2].textContent = card.querySelector('[data-type="客胜"]').getAttribute('data-odds');
+
+        if (type === '主胜') {
+          betOptCards[0].classList.add('selected', 'active');
+          selectedOddsType = '主队独赢';
+          selectedOddsValue = parseFloat(optOdds[0].textContent) || 0;
+        } else if (type === '和局') {
+          betOptCards[1].classList.add('selected', 'active');
+          selectedOddsType = '和局独赢';
+          selectedOddsValue = parseFloat(optOdds[1].textContent) || 0;
+        } else {
+          betOptCards[2].classList.add('selected', 'active');
+          selectedOddsType = '客队独赢';
+          selectedOddsValue = parseFloat(optOdds[2].textContent) || 0;
+        }
+      } else if (type === '让球主' || type === '让球客') {
+        const homeBtn = card.querySelector('[data-type="让球主"]');
+        const awayBtn = card.querySelector('[data-type="让球客"]');
+        
+        const hCapHome = homeBtn.getAttribute('data-handicap');
+        const hCapAway = awayBtn.getAttribute('data-handicap');
+        const oddsHome = homeBtn.getAttribute('data-odds');
+        const oddsAway = awayBtn.getAttribute('data-odds');
+
+        optLabels[0].textContent = `${home} (${hCapHome})`;
+        optOdds[0].textContent = oddsHome;
+
+        optLabels[1].textContent = '让球和';
+        optOdds[1].textContent = '-';
+
+        optLabels[2].textContent = `${away} (${hCapAway})`;
+        optOdds[2].textContent = oddsAway;
+
+        if (type === '让球主') {
+          betOptCards[0].classList.add('selected', 'active');
+          selectedOddsType = `${home} (${hCapHome})`;
+          selectedOddsValue = parseFloat(oddsHome) || 0;
+        } else {
+          betOptCards[2].classList.add('selected', 'active');
+          selectedOddsType = `${away} (${hCapAway})`;
+          selectedOddsValue = parseFloat(oddsAway) || 0;
+        }
+      } else if (type === '大小大' || type === '大小小') {
+        const overBtn = card.querySelector('[data-type="大小大"]');
+        const underBtn = card.querySelector('[data-type="大小小"]');
+
+        const hCapOver = overBtn.getAttribute('data-handicap');
+        const hCapUnder = underBtn.getAttribute('data-handicap');
+        const oddsOver = overBtn.getAttribute('data-odds');
+        const oddsUnder = underBtn.getAttribute('data-odds');
+
+        optLabels[0].textContent = hCapOver;
+        optOdds[0].textContent = oddsOver;
+
+        optLabels[1].textContent = '大小平';
+        optOdds[1].textContent = '-';
+
+        optLabels[2].textContent = hCapUnder;
+        optOdds[2].textContent = oddsUnder;
+
+        if (type === '大小大') {
+          betOptCards[0].classList.add('selected', 'active');
+          selectedOddsType = hCapOver;
+          selectedOddsValue = parseFloat(oddsOver) || 0;
+        } else {
+          betOptCards[2].classList.add('selected', 'active');
+          selectedOddsType = hCapUnder;
+          selectedOddsValue = parseFloat(oddsUnder) || 0;
+        }
+      }
+
+      // Sync active values into DOM references
+      betDrawerOddsH.textContent = optOdds[0].textContent;
+      betDrawerOddsD.textContent = optOdds[1].textContent;
+      betDrawerOddsA.textContent = optOdds[2].textContent;
 
       sportsBetDrawer.classList.add('active');
     });
-  });
+  }
 
   // Close Sports Bet Drawer
   btnCloseSportsDrawer.addEventListener('click', () => {
@@ -1367,7 +1441,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const filters = filterStr.split(' ');
 
       if (sport === activeSportsCategory && filters.includes(activeSportsFilter)) {
-        card.style.display = 'block';
+        card.style.display = 'flex';
         visibleCount++;
       } else {
         card.style.display = 'none';

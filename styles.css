@@ -5971,3 +5971,225 @@ input:checked + .slider:before {
   background: linear-gradient(135deg, #1e90ff, #3742fa);
 }
 
+/* Redesigned Sports Page Layout */
+#page-sports {
+  background-color: #f5f6fa !important;
+}
+
+#page-sports .sports-header {
+  background-color: #ffffff !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box;
+}
+
+#page-sports .sports-category-pill {
+  background-color: #f1f2f6 !important;
+  color: #57606f !important;
+  border-radius: 20px !important;
+}
+
+#page-sports .sports-category-pill.active {
+  background-color: #1e90ff !important;
+  color: #ffffff !important;
+}
+
+#page-sports .sports-more-platform {
+  background-color: #f1f2f6 !important;
+  border: 1px solid #e1e8ed !important;
+  color: #1e90ff !important;
+}
+
+#page-sports .sports-filter-item {
+  color: #57606f !important;
+}
+
+#page-sports .sports-filter-item.active {
+  color: #1e90ff !important;
+}
+
+#page-sports .sports-filter-item.active::after {
+  background-color: #1e90ff !important;
+}
+
+/* Sports Match Card Redesign */
+#page-sports .match-card {
+  background-color: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  margin: 10px 12px !important;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+#page-sports .match-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f2f6;
+  padding-bottom: 6px;
+  box-sizing: border-box;
+}
+
+#page-sports .league-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#page-sports .league-icon {
+  font-size: 0.75rem;
+  color: #a5b1c2;
+}
+
+#page-sports .match-league {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+#page-sports .market-headers {
+  display: flex;
+  gap: 8px;
+  font-size: 0.68rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+#page-sports .market-headers span {
+  width: 50px;
+  text-align: center;
+}
+
+#page-sports .match-card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+#page-sports .match-details-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+#page-sports .team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+#page-sports .flag-icon {
+  font-size: 0.95rem;
+  margin-right: 4px;
+}
+
+#page-sports .team-score {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #eb2f06;
+}
+
+#page-sports .team-score.active-score {
+  color: #eb2f06;
+}
+
+#page-sports .match-stats-row {
+  display: flex;
+  gap: 12px;
+  font-size: 0.68rem;
+  color: #95a5a6;
+  margin-top: 4px;
+}
+
+#page-sports .match-odds-grid {
+  display: flex;
+  gap: 8px;
+}
+
+#page-sports .odds-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+#page-sports .odds-col.col-1 {
+  width: 50px;
+}
+#page-sports .odds-col.col-2 {
+  width: 50px;
+}
+#page-sports .odds-col.col-3 {
+  width: 50px;
+}
+
+#page-sports .live-sports-odds-btn {
+  background-color: #f1f2f6 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  width: 50px;
+  height: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #2c3e50 !important;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 2px 0 !important;
+  box-sizing: border-box;
+}
+
+#page-sports .live-sports-odds-btn:active {
+  background-color: #e1e8ed !important;
+}
+
+#page-sports .live-sports-odds-btn .opt-text {
+  font-size: 0.52rem;
+  color: #7f8c8d;
+  line-height: 1.1;
+  text-align: center;
+}
+
+#page-sports .live-sports-odds-btn .odds-val {
+  font-size: 0.68rem;
+  font-weight: bold;
+  color: #2c3e50;
+  line-height: 1.1;
+  margin-top: 1px;
+}
+
+#page-sports .match-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1f2f6;
+  padding-top: 6px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+#page-sports .match-time-elapsed {
+  font-size: 0.65rem;
+  color: #95a5a6;
+}
+
+#page-sports .more-markets-btn {
+  font-size: 0.65rem;
+  color: #7f8c8d;
+  cursor: pointer;
+}
+
+
