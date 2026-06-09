@@ -4335,6 +4335,7 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
 }
 
 .hero-bet-btn:active {
