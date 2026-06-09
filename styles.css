@@ -242,83 +242,62 @@ body {
 .phone {
   width: 375px;
   height: 812px;
-  border-radius: 46px;
-  padding: 10px;
+  border-radius: 0;
+  padding: 0;
   position: relative;
-  box-shadow: var(--shadow-casino);
-  border: 4px solid #222;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Phone Color Skins */
 .phone-dark {
   background: linear-gradient(135deg, #181726 0%, #0b0a11 100%);
-  box-shadow: 0 0 0 3px #282736, var(--shadow-casino);
+  box-shadow: none;
 }
 
 .phone-gold {
   background: linear-gradient(135deg, #e5c158 0%, #9a7d25 100%);
-  box-shadow: 0 0 0 3px #bca142, var(--shadow-casino);
+  box-shadow: none;
 }
 
 .phone-purple {
   background: linear-gradient(135deg, #8e84ad 0%, #4c4465 100%);
-  box-shadow: 0 0 0 3px #6b618a, var(--shadow-casino);
+  box-shadow: none;
 }
 
 .phone-coral {
   background: linear-gradient(135deg, #ff7675 0%, #c0392b 100%);
-  box-shadow: 0 0 0 3px #e74c3c, var(--shadow-casino);
+  box-shadow: none;
 }
 
 /* Phone Notch */
 .phone-notch {
-  width: 140px;
-  height: 26px;
-  background: #000;
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 18px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0 16px;
+  display: none !important;
 }
 
 .phone-notch .camera {
-  width: 8px;
-  height: 8px;
-  background: #111;
-  border-radius: 50%;
-  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.2);
+  display: none !important;
 }
 
 .phone-notch .speaker {
-  width: 35px;
-  height: 3px;
-  background: #222;
-  border-radius: 2px;
+  display: none !important;
 }
 
 /* Physical button decorations */
 .phone-btn {
-  position: absolute;
-  background: inherit;
-  border-radius: 4px;
+  display: none !important;
 }
 
-.phone-btn-vol-up { width: 2px; height: 45px; left: -5px; top: 140px; border-left: 2px solid rgba(0,0,0,0.5); }
-.phone-btn-vol-down { width: 2px; height: 45px; left: -5px; top: 195px; border-left: 2px solid rgba(0,0,0,0.5); }
-.phone-btn-power { width: 2px; height: 70px; right: -5px; top: 170px; border-right: 2px solid rgba(0,0,0,0.5); }
+.phone-btn-vol-up { display: none !important; }
+.phone-btn-vol-down { display: none !important; }
+.phone-btn-power { display: none !important; }
 
 /* Internal Phone Viewport */
 .phone-screen {
   width: 100%;
   height: 100%;
   background-color: var(--bg-body);
-  border-radius: 36px;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -327,26 +306,15 @@ body {
 
 /* iPhone Status Bar */
 .status-bar {
-  height: 36px;
-  padding: 12px 24px 0 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  z-index: 98;
-  color: var(--text-white);
-  pointer-events: none;
+  display: none !important;
 }
 
 .status-time {
-  font-weight: 700;
+  display: none !important;
 }
 
 .status-right {
-  display: flex;
-  gap: 5px;
-  align-items: center;
+  display: none !important;
 }
 
 /* Web App Inner Body Container */
@@ -356,7 +324,7 @@ body {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  height: calc(100% - 36px);
+  height: 100%;
 }
 
 /* iPhone Home Indicator Line */
@@ -2263,13 +2231,13 @@ input:checked + .slider:before {
    8. Game Lobby Main View (Matches First Screenshot)
    ========================================================================== */
 .lobby-header-bar {
-  height: 87px;
+  height: 52px;
   background-color: var(--bg-dark);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  padding: 0 15px 10px 15px;
+  align-items: center;
+  padding: 0 15px;
   box-sizing: border-box;
 }
 
@@ -2587,7 +2555,7 @@ input:checked + .slider:before {
 }
 
 #page-profile .profile-header-container {
-  padding-top: 48px;
+  padding-top: 16px;
 }
 
 .profile-header-top-row {
@@ -3457,7 +3425,7 @@ input:checked + .slider:before {
 
 .video-watermark-overlay {
   position: absolute;
-  top: 48px;
+  top: 15px;
   right: 15px;
   background-color: rgba(255, 71, 87, 0.75);
   border: 1px solid rgba(255,255,255,0.25);
@@ -3470,7 +3438,7 @@ input:checked + .slider:before {
 
 .player-hud-top {
   position: absolute;
-  top: 40px;
+  top: 15px;
   left: 0;
   right: 0;
   padding: 0 15px;
