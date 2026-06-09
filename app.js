@@ -1646,8 +1646,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showWinNotification(name, amount, gameType);
   }
 
-  // Set interval to periodically trigger player wins every 4 seconds
-  setInterval(triggerRandomWinNotification, 4000);
+  // Set interval to periodically trigger player wins every 10 seconds
+  setInterval(triggerRandomWinNotification, 10000);
 
   // Switch phone theme skins (Dark/Gold/Purple/Coral) via sidebar
   const mobileDevice = document.getElementById('mobile-device');
