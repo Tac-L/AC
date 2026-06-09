@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=3.6">
+  <link rel="stylesheet" href="styles.css?v=3.7">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1117,48 +1117,38 @@
                 </div>
               </div>
 
-              <!-- Sports Betting Drawer Panel -->
+              <!-- Sports Betting Slip Drawer Panel -->
               <div class="sports-betting-drawer" id="sports-bet-drawer">
-                <div class="drawer-header">
-                  <h4>体育极速押注</h4>
-                  <button id="btn-close-sports-drawer" class="drawer-close-btn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="sports-drawer-header">
+                  <button id="btn-close-sports-drawer" class="sports-drawer-close-btn">
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </button>
+                  <h4 class="sports-drawer-title">确认投注</h4>
+                  <button id="btn-clear-sports-drawer" class="sports-drawer-clear-btn">清空</button>
                 </div>
-                <div class="drawer-content">
-                  <div class="bet-match-details">
-                    <span id="bet-drawer-league">西班牙甲级联赛</span>
-                    <h3 id="bet-drawer-match-teams">皇家马德里 VS 巴塞罗那</h3>
-                  </div>
-                  
-                  <div class="bet-options-row">
-                    <div class="bet-opt-card" data-opt="h">
-                      <span class="opt-label">主胜</span>
-                      <strong class="opt-odds" id="bet-drawer-odds-h">1.85</strong>
-                    </div>
-                    <div class="bet-opt-card" data-opt="d">
-                      <span class="opt-label">平局</span>
-                      <strong class="opt-odds" id="bet-drawer-odds-d">3.40</strong>
-                    </div>
-                    <div class="bet-opt-card" data-opt="a">
-                      <span class="opt-label">客胜</span>
-                      <strong class="opt-odds" id="bet-drawer-odds-a">2.10</strong>
-                    </div>
-                  </div>
+                
+                <div class="sports-drawer-tabs">
+                  <div class="sports-drawer-tab active" data-type="single">单关</div>
+                  <div class="sports-drawer-tab" data-type="parlay">串关</div>
+                </div>
 
-                  <!-- Chips Selector -->
-                  <div class="chips-row" id="sports-chips-row">
-                    <div class="chip-btn" data-val="10">10</div>
-                    <div class="chip-btn active" data-val="50">50</div>
-                    <div class="chip-btn" data-val="100">100</div>
-                    <div class="chip-btn" data-val="500">500</div>
-                    <div class="chip-btn" data-val="1000">1K</div>
-                  </div>
+                <div class="sports-drawer-scroll-content" id="sports-drawer-items-list">
+                  <!-- Staged sports bet cards will be dynamically rendered here -->
+                </div>
 
-                  <div class="bet-amount-input-row">
-                    <span>押注金额:</span>
-                    <input type="number" id="sports-bet-amount" value="50">
+                <div class="sports-drawer-footer">
+                  <div class="sports-drawer-footer-info">
+                    <div class="sports-drawer-footer-summary" id="sports-drawer-summary-text">
+                      0单，共<span>0.00</span>元
+                    </div>
+                    <div class="sports-drawer-footer-odds-policy">
+                      自动接受更好的赔率 <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
                   </div>
-
-                  <button id="btn-sports-bet-submit" class="bet-submit-btn">立即押注</button>
+                  <div class="sports-drawer-footer-actions">
+                    <button class="sports-drawer-cancel-btn" id="btn-cancel-sports-bet">取消</button>
+                    <button class="sports-drawer-confirm-btn" id="btn-confirm-sports-bet">确认投注</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2489,6 +2479,6 @@
     </div> <!-- End Phone Wrapper -->
   </div>
 
-  <script src="app.js?v=3.6"></script>
+  <script src="app.js?v=3.7"></script>
 </body>
 </html>

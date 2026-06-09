@@ -1237,22 +1237,180 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   const sportsBetDrawer = document.getElementById('sports-bet-drawer');
   const btnCloseSportsDrawer = document.getElementById('btn-close-sports-drawer');
-  const matchCards = document.querySelectorAll('.match-card');
-  const betDrawerLeague = document.getElementById('bet-drawer-league');
-  const betDrawerMatchTeams = document.getElementById('bet-drawer-match-teams');
-  const betDrawerOddsH = document.getElementById('bet-drawer-odds-h');
-  const betDrawerOddsD = document.getElementById('bet-drawer-odds-d');
-  const betDrawerOddsA = document.getElementById('bet-drawer-odds-a');
-  const sportsBetAmountInput = document.getElementById('sports-bet-amount');
-  const btnSportsBetSubmit = document.getElementById('btn-sports-bet-submit');
-  const sportsChips = document.querySelectorAll('#sports-chips-row .chip-btn');
-  const betOptCards = document.querySelectorAll('.bet-opt-card');
+  const btnClearSportsDrawer = document.getElementById('btn-clear-sports-drawer');
+  const sportsDrawerItemsList = document.getElementById('sports-drawer-items-list');
+  const sportsDrawerSummaryText = document.getElementById('sports-drawer-summary-text');
+  const btnCancelSportsBet = document.getElementById('btn-cancel-sports-bet');
+  const btnConfirmSportsBet = document.getElementById('btn-confirm-sports-bet');
+  const sportsDrawerTabs = document.querySelectorAll('.sports-drawer-tab');
 
-  let selectedBetMatchName = "";
-  let selectedOddsValue = 1.85;
-  let selectedOddsType = "主胜";
+  let stagedSportsBets = []; // Array of objects: { key, matchId, type, selection, market, teams, odds, amount, sport }
+  let activeSportsDrawerTab = 'single'; // 'single' or 'parlay'
+  let parlayBetAmount = 10; // State for parlay bet amount
 
-  // Delegate click event to parent container #sports-match-list-container for odds button clicks
+  // Tab switching
+  sportsDrawerTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      sportsDrawerTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeSportsDrawerTab = tab.getAttribute('data-type');
+      renderSportsDrawer();
+    });
+  });
+
+  // Sync the highlight states of the odds buttons on the page
+  function syncOddsButtonsHighlights() {
+    const oddsButtons = document.querySelectorAll('.live-sports-odds-btn');
+    oddsButtons.forEach(btn => {
+      const card = btn.closest('.match-card');
+      if (!card) return;
+      const matchId = card.getAttribute('data-match-id');
+      const type = btn.getAttribute('data-type');
+      const key = `${matchId}_${type}`;
+      
+      const isSelected = stagedSportsBets.some(item => item.key === key);
+      if (isSelected) {
+        btn.classList.add('selected');
+      } else {
+        btn.classList.remove('selected');
+      }
+    });
+  }
+
+  // Render the bottom sheet slip content
+  function renderSportsDrawer() {
+    if (!sportsDrawerItemsList) return;
+    sportsDrawerItemsList.innerHTML = '';
+
+    if (activeSportsDrawerTab === 'single') {
+      if (stagedSportsBets.length === 0) {
+        sportsDrawerItemsList.innerHTML = `<div class="sports-drawer-placeholder">暂无投注选项，请选择盘口进行投注</div>`;
+        sportsDrawerSummaryText.innerHTML = `0单，共<span>0.00</span>元`;
+        return;
+      }
+
+      stagedSportsBets.forEach(item => {
+        const cardHtml = `
+          <div class="sports-drawer-bet-card" data-key="${item.key}">
+            <div class="sports-drawer-card-left">
+              <div class="sports-drawer-card-option">${item.selection}</div>
+              <div class="sports-drawer-card-market">${item.market}</div>
+              <div class="sports-drawer-card-match">${item.teams}</div>
+              <div class="sports-drawer-card-odds">@${item.odds.toFixed(2)}</div>
+            </div>
+            <div class="sports-drawer-card-right">
+              <button class="sports-drawer-card-close" onclick="removeSportsBet('${item.key}')">✕</button>
+              <span class="sports-drawer-card-sport">${item.sport}</span>
+              <div class="sports-drawer-card-input-wrapper">
+                <input type="number" class="sports-drawer-card-input" value="${item.amount}" min="1" max="10000" data-key="${item.key}">
+                <div class="sports-drawer-card-limit">限额 10 ~ 1000</div>
+              </div>
+            </div>
+          </div>
+        `;
+        sportsDrawerItemsList.insertAdjacentHTML('beforeend', cardHtml);
+      });
+
+      // Recalculate totals
+      updateSportsDrawerTotals();
+    } else {
+      // Parlay mode
+      if (stagedSportsBets.length === 0) {
+        sportsDrawerItemsList.innerHTML = `<div class="sports-drawer-placeholder">暂无投注选项，请选择盘口进行投注</div>`;
+        sportsDrawerSummaryText.innerHTML = `1个串关，共<span>0.00</span>元`;
+        return;
+      }
+
+      // Render cards without inputs
+      stagedSportsBets.forEach(item => {
+        const cardHtml = `
+          <div class="sports-drawer-bet-card parlay-mode" data-key="${item.key}">
+            <div class="sports-drawer-card-left">
+              <div class="sports-drawer-card-option">${item.selection}</div>
+              <div class="sports-drawer-card-market">${item.market}</div>
+              <div class="sports-drawer-card-match">${item.teams}</div>
+              <div class="sports-drawer-card-odds">@${item.odds.toFixed(2)}</div>
+            </div>
+            <div class="sports-drawer-card-right">
+              <button class="sports-drawer-card-close" onclick="removeSportsBet('${item.key}')">✕</button>
+              <span class="sports-drawer-card-sport">${item.sport}</span>
+            </div>
+          </div>
+        `;
+        sportsDrawerItemsList.insertAdjacentHTML('beforeend', cardHtml);
+      });
+
+      // Check parlay restrictions
+      const matchIds = stagedSportsBets.map(item => item.matchId);
+      const uniqueMatchIds = [...new Set(matchIds)];
+
+      if (uniqueMatchIds.length < 2) {
+        sportsDrawerItemsList.insertAdjacentHTML('beforeend', `<div class="sports-drawer-placeholder-warning">请选择至少2场不同赛事的选项进行串关投注</div>`);
+        sportsDrawerSummaryText.innerHTML = `1个串关，共<span>0.00</span>元`;
+      } else if (uniqueMatchIds.length < stagedSportsBets.length) {
+        sportsDrawerItemsList.insertAdjacentHTML('beforeend', `<div class="sports-drawer-placeholder-warning">不支持同场赛事的多个选项进行串关，请先移除非同一赛事的重合选项</div>`);
+        sportsDrawerSummaryText.innerHTML = `1个串关，共<span>0.00</span>元`;
+      } else {
+        // Calculate parlay odds
+        const combinedOdds = stagedSportsBets.reduce((prod, item) => prod * item.odds, 1);
+        const parlayCardHtml = `
+          <div class="sports-drawer-parlay-card">
+            <div class="parlay-card-left">
+              <div class="parlay-card-title">${uniqueMatchIds.length}串1</div>
+              <div class="parlay-card-odds">@${combinedOdds.toFixed(2)}</div>
+            </div>
+            <div class="parlay-card-right">
+              <div class="sports-drawer-card-input-wrapper">
+                <input type="number" class="sports-drawer-parlay-input" value="${parlayBetAmount}" min="1" max="10000">
+                <div class="sports-drawer-card-limit">限额 10 ~ 1000</div>
+              </div>
+            </div>
+          </div>
+        `;
+        sportsDrawerItemsList.insertAdjacentHTML('beforeend', parlayCardHtml);
+        sportsDrawerSummaryText.innerHTML = `1个串关，共<span>${parlayBetAmount.toFixed(2)}</span>元`;
+      }
+    }
+  }
+
+  // Helper to recalculate totals in single mode
+  function updateSportsDrawerTotals() {
+    if (activeSportsDrawerTab === 'single') {
+      const totalCount = stagedSportsBets.length;
+      const totalAmount = stagedSportsBets.reduce((sum, item) => sum + item.amount, 0);
+      sportsDrawerSummaryText.innerHTML = `${totalCount}单，共<span>${totalAmount.toFixed(2)}</span>元`;
+    }
+  }
+
+  // Handle inputs dynamically
+  if (sportsDrawerItemsList) {
+    sportsDrawerItemsList.addEventListener('input', (e) => {
+      if (e.target.classList.contains('sports-drawer-card-input')) {
+        const key = e.target.getAttribute('data-key');
+        const val = parseFloat(e.target.value) || 0;
+        const item = stagedSportsBets.find(item => item.key === key);
+        if (item) {
+          item.amount = val;
+          updateSportsDrawerTotals();
+        }
+      } else if (e.target.classList.contains('sports-drawer-parlay-input')) {
+        parlayBetAmount = parseFloat(e.target.value) || 0;
+        sportsDrawerSummaryText.innerHTML = `1个串关，共<span>${parlayBetAmount.toFixed(2)}</span>元`;
+      }
+    });
+  }
+
+  // Remove a selection from the slip
+  window.removeSportsBet = function(key) {
+    stagedSportsBets = stagedSportsBets.filter(item => item.key !== key);
+    syncOddsButtonsHighlights();
+    renderSportsDrawer();
+    if (stagedSportsBets.length === 0) {
+      sportsBetDrawer.classList.remove('active');
+    }
+  };
+
+  // Click handler on sports list
   const sportsMatchListContainer = document.getElementById('sports-match-list-container');
   if (sportsMatchListContainer) {
     sportsMatchListContainer.addEventListener('click', (e) => {
@@ -1262,163 +1420,152 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = clickedBtn.closest('.match-card');
       if (!card) return;
 
+      const matchId = card.getAttribute('data-match-id');
       const home = card.getAttribute('data-home') || '主队';
       const away = card.getAttribute('data-away') || '客队';
-      const leagueName = card.querySelector('.match-league').textContent;
-      selectedBetMatchName = `${home} VS ${away}`;
-
-      betDrawerLeague.textContent = leagueName;
-      betDrawerMatchTeams.textContent = selectedBetMatchName;
-
+      const sport = card.getAttribute('data-sport') || 'soccer';
       const type = clickedBtn.getAttribute('data-type');
-      const optLabels = document.querySelectorAll('.bet-opt-card .opt-label');
-      const optOdds = document.querySelectorAll('.bet-opt-card .opt-odds');
-
-      betOptCards.forEach(c => c.classList.remove('selected', 'active'));
-
-      // If clicked value is suspended or empty "-", do not open drawer
       const oddsText = clickedBtn.getAttribute('data-odds');
+
       if (oddsText === '-') {
         showPopupToast("该盘口已关盘，请选择其他盘口！");
         return;
       }
 
-      if (type === '主胜' || type === '和局' || type === '客胜') {
-        optLabels[0].textContent = '主队';
-        optOdds[0].textContent = card.querySelector('[data-type="主胜"]').getAttribute('data-odds');
-        
-        optLabels[1].textContent = '平局';
-        optOdds[1].textContent = card.querySelector('[data-type="和局"]').getAttribute('data-odds');
-        
-        optLabels[2].textContent = '客队';
-        optOdds[2].textContent = card.querySelector('[data-type="客胜"]').getAttribute('data-odds');
+      const matchKey = `${matchId}_${type}`;
+      const existingIndex = stagedSportsBets.findIndex(item => item.key === matchKey);
 
-        if (type === '主胜') {
-          betOptCards[0].classList.add('selected', 'active');
-          selectedOddsType = '主队独赢';
-          selectedOddsValue = parseFloat(optOdds[0].textContent) || 0;
-        } else if (type === '和局') {
-          betOptCards[1].classList.add('selected', 'active');
-          selectedOddsType = '和局独赢';
-          selectedOddsValue = parseFloat(optOdds[1].textContent) || 0;
+      if (existingIndex > -1) {
+        // Remove it
+        stagedSportsBets.splice(existingIndex, 1);
+        clickedBtn.classList.remove('selected');
+      } else {
+        // Add it
+        let market = '独赢';
+        let selection = '主胜';
+        const handicap = clickedBtn.getAttribute('data-handicap') || '';
+
+        if (type.startsWith('大小')) {
+          market = '全场大小';
+          selection = handicap;
+        } else if (type.startsWith('让球')) {
+          market = '全场让球';
+          selection = (type === '让球主') ? `${home} (${handicap})` : `${away} (${handicap})`;
         } else {
-          betOptCards[2].classList.add('selected', 'active');
-          selectedOddsType = '客队独赢';
-          selectedOddsValue = parseFloat(optOdds[2].textContent) || 0;
+          market = '全场独赢';
+          selection = (type === '主胜') ? `${home}` : ((type === '客胜') ? `${away}` : '和局');
         }
-      } else if (type === '让球主' || type === '让球客') {
-        const homeBtn = card.querySelector('[data-type="让球主"]');
-        const awayBtn = card.querySelector('[data-type="让球客"]');
-        
-        const hCapHome = homeBtn.getAttribute('data-handicap');
-        const hCapAway = awayBtn.getAttribute('data-handicap');
-        const oddsHome = homeBtn.getAttribute('data-odds');
-        const oddsAway = awayBtn.getAttribute('data-odds');
 
-        optLabels[0].textContent = `${home} (${hCapHome})`;
-        optOdds[0].textContent = oddsHome;
+        const sportLabel = (sport === 'soccer' ? '足球' : (sport === 'basketball' ? '篮球' : (sport === 'tennis' ? '网球' : (sport === 'volleyball' ? '排球' : '乒乓球'))));
 
-        optLabels[1].textContent = '让球和';
-        optOdds[1].textContent = '-';
-
-        optLabels[2].textContent = `${away} (${hCapAway})`;
-        optOdds[2].textContent = oddsAway;
-
-        if (type === '让球主') {
-          betOptCards[0].classList.add('selected', 'active');
-          selectedOddsType = `${home} (${hCapHome})`;
-          selectedOddsValue = parseFloat(oddsHome) || 0;
-        } else {
-          betOptCards[2].classList.add('selected', 'active');
-          selectedOddsType = `${away} (${hCapAway})`;
-          selectedOddsValue = parseFloat(oddsAway) || 0;
-        }
-      } else if (type === '大小大' || type === '大小小') {
-        const overBtn = card.querySelector('[data-type="大小大"]');
-        const underBtn = card.querySelector('[data-type="大小小"]');
-
-        const hCapOver = overBtn.getAttribute('data-handicap');
-        const hCapUnder = underBtn.getAttribute('data-handicap');
-        const oddsOver = overBtn.getAttribute('data-odds');
-        const oddsUnder = underBtn.getAttribute('data-odds');
-
-        optLabels[0].textContent = hCapOver;
-        optOdds[0].textContent = oddsOver;
-
-        optLabels[1].textContent = '大小平';
-        optOdds[1].textContent = '-';
-
-        optLabels[2].textContent = hCapUnder;
-        optOdds[2].textContent = oddsUnder;
-
-        if (type === '大小大') {
-          betOptCards[0].classList.add('selected', 'active');
-          selectedOddsType = hCapOver;
-          selectedOddsValue = parseFloat(oddsOver) || 0;
-        } else {
-          betOptCards[2].classList.add('selected', 'active');
-          selectedOddsType = hCapUnder;
-          selectedOddsValue = parseFloat(oddsUnder) || 0;
-        }
+        stagedSportsBets.push({
+          key: matchKey,
+          matchId,
+          type,
+          selection,
+          market,
+          teams: `${home} V ${away}`,
+          odds: parseFloat(oddsText) || 0,
+          amount: 10,
+          sport: sportLabel
+        });
+        clickedBtn.classList.add('selected');
       }
 
-      // Sync active values into DOM references
-      betDrawerOddsH.textContent = optOdds[0].textContent;
-      betDrawerOddsD.textContent = optOdds[1].textContent;
-      betDrawerOddsA.textContent = optOdds[2].textContent;
+      renderSportsDrawer();
 
-      sportsBetDrawer.classList.add('active');
+      if (stagedSportsBets.length > 0) {
+        sportsBetDrawer.classList.add('active');
+      } else {
+        sportsBetDrawer.classList.remove('active');
+      }
     });
   }
 
-  // Close Sports Bet Drawer
+  // Close button
   btnCloseSportsDrawer.addEventListener('click', () => {
     sportsBetDrawer.classList.remove('active');
   });
 
-  // Toggle Bet Options inside Drawer
-  betOptCards.forEach(card => {
-    card.addEventListener('click', () => {
-      betOptCards.forEach(c => c.classList.remove('selected'));
-      card.classList.add('active');
-      card.classList.add('selected');
-      
-      const label = card.querySelector('.opt-label').textContent;
-      const val = parseFloat(card.querySelector('.opt-odds').textContent);
-      selectedOddsType = label;
-      selectedOddsValue = val;
-    });
-  });
-
-  // Chips select
-  sportsChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      sportsChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      
-      const val = chip.getAttribute('data-val');
-      sportsBetAmountInput.value = val;
-    });
-  });
-
-  // Place Sports Bet
-  btnSportsBetSubmit.addEventListener('click', () => {
-    const betVal = parseFloat(sportsBetAmountInput.value);
-    if (isNaN(betVal) || betVal <= 0) {
-      alert("请输入有效的押注金额！");
-      return;
-    }
-    if (betVal > balance) {
-      alert("投注失败：虚拟账户余额不足！请先点击充值。");
-      return;
-    }
-
-    // Deduct
-    updateBalance(-betVal);
+  // Clear button
+  btnClearSportsDrawer.addEventListener('click', () => {
+    stagedSportsBets = [];
+    syncOddsButtonsHighlights();
+    renderSportsDrawer();
     sportsBetDrawer.classList.remove('active');
+    showPopupToast("已清空所有投注项");
+  });
 
-    // Bet Success
-    alert(`🎉 体育押注成功！\n投注赛事: ${selectedBetMatchName}\n下注项目: ${selectedOddsType} (赔率 ${selectedOddsValue.toFixed(2)})\n投注金额: ¥${betVal.toFixed(2)} 元！`);
+  // Cancel button
+  btnCancelSportsBet.addEventListener('click', () => {
+    sportsBetDrawer.classList.remove('active');
+  });
+
+  // Confirm / Submit button
+  btnConfirmSportsBet.addEventListener('click', () => {
+    if (stagedSportsBets.length === 0) {
+      showPopupToast("请先选择投注项");
+      return;
+    }
+
+    if (activeSportsDrawerTab === 'single') {
+      // Validate all amounts are valid limit 10 ~ 1000
+      const invalidItem = stagedSportsBets.find(item => item.amount < 10 || item.amount > 1000);
+      if (invalidItem) {
+        showPopupToast("单笔投注金额范围必须在 10 ~ 1000 元之间");
+        return;
+      }
+
+      const totalAmount = stagedSportsBets.reduce((sum, item) => sum + item.amount, 0);
+      if (totalAmount > balance) {
+        showPopupToast("投注失败：账户可用余额不足！");
+        return;
+      }
+
+      // Deduct
+      updateBalance(-totalAmount);
+      
+      // Success popup
+      showPopupToast(`投注成功！已投 ${stagedSportsBets.length} 笔单关，共 ¥${totalAmount.toFixed(2)} 元！`);
+      
+      // Reset
+      stagedSportsBets = [];
+      syncOddsButtonsHighlights();
+      renderSportsDrawer();
+      sportsBetDrawer.classList.remove('active');
+    } else {
+      // Parlay mode
+      const matchIds = stagedSportsBets.map(item => item.matchId);
+      const uniqueMatchIds = [...new Set(matchIds)];
+
+      if (uniqueMatchIds.length < 2 || uniqueMatchIds.length < stagedSportsBets.length) {
+        showPopupToast("请满足串关投注条件后再提交投注");
+        return;
+      }
+
+      if (parlayBetAmount < 10 || parlayBetAmount > 1000) {
+        showPopupToast("串关投注金额范围必须在 10 ~ 1000 元之间");
+        return;
+      }
+
+      if (parlayBetAmount > balance) {
+        showPopupToast("投注失败：账户可用余额不足！");
+        return;
+      }
+
+      const combinedOdds = stagedSportsBets.reduce((prod, item) => prod * item.odds, 1);
+
+      // Deduct
+      updateBalance(-parlayBetAmount);
+
+      showPopupToast(`串关成功！已投 ${uniqueMatchIds.length}串1 (赔率 @${combinedOdds.toFixed(2)})，共 ¥${parlayBetAmount.toFixed(2)} 元！`);
+
+      // Reset
+      stagedSportsBets = [];
+      syncOddsButtonsHighlights();
+      renderSportsDrawer();
+      sportsBetDrawer.classList.remove('active');
+    }
   });
 
   // ==========================================
@@ -1455,6 +1602,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sportsEmptyState.style.display = 'none';
       }
     }
+    syncOddsButtonsHighlights();
   }
 
   // Bind Category Pills clicks

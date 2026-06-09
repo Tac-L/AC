@@ -1581,15 +1581,16 @@ input:checked + .slider:before {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #12111d;
-  border-top: 2px solid var(--color-gold);
+  background-color: #ffffff;
   border-radius: 20px 20px 0 0;
   z-index: 105;
-  box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
-  padding: 15px;
+  box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1);
   pointer-events: none; /* Prevent click blocking when closed */
+  overflow: hidden;
 }
 
 .sports-betting-drawer.active {
@@ -1597,149 +1598,365 @@ input:checked + .slider:before {
   pointer-events: auto;
 }
 
-.drawer-header {
+.sports-drawer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
-  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f2f6;
+  background-color: #ffffff;
 }
 
-.drawer-header h4 {
-  font-size: 0.9rem;
-  color: var(--color-gold);
-}
-
-.drawer-close-btn {
+.sports-drawer-close-btn {
   background: none;
   border: none;
-  color: var(--text-grey);
+  color: #747d8c;
   font-size: 1.1rem;
   cursor: pointer;
-}
-
-.bet-match-details {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.bet-match-details span {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-}
-
-.bet-match-details h3 {
-  font-size: 0.95rem;
-  margin-top: 3px;
-  color: #fff;
-}
-
-.bet-options-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  align-items: center;
+  padding: 0;
 }
 
-.bet-opt-card {
-  flex: 1;
-  background-color: var(--card-bg);
-  border: 1.5px solid var(--border-color);
-  border-radius: 10px;
-  padding: 10px;
-  text-align: center;
+.sports-drawer-title {
+  font-size: 0.92rem;
+  font-weight: bold;
+  color: #2f3542;
+  margin: 0;
+}
+
+.sports-drawer-clear-btn {
+  background: none;
+  border: none;
+  color: #747d8c;
+  font-size: 0.8rem;
   cursor: pointer;
+  padding: 0;
+}
+
+.sports-drawer-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  height: 40px;
+  border-bottom: 1px solid #f1f2f6;
+  background-color: #ffffff;
 }
 
-.bet-opt-card.selected {
-  border-color: var(--color-primary);
-  background-color: rgba(255,71,87,0.1);
-}
-
-.bet-opt-card.selected .opt-odds {
-  color: var(--color-primary);
-}
-
-.opt-label {
-  font-size: 0.72rem;
-  color: var(--text-grey);
-}
-
-.opt-odds {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-gold);
-}
-
-/* Chips layout */
-.chips-row {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 15px;
-}
-
-.chip-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 2px dashed rgba(255,255,255,0.2);
+.sports-drawer-tab {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-  background-color: #333;
-}
-
-.chip-btn[data-val="10"] { background-color: #2f3542; }
-.chip-btn[data-val="50"] { background-color: #1e90ff; }
-.chip-btn[data-val="100"] { background-color: #2ed573; }
-.chip-btn[data-val="500"] { background-color: #ffa502; }
-.chip-btn[data-val="1000"] { background-color: #ff4757; }
-
-.chip-btn.active {
-  border: 2.5px solid #fff;
-  transform: scale(1.1);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-.bet-amount-input-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
   font-size: 0.82rem;
-  color: var(--text-grey);
+  color: #747d8c;
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
 }
 
-.bet-amount-input-row input {
-  width: 100px;
-  background-color: rgba(0,0,0,0.25);
-  border: 1px solid var(--border-color);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  text-align: center;
-  outline: none;
+.sports-drawer-tab.active {
+  color: #1e90ff;
   font-weight: bold;
 }
 
-.bet-submit-btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-gold));
-  border: none;
-  color: #fff;
-  font-weight: 700;
-  padding: 10px 0;
+.sports-drawer-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2.5px;
+  background-color: #1e90ff;
+  border-radius: 2px;
+}
+
+.sports-drawer-scroll-content {
+  overflow-y: auto;
+  background-color: #f5f6fa;
+  padding: 12px;
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.sports-drawer-scroll-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sports-drawer-scroll-content::-webkit-scrollbar-thumb {
+  background-color: #ced6e0;
+  border-radius: 2px;
+}
+
+.sports-drawer-bet-card {
+  background-color: #ffffff;
   border-radius: 10px;
-  font-size: 0.9rem;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid #e8ecf0;
+  box-sizing: border-box;
+}
+
+.sports-drawer-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.sports-drawer-card-option {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #2f3542;
+}
+
+.sports-drawer-card-market {
+  font-size: 0.68rem;
+  color: #747d8c;
+}
+
+.sports-drawer-card-match {
+  font-size: 0.7rem;
+  color: #2f3542;
+}
+
+.sports-drawer-card-odds {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #ff4757;
+}
+
+.sports-drawer-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-width: 90px;
+}
+
+.sports-drawer-card-close {
+  background: none;
+  border: none;
+  color: #a4b0be;
+  font-size: 1.1rem;
   cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.sports-drawer-card-close:hover {
+  color: #ff4757;
+}
+
+.sports-drawer-card-sport {
+  font-size: 0.68rem;
+  color: #747d8c;
+  margin-bottom: 4px;
+}
+
+.sports-drawer-card-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.sports-drawer-card-input {
+  width: 84px;
+  height: 28px;
+  border: 1px solid #ced6e0;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #2f3542;
+  outline: none;
+  background-color: #fcfcfc;
+  box-sizing: border-box;
+}
+
+.sports-drawer-card-input:focus {
+  border-color: #1e90ff;
+  background-color: #ffffff;
+}
+
+.sports-drawer-card-limit {
+  font-size: 0.58rem;
+  color: #ff4757;
+}
+
+.sports-drawer-parlay-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  border: 1.5px solid #1e90ff;
+  box-sizing: border-box;
+}
+
+.parlay-card-left {
+  text-align: left;
+}
+
+.parlay-card-title {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #1e90ff;
+}
+
+.parlay-card-odds {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ff4757;
+}
+
+.parlay-card-right {
+  display: flex;
+  align-items: center;
+}
+
+.sports-drawer-parlay-input {
+  width: 84px;
+  height: 28px;
+  border: 1px solid #ced6e0;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #2f3542;
+  outline: none;
+  background-color: #fcfcfc;
+  box-sizing: border-box;
+}
+
+.sports-drawer-parlay-input:focus {
+  border-color: #1e90ff;
+  background-color: #ffffff;
+}
+
+.sports-drawer-placeholder {
+  padding: 40px 10px;
+  color: #747d8c;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.sports-drawer-placeholder-warning {
+  padding: 20px 10px;
+  color: #ff4757;
+  font-size: 0.72rem;
+  text-align: center;
+  background-color: rgba(255, 71, 87, 0.05);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 71, 87, 0.2);
+}
+
+.sports-drawer-footer {
+  background-color: #ffffff;
+  border-top: 1px solid #f1f2f6;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sports-drawer-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+}
+
+.sports-drawer-footer-summary {
+  color: #2f3542;
+  font-weight: 500;
+}
+
+.sports-drawer-footer-summary span {
+  color: #ff4757;
+  font-weight: bold;
+  font-size: 0.8rem;
+  margin: 0 2px;
+}
+
+.sports-drawer-footer-odds-policy {
+  color: #747d8c;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.sports-drawer-footer-odds-policy i {
+  color: #ff4757;
+  font-size: 0.75rem;
+}
+
+.sports-drawer-footer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.sports-drawer-cancel-btn {
+  flex: 1;
+  height: 36px;
+  border: 1px solid #1e90ff;
+  border-radius: 8px;
+  color: #1e90ff;
+  background-color: #ffffff;
+  font-weight: bold;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.sports-drawer-cancel-btn:active {
+  background-color: #f1f2f6;
+}
+
+.sports-drawer-confirm-btn {
+  flex: 1.5;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  background-color: #1e90ff;
+  font-weight: bold;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.sports-drawer-confirm-btn:active {
+  background-color: #0077e6;
+}
+
+/* Active style for odds buttons on the page */
+#page-sports .live-sports-odds-btn.selected {
+  background-color: #1e90ff !important;
+  color: #ffffff !important;
+}
+
+#page-sports .live-sports-odds-btn.selected .opt-text,
+#page-sports .live-sports-odds-btn.selected .odds-val {
+  color: #ffffff !important;
 }
 
 /* ==========================================================================
