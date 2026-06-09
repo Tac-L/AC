@@ -5185,3 +5185,28 @@ input:checked + .slider:before {
 .sub-modal-btn.save-btn:hover {
   background: #0975e6;
 }
+
+.sub-modal-inputs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sub-modal-inputs-list .sub-modal-input {
+  height: 34px;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  outline: none;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.sub-modal-inputs-list .sub-modal-input:focus {
+  border-color: #1e90ff;
+}
