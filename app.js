@@ -1078,8 +1078,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCloseLiveBetting = document.getElementById('btn-close-live-betting');
   const liveBettingPanel = document.getElementById('live-betting-panel');
   const liveChatViewContainer = document.getElementById('live-chat-view-container');
-  const livePlayTabs = document.querySelectorAll('.live-play-tab');
-  const liveOddsCards = document.querySelectorAll('.live-odds-card');
+  const livePlayTabs = document.querySelectorAll('#live-betting-panel .live-play-tab');
+  const liveOddsCards = document.querySelectorAll('#live-betting-panel .live-odds-card');
   const liveFast3TotalCost = document.getElementById('live-fast3-total-cost');
   const liveFast3ManualAmount = document.getElementById('live-fast3-input-amount');
   const btnLiveFast3Cancel = document.getElementById('btn-live-fast3-cancel');
@@ -2330,8 +2330,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Run initial timer
   startFast3Timer();
 
-  // Odds cards selections click binding
-  fast3OddsCards.forEach(card => {
+  // 1. Video Player Overlay Play sub-tabs switching logic
+  const embeddedPlayTabs = document.querySelectorAll('#embedded-game-panel .live-play-tab');
+  embeddedPlayTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      embeddedPlayTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const grids = document.querySelectorAll('.vid-fast3-options-wrap .live-betting-options-grid');
+      grids.forEach(g => {
+        g.style.display = 'none';
+        g.classList.remove('active');
+      });
+
+      const cat = tab.getAttribute('data-vid-cat');
+      const targetGrid = document.getElementById(`vid-fast3-grid-${cat}`);
+      if (targetGrid) {
+        targetGrid.style.display = 'grid';
+        targetGrid.classList.add('active');
+      }
+    });
+  });
+
+  // 2. Selection of Odds Cards
+  const embeddedOddsCards = document.querySelectorAll('.vid-fast3-options-wrap .live-odds-card');
+  embeddedOddsCards.forEach(card => {
     card.addEventListener('click', () => {
       card.classList.toggle('selected');
       const name = card.getAttribute('data-name');
@@ -2343,6 +2366,17 @@ document.addEventListener('DOMContentLoaded', () => {
       updateFast3Summary();
     });
   });
+
+  // 3. Cancel Selection
+  const btnFast3Cancel = document.getElementById('btn-fast3-cancel');
+  if (btnFast3Cancel) {
+    btnFast3Cancel.addEventListener('click', () => {
+      embeddedOddsCards.forEach(c => c.classList.remove('selected'));
+      fast3SelectedOdds.clear();
+      updateFast3Summary();
+      showPopupToast("已撤回所有投注选择");
+    });
+  }
 
   // Embedded Fast Three input listener to sync with manual amount typing
   if (fast3InputAmount) {
@@ -2390,18 +2424,22 @@ document.addEventListener('DOMContentLoaded', () => {
     btnFast3Submit.addEventListener('click', () => {
       const count = fast3SelectedOdds.size;
       if (count <= 0) {
-        alert("请选择投注盘口（单/双/大/小）！");
+        showPopupToast("请选择投注盘口！");
         return;
       }
       if (isNaN(fast3BetAmount) || fast3BetAmount <= 0) {
-        alert("请输入有效的单注金额！");
+        showPopupToast("请输入或选择有效的投注金额！");
+        return;
+      }
+      if (fast3BetAmount * count > balance) {
+        showPopupToast("余额不足，请先充值！");
         return;
       }
       
-      const activePlayTab = document.querySelector('.fast3-play-tabs .play-tab.active');
+      const activePlayTab = document.querySelector('#embedded-game-panel .live-play-tab.active');
       const category = activePlayTab ? activePlayTab.textContent.trim() : '大小';
       
-      const cards = document.querySelectorAll('#fast3-odds-grid .odds-card.selected');
+      const cards = document.querySelectorAll('.vid-fast3-options-wrap .live-odds-card.selected');
       const items = [];
       cards.forEach(card => {
         const name = card.getAttribute('data-name');
