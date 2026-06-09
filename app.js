@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } while (nextIndex === currentCarouselSlideIndex);
       
       switchCarouselToSlide(nextIndex);
-    }, 2500);
+    }, 4000);
   }
 
   // Dot manual click handlers
