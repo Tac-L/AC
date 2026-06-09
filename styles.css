@@ -5210,3 +5210,115 @@ input:checked + .slider:before {
 .sub-modal-inputs-list .sub-modal-input:focus {
   border-color: #1e90ff;
 }
+
+/* Custom Fast Three Play grids */
+.two-sides-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+}
+
+.double-grid, .triple-grid, .single-dice-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+}
+
+.sum-grid {
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 6px !important;
+}
+
+/* Adjust card height and content layouts */
+#page-fast-three .fast3-odds-card {
+  height: 90px !important; /* make cards taller like the screenshot */
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  color: #2d3748 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+
+/* Hover and selected states */
+#page-fast-three .fast3-odds-card:hover {
+  border-color: #cbd5e0 !important;
+}
+
+#page-fast-three .fast3-odds-card.selected {
+  border-color: #3b82f6 !important; /* blue border matching screenshot active theme */
+  background-color: rgba(59, 130, 246, 0.05) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Text styles inside cards */
+#page-fast-three .fast3-odds-card .odds-title {
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: #2d3748 !important;
+}
+
+#page-fast-three .fast3-odds-card .odds-value {
+  font-size: 0.68rem !important;
+  color: #718096 !important;
+  font-weight: 500 !important;
+  margin-top: auto;
+  margin-bottom: 8px;
+}
+
+#page-fast-three .fast3-odds-card.selected .odds-title {
+  color: #1e90ff !important;
+}
+
+#page-fast-three .fast3-odds-card.selected .odds-value {
+  color: #1e90ff !important;
+}
+
+/* Sum card specific style */
+.sum-card .sum-num {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.sum-card.selected .sum-num {
+  color: #1e90ff;
+}
+
+/* Dice pair, triple alignment inside card */
+.dice-pair, .dice-triple {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+/* Dice card styling */
+.dice-card .odds-value {
+  margin-top: auto !important;
+  margin-bottom: 8px !important;
+}
+
+/* Add custom styling for dice to display cleanly on white card background */
+#page-fast-three .dice {
+  border: 1px solid #cbd5e0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Sub-page game main container background adjustment */
+#page-fast-three .fast3-betting-main {
+  background-color: #f7fafc !important; /* lighter clean background matching screenshots */
+  padding: 12px !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+}
+
+/* Active tab style override for blue theme */
+#page-fast-three .fast3-tab.active {
+  background-color: #1e90ff !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(30, 144, 255, 0.3) !important;
+}
