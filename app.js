@@ -2452,14 +2452,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Collapse / Expand handlers
+  const btnCollapseEmbeddedGame = document.getElementById('btn-collapse-embedded-game');
+  const collapseAction = () => {
+    if (embeddedGamePanel) {
+      embeddedGamePanel.classList.add('collapsed');
+    }
+    // Remove active states from carousel
+    carouselGameItems.forEach(i => i.classList.remove('active'));
+  };
+
   if (btnCloseEmbeddedGame) {
-    btnCloseEmbeddedGame.addEventListener('click', () => {
-      if (embeddedGamePanel) {
-        embeddedGamePanel.classList.add('collapsed');
-      }
-      // Remove active states from carousel
-      carouselGameItems.forEach(i => i.classList.remove('active'));
-    });
+    btnCloseEmbeddedGame.addEventListener('click', collapseAction);
+  }
+  if (btnCollapseEmbeddedGame) {
+    btnCollapseEmbeddedGame.addEventListener('click', collapseAction);
   }
 
   carouselGameItems.forEach(item => {

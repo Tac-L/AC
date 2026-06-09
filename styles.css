@@ -3540,6 +3540,7 @@ input:checked + .slider:before {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .player-scroll-content::-webkit-scrollbar {
@@ -3684,10 +3685,13 @@ input:checked + .slider:before {
 
 /* Embedded game panel styling */
 .player-embedded-game-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 110;
   padding: 0;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: #f1f2f6;
