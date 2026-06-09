@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Global State: User Balance & Clock
   // ==========================================
   let balance = 1000.00;
+  let customQuickAmounts = [50, 100, 500, 1000];
+  let customMultipliers = [1, 2, 5, 10, 20];
+  let currentActiveGame = ''; // 'mark_six', 'fast_three_embedded', or 'fast_three'
+  let stagedItems = [];
+  let currentMultiplier = 1;
 
   function updateBalance(amount, isRelative = true) {
     if (isRelative) {
@@ -28,6 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fastthreeTopBal) fastthreeTopBal.textContent = balance.toFixed(2);
     const homeUserBal = document.getElementById('home-user-balance-display');
     if (homeUserBal) homeUserBal.textContent = formatted;
+
+    // Redesigned consoles and confirmation modal balance displays
+    const mark6Bal = document.getElementById('mark6-console-balance');
+    if (mark6Bal) mark6Bal.textContent = balance.toFixed(2);
+    const fast3Bal = document.getElementById('fast3-console-balance');
+    if (fast3Bal) fast3Bal.textContent = balance.toFixed(2);
+    const fastthreeBal = document.getElementById('fastthree-console-balance');
+    if (fastthreeBal) fastthreeBal.textContent = balance.toFixed(2);
+    const modalBal = document.getElementById('details-modal-balance-val');
+    if (modalBal) modalBal.textContent = balance.toFixed(2);
   }
 
   // Initial balance update
@@ -1487,64 +1502,60 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize odds
   renderBetOddsCards('twoside');
 
-  // Chips click to update amount
-  mark6Chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      mark6Chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-
-      const val = parseFloat(chip.getAttribute('data-val'));
+  // Mark Six input listener to sync with manual amount typing
+  if (mark6InputAmount) {
+    mark6InputAmount.addEventListener('input', (e) => {
+      let val = parseFloat(e.target.value) || 0;
       currentMarkSixBetAmount = val;
-      mark6InputAmount.value = val;
       updateBetSummaryCalculation();
+      
+      const bar = document.getElementById('mark6-quick-amounts');
+      if (bar) {
+        const buttons = bar.querySelectorAll('.quick-amount-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        buttons.forEach(b => {
+          if (parseFloat(b.getAttribute('data-val')) === val) {
+            b.classList.add('active');
+          }
+        });
+      }
     });
-  });
-
-  mark6InputAmount.addEventListener('input', (e) => {
-    let val = parseFloat(e.target.value);
-    if (!isNaN(val) && val > 0) {
-      currentMarkSixBetAmount = val;
-      updateBetSummaryCalculation();
-    }
-  });
+  }
 
   function updateBetSummaryCalculation() {
     const count = selectedOddsKeys.size;
     const total = count * currentMarkSixBetAmount;
-    betSelectedCount.textContent = count;
-    betTotalCost.textContent = total.toFixed(2);
+    if (betSelectedCount) betSelectedCount.textContent = count;
+    if (betTotalCost) betTotalCost.textContent = total.toFixed(2);
   }
 
-  // Submit Mark Six Bet
-  btnMark6Submit.addEventListener('click', () => {
-    const count = selectedOddsKeys.size;
-    const totalCost = count * currentMarkSixBetAmount;
-
-    if (count <= 0) {
-      alert("请至少选择一个投注盘口！");
-      return;
-    }
-    if (isNaN(currentMarkSixBetAmount) || currentMarkSixBetAmount <= 0) {
-      alert("请输入有效的每注投注金额！");
-      return;
-    }
-    if (totalCost > balance) {
-      alert("投注失败：您的可用余额不足！请先充值。");
-      return;
-    }
-
-    // Deduct
-    updateBalance(-totalCost);
-
-    // Alert
-    const betItemsStr = Array.from(selectedOddsKeys).join(', ');
-    alert(`🎉 六合彩投注成功！\n期数: 第 ${activeBetIssue} 期\n投注项目: [${betItemsStr}]\n注数: ${count} 注\n每注金额: ¥${currentMarkSixBetAmount.toFixed(2)}\n总投注额: ¥${totalCost.toFixed(2)} 元！`);
-
-    // Reset selection state
-    selectedOddsKeys.clear();
-    const activePlayType = document.querySelector('.play-side-tab.active').getAttribute('data-play');
-    renderBetOddsCards(activePlayType);
-  });
+  // Submit Mark Six Bet opens details confirmation modal
+  if (btnMark6Submit) {
+    btnMark6Submit.addEventListener('click', () => {
+      const count = selectedOddsKeys.size;
+      if (count <= 0) {
+        alert("请至少选择一个投注盘口！");
+        return;
+      }
+      if (isNaN(currentMarkSixBetAmount) || currentMarkSixBetAmount <= 0) {
+        alert("请输入有效的每注投注金额！");
+        return;
+      }
+      
+      const activePlayTab = document.querySelector('.play-side-tab.active');
+      const category = activePlayTab ? activePlayTab.textContent.trim() : '特码两面';
+      
+      const cards = document.querySelectorAll('#mark6-odds-grid .odds-card.selected');
+      const items = [];
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const odds = card.getAttribute('data-odds');
+        items.push({ name, odds, baseVal: currentMarkSixBetAmount, category });
+      });
+      
+      openBetDetailsModal('mark_six', items);
+    });
+  }
 
   // ==========================================
   // 9. Extra Controls & Helper Toast
@@ -1776,25 +1787,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Chips selections click binding
-  fast3Chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      fast3Chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const val = parseInt(chip.getAttribute('data-val'));
-      fast3BetAmount = val;
-      if (fast3InputAmount) fast3InputAmount.value = val;
-      updateFast3Summary();
-    });
-  });
-
-  // Input field listener
+  // Embedded Fast Three input listener to sync with manual amount typing
   if (fast3InputAmount) {
     fast3InputAmount.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      if (!isNaN(val) && val > 0) {
-        fast3BetAmount = val;
-        updateFast3Summary();
+      const val = parseInt(e.target.value) || 0;
+      fast3BetAmount = val;
+      updateFast3Summary();
+      
+      const bar = document.getElementById('fast3-quick-amounts');
+      if (bar) {
+        const buttons = bar.querySelectorAll('.quick-amount-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        buttons.forEach(b => {
+          if (parseInt(b.getAttribute('data-val')) === val) {
+            b.classList.add('active');
+          }
+        });
       }
     });
   }
@@ -1807,12 +1815,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fast3TotalCost) fast3TotalCost.textContent = total.toFixed(2);
   }
 
-  // Submit Fast Three Bet handler
+  // Submit Fast Three Bet opens details confirmation modal
   if (btnFast3Submit) {
     btnFast3Submit.addEventListener('click', () => {
       const count = fast3SelectedOdds.size;
-      const totalCost = count * fast3BetAmount;
-
       if (count <= 0) {
         alert("请选择投注盘口（单/双/大/小）！");
         return;
@@ -1821,21 +1827,19 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("请输入有效的单注金额！");
         return;
       }
-      if (totalCost > balance) {
-        alert("投注失败：虚拟账户余额不足！请先一键充值。");
-        return;
-      }
-
-      // Deduct from balance
-      updateBalance(-totalCost);
-
-      const itemsStr = Array.from(fast3SelectedOdds).join(', ');
-      showPopupToast(`投注成功！一分快三 [${itemsStr}] 共 ${count}注，金额 ¥${totalCost.toFixed(2)}`);
-
-      // Reset selection state
-      fast3SelectedOdds.clear();
-      fast3OddsCards.forEach(c => c.classList.remove('selected'));
-      updateFast3Summary();
+      
+      const activePlayTab = document.querySelector('.fast3-play-tabs .play-tab.active');
+      const category = activePlayTab ? activePlayTab.textContent.trim() : '大小';
+      
+      const cards = document.querySelectorAll('#fast3-odds-grid .odds-card.selected');
+      const items = [];
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const odds = card.getAttribute('data-odds');
+        items.push({ name, odds, baseVal: fast3BetAmount, category });
+      });
+      
+      openBetDetailsModal('fast_three_embedded', items);
     });
   }
 
@@ -1946,25 +1950,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Chips selections click binding
-  f3Chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      f3Chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const val = parseInt(chip.getAttribute('data-val'));
-      f3BetAmount = val;
-      if (f3InputAmount) f3InputAmount.value = val;
-      updateF3Summary();
-    });
-  });
-
-  // Input amount field listener
+  // Full-page Fast Three input listener to sync with manual amount typing
   if (f3InputAmount) {
     f3InputAmount.addEventListener('input', (e) => {
-      const val = parseInt(e.target.value);
-      if (!isNaN(val) && val > 0) {
-        f3BetAmount = val;
-        updateF3Summary();
+      const val = parseInt(e.target.value) || 0;
+      f3BetAmount = val;
+      updateF3Summary();
+      
+      const bar = document.getElementById('fastthree-quick-amounts');
+      if (bar) {
+        const buttons = bar.querySelectorAll('.quick-amount-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        buttons.forEach(b => {
+          if (parseInt(b.getAttribute('data-val')) === val) {
+            b.classList.add('active');
+          }
+        });
       }
     });
   }
@@ -1977,43 +1978,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (f3TotalCostDisplay) f3TotalCostDisplay.textContent = total.toFixed(2);
   }
 
-  // Cancel button handler
-  if (btnF3Cancel) {
-    btnF3Cancel.addEventListener('click', () => {
+  // Cancel button handler for full page Fast Three
+  const btnFastthreeCancel = document.getElementById('btn-fastthree-cancel');
+  if (btnFastthreeCancel) {
+    btnFastthreeCancel.addEventListener('click', () => {
       f3SelectedOdds.clear();
       f3OddsCards.forEach(c => c.classList.remove('selected'));
       updateF3Summary();
-      showPopupToast("投注已取消");
+      showPopupToast("已撤回选号");
     });
   }
 
-  // Double button handler
-  if (btnF3Double) {
-    btnF3Double.addEventListener('click', () => {
-      f3BetAmount *= 2;
-      if (f3InputAmount) f3InputAmount.value = f3BetAmount;
-      
-      // Update chip row active state
-      f3Chips.forEach(chip => {
-        const val = parseInt(chip.getAttribute('data-val'));
-        if (val === f3BetAmount) {
-          chip.classList.add('active');
-        } else {
-          chip.classList.remove('active');
-        }
-      });
-      
-      updateF3Summary();
-      showPopupToast(`单注金额已翻倍至 ¥${f3BetAmount}`);
-    });
-  }
-
-  // Confirm Bet button handler
-  if (btnF3Confirm) {
-    btnF3Confirm.addEventListener('click', () => {
+  // Submit Full Page Fast Three Bet opens details confirmation modal
+  const btnFastthreeSubmit = document.getElementById('btn-fastthree-submit');
+  if (btnFastthreeSubmit) {
+    btnFastthreeSubmit.addEventListener('click', () => {
       const count = f3SelectedOdds.size;
-      const totalCost = count * f3BetAmount;
-
       if (count <= 0) {
         alert("请选择投注盘口！");
         return;
@@ -2022,63 +2002,19 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("请输入有效的投注金额！");
         return;
       }
-      if (totalCost > balance) {
-        alert("投注失败：虚拟账户余额不足！请先一键充值。");
-        return;
-      }
-
-      // Deduct balance
-      updateBalance(-totalCost);
-
-      const selectionsStr = Array.from(f3SelectedOdds).join(', ');
-      showPopupToast(`投注成功！一分快三 [${selectionsStr}] 共 ${count}注，金额 ¥${totalCost.toFixed(2)}`);
-
-      // Save to last bet cache
-      f3LastBetSelectedOdds = new Set(f3SelectedOdds);
-      f3LastBetAmount = f3BetAmount;
-
-      // Reset selection state
-      f3SelectedOdds.clear();
-      f3OddsCards.forEach(c => c.classList.remove('selected'));
-      updateF3Summary();
-    });
-  }
-
-  // Restore Last Bet button handler
-  if (btnF3LastBet) {
-    btnF3LastBet.addEventListener('click', () => {
-      if (!f3LastBetSelectedOdds || f3LastBetSelectedOdds.size === 0) {
-        showPopupToast("未找到上次投注记录！");
-        return;
-      }
-      // Clear current selections
-      f3SelectedOdds.clear();
-      f3OddsCards.forEach(c => c.classList.remove('selected'));
-
-      // Restore from cache
-      f3BetAmount = f3LastBetAmount;
-      if (f3InputAmount) f3InputAmount.value = f3BetAmount;
-
-      f3Chips.forEach(chip => {
-        const val = parseInt(chip.getAttribute('data-val'));
-        if (val === f3BetAmount) {
-          chip.classList.add('active');
-        } else {
-          chip.classList.remove('active');
-        }
+      
+      const activePlayTab = document.querySelector('#page-fast-three .fast3-tab.active');
+      const category = activePlayTab ? activePlayTab.textContent.trim() : '大小';
+      
+      const cards = document.querySelectorAll('#page-fast-three .fast3-odds-card.selected');
+      const items = [];
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const odds = card.getAttribute('data-odds');
+        items.push({ name, odds, baseVal: f3BetAmount, category });
       });
-
-      f3LastBetSelectedOdds.forEach(item => {
-        f3SelectedOdds.add(item);
-        f3OddsCards.forEach(card => {
-          if (card.getAttribute('data-name') === item) {
-            card.classList.add('selected');
-          }
-        });
-      });
-
-      updateF3Summary();
-      showPopupToast("已还原上次投注内容");
+      
+      openBetDetailsModal('fast_three', items);
     });
   }
 
@@ -2163,6 +2099,384 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize dice state to match screenshot (1, 3, 6)
   renderF3Dice([1, 3, 6]);
+
+  // ==========================================================================
+  // 12. Redesigned Console, Bet Details Modal, and Sub-Modals Actions
+  // ==========================================================================
+  const modalBetDetails = document.getElementById('modal-bet-details');
+  const detailsItemsContainer = document.getElementById('bet-details-items-container');
+  const detailsGameTitle = document.getElementById('bet-details-game-title');
+  const modalEditMultipliers = document.getElementById('modal-edit-multipliers');
+  const modalEditQuickAmounts = document.getElementById('modal-edit-quick-amounts');
+
+  // Open Bet Details Modal
+  function openBetDetailsModal(gameType, itemsList) {
+    currentActiveGame = gameType;
+    stagedItems = JSON.parse(JSON.stringify(itemsList)); // deep clone items to edit freely
+    currentMultiplier = 1;
+
+    // Set game title
+    if (gameType === 'mark_six') {
+      detailsGameTitle.textContent = '一分六合彩 投注详情';
+    } else if (gameType === 'fast_three_embedded') {
+      detailsGameTitle.textContent = '一分快三(视频) 投注详情';
+    } else {
+      detailsGameTitle.textContent = '一分快三 投注详情';
+    }
+
+    // Render components
+    renderMultiplierBar();
+    renderStagedItems();
+    updateDetailsModalSummary();
+
+    // Sync balance display inside modal
+    const modalBal = document.getElementById('details-modal-balance-val');
+    if (modalBal) modalBal.textContent = balance.toFixed(2);
+
+    // Open modal
+    modalBetDetails.classList.add('active');
+  }
+
+  // Render Staged items inside Details modal
+  function renderStagedItems() {
+    if (!detailsItemsContainer) return;
+    detailsItemsContainer.innerHTML = '';
+
+    stagedItems.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'bet-item-card';
+      card.innerHTML = `
+        <div class="item-info">
+          <span class="item-category">${item.category || '投注项'}</span>
+          <span class="item-name">${item.name}</span>
+        </div>
+        <div class="item-right">
+          <span class="item-odds-lbl">赔率 <span class="item-odds-val">${item.odds}</span></span>
+          <input type="number" class="item-amount-input" value="${item.baseVal}" data-index="${index}">
+          <i class="fa-solid fa-trash-can item-delete-icon" data-index="${index}"></i>
+        </div>
+      `;
+
+      // Bind inline amount change
+      const amountInput = card.querySelector('.item-amount-input');
+      amountInput.addEventListener('input', (e) => {
+        let val = parseFloat(e.target.value) || 0;
+        stagedItems[index].baseVal = val;
+        updateDetailsModalSummary();
+      });
+
+      // Bind delete button click
+      const deleteIcon = card.querySelector('.item-delete-icon');
+      deleteIcon.addEventListener('click', () => {
+        stagedItems.splice(index, 1);
+        renderStagedItems();
+        updateDetailsModalSummary();
+      });
+
+      detailsItemsContainer.appendChild(card);
+    });
+  }
+
+  // Update totals inside Details modal
+  function updateDetailsModalSummary() {
+    let count = stagedItems.length;
+    let sum = 0;
+    stagedItems.forEach(item => {
+      sum += item.baseVal;
+    });
+    let totalCost = sum * currentMultiplier;
+
+    const countVal = document.getElementById('details-modal-count-val');
+    const costVal = document.getElementById('details-modal-cost-val');
+
+    if (countVal) countVal.textContent = count;
+    if (costVal) costVal.textContent = totalCost.toFixed(2);
+  }
+
+  // Render Multiplier options row inside Details modal
+  function renderMultiplierBar() {
+    const bar = document.getElementById('bet-details-multipliers');
+    if (!bar) return;
+
+    // Clear everything except the pencil edit button
+    const editBtn = document.getElementById('btn-edit-multipliers');
+    bar.innerHTML = '';
+
+    customMultipliers.forEach(mult => {
+      const btn = document.createElement('div');
+      btn.className = 'multiplier-btn';
+      if (mult === currentMultiplier) {
+        btn.classList.add('active');
+      }
+      btn.setAttribute('data-mult', mult);
+      btn.textContent = `${mult}倍`;
+
+      btn.addEventListener('click', () => {
+        currentMultiplier = mult;
+        const buttons = bar.querySelectorAll('.multiplier-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateDetailsModalSummary();
+      });
+
+      bar.appendChild(btn);
+    });
+
+    if (editBtn) {
+      bar.appendChild(editBtn);
+    }
+  }
+
+  // Render Quick Amounts bar on game bottom consoles
+  function renderQuickAmountsBars() {
+    const prefixes = ['mark6', 'fast3', 'fastthree'];
+    prefixes.forEach(prefix => {
+      const bar = document.getElementById(`${prefix}-quick-amounts`);
+      if (!bar) return;
+
+      const editBtn = document.getElementById(`btn-edit-${prefix}-quick`);
+      bar.innerHTML = '';
+
+      // Re-append edit button
+      if (editBtn) {
+        bar.appendChild(editBtn);
+      }
+
+      // Append quick amount buttons
+      customQuickAmounts.forEach((amt, index) => {
+        const btn = document.createElement('div');
+        btn.className = 'quick-amount-btn';
+        if (index === 0) {
+          btn.classList.add('active');
+          const input = document.getElementById(`${prefix}-input-amount`);
+          if (input) input.value = amt;
+          if (prefix === 'mark6') {
+            currentMarkSixBetAmount = amt;
+            updateBetSummaryCalculation();
+          } else if (prefix === 'fast3') {
+            fast3BetAmount = amt;
+            updateFast3Summary();
+          } else if (prefix === 'fastthree') {
+            f3BetAmount = amt;
+            updateF3Summary();
+          }
+        }
+
+        btn.setAttribute('data-val', amt);
+        btn.textContent = amt;
+
+        btn.addEventListener('click', () => {
+          const buttons = bar.querySelectorAll('.quick-amount-btn');
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const val = parseFloat(amt);
+          const input = document.getElementById(`${prefix}-input-amount`);
+          if (input) input.value = val;
+
+          if (prefix === 'mark6') {
+            currentMarkSixBetAmount = val;
+            updateBetSummaryCalculation();
+          } else if (prefix === 'fast3') {
+            fast3BetAmount = val;
+            updateFast3Summary();
+          } else if (prefix === 'fastthree') {
+            f3BetAmount = val;
+            updateF3Summary();
+          }
+        });
+
+        bar.appendChild(btn);
+      });
+    });
+  }
+
+  // Bind sub-modals edit buttons
+  const btnEditMultipliers = document.getElementById('btn-edit-multipliers');
+  if (btnEditMultipliers) {
+    btnEditMultipliers.addEventListener('click', () => {
+      for (let i = 1; i <= 5; i++) {
+        const input = document.getElementById(`input-mult-${i}`);
+        if (input) {
+          input.value = customMultipliers[i - 1];
+        }
+      }
+      modalEditMultipliers.classList.add('active');
+    });
+  }
+
+  const editQuickBtns = ['btn-edit-mark6-quick', 'btn-edit-fast3-quick', 'btn-edit-fastthree-quick'];
+  editQuickBtns.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        for (let i = 1; i <= 4; i++) {
+          const input = document.getElementById(`input-quick-${i}`);
+          if (input) {
+            input.value = customQuickAmounts[i - 1];
+          }
+        }
+        modalEditQuickAmounts.classList.add('active');
+      });
+    }
+  });
+
+  // Modal Closures
+  const btnCloseBetDetails = document.getElementById('btn-close-bet-details');
+  if (btnCloseBetDetails) {
+    btnCloseBetDetails.addEventListener('click', () => {
+      modalBetDetails.classList.remove('active');
+    });
+  }
+  const btnCancelBetDetails = document.getElementById('btn-cancel-bet-details');
+  if (btnCancelBetDetails) {
+    btnCancelBetDetails.addEventListener('click', () => {
+      modalBetDetails.classList.remove('active');
+    });
+  }
+
+  const btnCloseEditMultipliers = document.getElementById('btn-close-edit-multipliers');
+  if (btnCloseEditMultipliers) {
+    btnCloseEditMultipliers.addEventListener('click', () => {
+      modalEditMultipliers.classList.remove('active');
+    });
+  }
+
+  const btnCloseEditQuickAmounts = document.getElementById('btn-close-edit-quick-amounts');
+  if (btnCloseEditQuickAmounts) {
+    btnCloseEditQuickAmounts.addEventListener('click', () => {
+      modalEditQuickAmounts.classList.remove('active');
+    });
+  }
+
+  // Multiplier sub-modal actions
+  const btnSaveMultipliers = document.getElementById('btn-save-multipliers');
+  if (btnSaveMultipliers) {
+    btnSaveMultipliers.addEventListener('click', () => {
+      const newMults = [];
+      for (let i = 1; i <= 5; i++) {
+        const input = document.getElementById(`input-mult-${i}`);
+        const val = parseInt(input.value);
+        if (isNaN(val) || val <= 0) {
+          alert("请输入有效的正整数倍数！");
+          return;
+        }
+        newMults.push(val);
+      }
+      customMultipliers = newMults;
+      renderMultiplierBar();
+      modalEditMultipliers.classList.remove('active');
+      showPopupToast("倍数配置保存成功！");
+    });
+  }
+
+  const btnResetMultipliersDefault = document.getElementById('btn-reset-multipliers-default');
+  if (btnResetMultipliersDefault) {
+    btnResetMultipliersDefault.addEventListener('click', () => {
+      customMultipliers = [1, 2, 5, 10, 20];
+      for (let i = 1; i <= 5; i++) {
+        const input = document.getElementById(`input-mult-${i}`);
+        if (input) input.value = customMultipliers[i - 1];
+      }
+      renderMultiplierBar();
+      modalEditMultipliers.classList.remove('active');
+      showPopupToast("已恢复默认倍数配置！");
+    });
+  }
+
+  // Quick amounts sub-modal actions
+  const btnSaveQuickAmounts = document.getElementById('btn-save-quick-amounts');
+  if (btnSaveQuickAmounts) {
+    btnSaveQuickAmounts.addEventListener('click', () => {
+      const newAmounts = [];
+      for (let i = 1; i <= 4; i++) {
+        const input = document.getElementById(`input-quick-${i}`);
+        const val = parseFloat(input.value);
+        if (isNaN(val) || val <= 0) {
+          alert("请输入有效的正数金额！");
+          return;
+        }
+        newAmounts.push(val);
+      }
+      customQuickAmounts = newAmounts;
+      renderQuickAmountsBars();
+      modalEditQuickAmounts.classList.remove('active');
+      showPopupToast("快捷金额配置保存成功！");
+    });
+  }
+
+  const btnResetQuickAmountsDefault = document.getElementById('btn-reset-quick-amounts-default');
+  if (btnResetQuickAmountsDefault) {
+    btnResetQuickAmountsDefault.addEventListener('click', () => {
+      customQuickAmounts = [50, 100, 500, 1000];
+      for (let i = 1; i <= 4; i++) {
+        const input = document.getElementById(`input-quick-${i}`);
+        if (input) input.value = customQuickAmounts[i - 1];
+      }
+      renderQuickAmountsBars();
+      modalEditQuickAmounts.classList.remove('active');
+      showPopupToast("已恢复默认快捷金额！");
+    });
+  }
+
+  // Final checkout confirm button inside Details modal
+  const btnConfirmBetDetails = document.getElementById('btn-confirm-bet-details');
+  if (btnConfirmBetDetails) {
+    btnConfirmBetDetails.addEventListener('click', () => {
+      if (stagedItems.length === 0) {
+        alert("当前没有可投注的项目！");
+        return;
+      }
+
+      let sum = 0;
+      stagedItems.forEach(item => {
+        sum += item.baseVal;
+      });
+      const totalCost = sum * currentMultiplier;
+
+      if (totalCost > balance) {
+        alert("投注失败：虚拟账户余额不足！请先充值。");
+        return;
+      }
+
+      // Deduct balance
+      updateBalance(-totalCost);
+
+      let gameName = '';
+      if (currentActiveGame === 'mark_six') {
+        gameName = '一分六合彩';
+      } else if (currentActiveGame === 'fast_three_embedded') {
+        gameName = '一分快三(视频)';
+      } else {
+        gameName = '一分快三';
+      }
+
+      showPopupToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);
+
+      // Reset source game state
+      if (currentActiveGame === 'mark_six') {
+        selectedOddsKeys.clear();
+        const activePlayType = document.querySelector('.play-side-tab.active').getAttribute('data-play');
+        renderBetOddsCards(activePlayType);
+        updateBetSummaryCalculation();
+      } else if (currentActiveGame === 'fast_three_embedded') {
+        fast3SelectedOdds.clear();
+        fast3OddsCards.forEach(c => c.classList.remove('selected'));
+        updateFast3Summary();
+      } else if (currentActiveGame === 'fast_three') {
+        f3SelectedOdds.clear();
+        f3OddsCards.forEach(c => c.classList.remove('selected'));
+        updateF3Summary();
+      }
+
+      // Close modal
+      modalBetDetails.classList.remove('active');
+    });
+  }
+
+  // Initialize balance and consoles
+  updateBalance(0);
+  renderQuickAmountsBars();
 
   // Run initial timer
   startF3CountdownTimer();
