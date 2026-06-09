@@ -2955,6 +2955,119 @@ document.addEventListener('DOMContentLoaded', () => {
   // Run initial timer
   startF3CountdownTimer();
 
+  // ── 快三新版侧边栏互动 ──────────────────────────────────────
+  (function() {
+    var pageFastThreeNew = document.getElementById('page-fast-three');
+    if (!pageFastThreeNew) return;
+
+    // 侧边栏导航切换
+    var navItems = pageFastThreeNew.querySelectorAll('.f3new-nav-item');
+    var panels = pageFastThreeNew.querySelectorAll('.f3new-panel');
+    navItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        var play = item.getAttribute('data-f3play');
+        navItems.forEach(function(n) { n.classList.remove('active'); });
+        panels.forEach(function(p) { p.classList.remove('active'); });
+        item.classList.add('active');
+        var panel = document.getElementById('f3panel-' + play);
+        if (panel) panel.classList.add('active');
+        // 滚动到顶
+        var content = document.getElementById('f3new-content');
+        if (content) content.scrollTop = 0;
+      });
+    });
+
+    // 投注格子点击 + 快捷金额选择
+    var f3newSelectedItem = null;
+    var f3newAmount = 10;
+    var f3newBetCount = 0;
+
+    var betItems = pageFastThreeNew.querySelectorAll('.f3new-bet-item');
+    betItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        if (f3newSelectedItem) f3newSelectedItem.classList.remove('selected');
+        item.classList.add('selected');
+        f3newSelectedItem = item;
+        f3newBetCount = 1;
+        updateF3newSummary();
+      });
+    });
+
+    function updateF3newSummary() {
+      var countEl = document.getElementById('fastthree-selected-count');
+      var costEl = document.getElementById('fastthree-total-cost');
+      if (countEl) countEl.textContent = f3newBetCount;
+      if (costEl) costEl.textContent = (f3newBetCount * f3newAmount).toFixed(0);
+    }
+
+    // 快捷金额按钮
+    var quickBtns = pageFastThreeNew.querySelectorAll('.f3new-quick-btn[data-val]');
+    var inputAmount = pageFastThreeNew.querySelector('.f3new-input-amount');
+    quickBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        quickBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        f3newAmount = parseFloat(btn.getAttribute('data-val')) || 10;
+        if (inputAmount) inputAmount.value = f3newAmount;
+        updateF3newSummary();
+      });
+    });
+
+    if (inputAmount) {
+      inputAmount.addEventListener('input', function() {
+        f3newAmount = parseFloat(inputAmount.value) || 0;
+        updateF3newSummary();
+      });
+    }
+
+    // 重置按钮
+    var resetBtn = pageFastThreeNew.querySelector('.f3new-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        if (f3newSelectedItem) { f3newSelectedItem.classList.remove('selected'); f3newSelectedItem = null; }
+        f3newBetCount = 0;
+        updateF3newSummary();
+      });
+    }
+
+    // 投注按钮
+    var submitBtn = pageFastThreeNew.querySelector('.f3new-submit-btn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        if (!f3newSelectedItem) {
+          showPopupToast('请先选择投注项目！');
+          return;
+        }
+        var name = f3newSelectedItem.getAttribute('data-f3name') || '未知';
+        var total = f3newBetCount * f3newAmount;
+        if (total <= 0) { showPopupToast('请输入有效金额！'); return; }
+        if (total > balance) { showPopupToast('余额不足，请先充值！'); return; }
+        updateBalance(-total);
+        showPopupToast('🎉 一分快三【' + name + '】投注成功！¥' + total.toFixed(2));
+        if (f3newSelectedItem) { f3newSelectedItem.classList.remove('selected'); f3newSelectedItem = null; }
+        f3newBetCount = 0;
+        updateF3newSummary();
+      });
+    }
+
+    // 余额刷新
+    var refreshBalBtn = pageFastThreeNew.querySelector('#btn-refresh-fastthree-console-balance');
+    if (refreshBalBtn) {
+      refreshBalBtn.addEventListener('click', function() {
+        updateBalance(0);
+        showPopupToast('余额已同步！');
+      });
+    }
+
+    // 返回按钮
+    var backBtn = pageFastThreeNew.querySelector('#btn-back-to-lobby-fastthree');
+    if (backBtn) {
+      backBtn.addEventListener('click', function() {
+        pageFastThreeNew.classList.remove('active');
+      });
+    }
+  })();
+
   // ── 首页卡片轮播图 ──────────────────────────────────────────
   function initHomeCardCarousels() {
     const slideshows = document.querySelectorAll('.home-card-slideshow');
@@ -2962,11 +3075,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const slides = ss.querySelectorAll('.slide');
       if (slides.length < 2) return;
       let current = 0;
-      setInterval(function() {
-        slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('active');
-      }, 2000);
+      // 每张卡随机偏移初始延迟（0~2000ms），避免全部同步切换
+      var initDelay = Math.floor(Math.random() * 2000);
+      function scheduleNext() {
+        // 每次切换随机等待 2000~4000ms
+        var delay = 2000 + Math.floor(Math.random() * 2000);
+        setTimeout(function() {
+          slides[current].classList.remove('active');
+          current = (current + 1) % slides.length;
+          slides[current].classList.add('active');
+          scheduleNext();
+        }, delay);
+      }
+      setTimeout(scheduleNext, initDelay);
     });
   }
   initHomeCardCarousels();

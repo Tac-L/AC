@@ -6530,8 +6530,400 @@ input:checked + .slider:before {
   background: linear-gradient(135deg, #c0392b, #e74c3c);
 }
 
-/* 游戏区 (绿翠) */
-.home-game-card .home-card-bottom-bar {
-  background: linear-gradient(135deg, #1a7a4a, #2ecc71);
+/* ============================================================
+   快三游戏新版侧边栏布局 (f3new)
+   ============================================================ */
+
+#page-fast-three {
+  display: none;
+  flex-direction: column;
+  background: #f2f4f7;
+  height: 100%;
+  overflow: hidden;
 }
+
+#page-fast-three.active {
+  display: flex;
+}
+
+/* 顶部标题栏 */
+.f3new-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #3b5bdb;
+  padding: 10px 14px;
+  flex-shrink: 0;
+}
+
+.f3new-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.f3new-back-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.f3new-title {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.f3new-menu-icon {
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* 期号栏 */
+.f3new-issue-bar {
+  background: #fff;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e9ecef;
+  flex-shrink: 0;
+}
+
+.f3new-issue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.f3new-issue-label {
+  font-size: 0.72rem;
+  color: #444;
+}
+
+.f3new-issue-label strong {
+  color: #222;
+  font-weight: 700;
+}
+
+.f3new-last-dice-row {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.f3new-mini-dice {
+  font-size: 0.65rem;
+  color: #555;
+  letter-spacing: -1px;
+}
+
+.f3new-mini-dice.red-dot-mini {
+  color: #e03131;
+}
+
+.f3new-trophy {
+  color: #aaa;
+  font-size: 0.75rem;
+  margin-left: auto;
+}
+
+.f3new-countdown-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.f3new-next-issue {
+  font-size: 0.68rem;
+  color: #444;
+  font-weight: 600;
+}
+
+.f3new-countdown-label {
+  font-size: 0.65rem;
+  color: #555;
+}
+
+.f3new-red-time {
+  color: #e03131;
+  font-weight: 700;
+}
+
+.f3new-play-icon {
+  color: #999;
+  font-size: 0.75rem;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+/* 主体：左 + 右 */
+.f3new-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 左侧导航栏 */
+.f3new-sidebar {
+  width: 68px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e9ecef;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.f3new-nav-item {
+  padding: 14px 4px;
+  font-size: 0.68rem;
+  color: #555;
+  text-align: center;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid #f1f3f5;
+  line-height: 1.3;
+  transition: all 0.15s;
+}
+
+.f3new-nav-item.active {
+  color: #3b5bdb;
+  border-left-color: #3b5bdb;
+  font-weight: 700;
+  background: #f0f4ff;
+}
+
+/* 右侧内容区 */
+.f3new-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: #f2f4f7;
+}
+
+/* Panel */
+.f3new-panel {
+  display: none;
+}
+
+.f3new-panel.active {
+  display: block;
+}
+
+/* 分组标题 */
+.f3new-group-title {
+  font-size: 0.65rem;
+  color: #555;
+  padding: 4px 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f3new-hot-label {
+  color: #e03131;
+  font-size: 0.6rem;
+}
+
+/* 2列行 */
+.f3new-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+/* 单行宽按钮 */
+.f3new-row-single {
+  margin-bottom: 6px;
+}
+
+/* 投注格子 */
+.f3new-bet-item {
+  background: #fff;
+  border-radius: 6px;
+  border: 1.5px solid #dee2e6;
+  padding: 10px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.12s;
+  min-height: 44px;
+  gap: 4px;
+}
+
+.f3new-bet-item:active,
+.f3new-bet-item.selected {
+  border-color: #3b5bdb;
+  background: #e8edff;
+}
+
+.f3new-bet-item.blue-item {
+  border-color: #3b5bdb;
+}
+
+.f3new-bet-item.blue-item .f3new-dice-label {
+  background: #3b5bdb;
+  color: #fff;
+}
+
+.f3new-bet-item.orange-item {
+  border-color: #e8890c;
+}
+
+.f3new-bet-item.orange-item .f3new-dice-label {
+  background: #e8890c;
+  color: #fff;
+}
+
+/* 全宽按钮 */
+.f3new-wide-item {
+  width: 100%;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 骰子标签（文字类，如：大小单双） */
+.f3new-dice-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #f1f3f5;
+  color: #333;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* 骰子点位（圆点字符） */
+.f3new-dice-dot {
+  font-size: 0.6rem;
+  letter-spacing: -1px;
+  color: #333;
+  line-height: 1;
+}
+
+.f3new-dice-dot.red-dot-mini {
+  color: #e03131;
+}
+
+/* 赔率数字 */
+.f3new-odds {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* 底部投注控制台 */
+.f3new-console {
+  background: #fff;
+  border-top: 1px solid #dee2e6;
+  padding: 8px 10px;
+  flex-shrink: 0;
+}
+
+.f3new-console-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.f3new-console-info strong {
+  color: #222;
+}
+
+.f3new-console-amounts {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.f3new-quick-btn {
+  flex: 1;
+  background: #f1f3f5;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.65rem;
+  padding: 5px 2px;
+  cursor: pointer;
+  transition: all 0.12s;
+  color: #333;
+}
+
+.f3new-quick-btn.active {
+  background: #3b5bdb;
+  color: #fff;
+  border-color: #3b5bdb;
+}
+
+.f3new-edit-btn {
+  flex: 0 0 28px;
+  background: #f8f9fa;
+  color: #666;
+  font-size: 0.6rem;
+}
+
+.f3new-console-input-row {
+  margin-bottom: 6px;
+}
+
+.f3new-input-amount {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  outline: none;
+  color: #333;
+  background: #fff;
+}
+
+.f3new-input-amount:focus {
+  border-color: #3b5bdb;
+}
+
+.f3new-console-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.f3new-reset-btn {
+  flex: 1;
+  background: #f1f3f5;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+}
+
+.f3new-submit-btn {
+  flex: 2;
+  background: #3b5bdb;
+  border: none;
+  border-radius: 6px;
+  padding: 9px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.f3new-submit-btn:hover {
+  background: #2f4ec9;
+}
+
 

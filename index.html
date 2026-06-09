@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>黑豹娱乐城模拟器 | 手机版面功能演示</title>
-  <link rel="stylesheet" href="styles.css?v=3.8">
+  <link rel="stylesheet" href="styles.css?v=3.9">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1335,8 +1335,8 @@
                   <div class="home-map-card" data-route="page-sports">
                     <div class="home-card-slideshow">
                       <img src="assets/sports_cover.png" class="slide active">
-                      <img src="assets/game_casino.png" class="slide">
                       <img src="assets/chat_cover.png" class="slide">
+                      <img src="assets/game_fast3.png" class="slide">
                       <img src="assets/drawing.png" class="slide">
                       <div class="home-card-badge"><i class="fa-solid fa-fire"></i> 4.2w</div>
                     </div>
@@ -1380,7 +1380,7 @@
                   <div class="home-map-card" data-route="page-games-lottery">
                     <div class="home-card-slideshow">
                       <img src="assets/gold_dragon_bg.png" class="slide active">
-                      <img src="assets/game_lottery.png" class="slide">
+                      <img src="assets/origami.png" class="slide">
                       <img src="assets/game_fast3.png" class="slide">
                       <img src="assets/drawing.png" class="slide">
                       <div class="home-card-badge"><i class="fa-solid fa-fire"></i> 热门</div>
@@ -1395,7 +1395,7 @@
                   <div class="home-map-card" data-route="page-games-slots">
                     <div class="home-card-slideshow">
                       <img src="assets/game_mahjong.png" class="slide active">
-                      <img src="assets/game_slots.png" class="slide">
+                      <img src="assets/lego.png" class="slide">
                       <img src="assets/drawing.png" class="slide">
                       <img src="assets/origami.png" class="slide">
                       <div class="home-card-badge"><i class="fa-solid fa-fire"></i> 97.5%</div>
@@ -1446,7 +1446,7 @@
                   <div class="home-live-card" data-room-name="体育红单基地">
                     <div class="home-card-slideshow">
                       <img src="assets/sports_cover.png" class="slide active">
-                      <img src="assets/game_casino.png" class="slide">
+                      <img src="assets/lego.png" class="slide">
                       <img src="assets/chat_cover.png" class="slide">
                       <img src="assets/drawing.png" class="slide">
                       <div class="home-card-badge"><i class="fa-solid fa-fire"></i> 2.8w</div>
@@ -1554,7 +1554,7 @@
                   <div class="home-game-card" data-game-target="canada28">
                     <div class="home-card-slideshow">
                       <img src="assets/sports_cover.png" class="slide active">
-                      <img src="assets/game_casino.png" class="slide">
+                      <img src="assets/game_mahjong.png" class="slide">
                       <img src="assets/chat_cover.png" class="slide">
                       <img src="assets/drawing.png" class="slide">
                       <div class="home-card-badge"><i class="fa-solid fa-circle-nodes"></i> 热门</div>
@@ -1969,277 +1969,388 @@
               </div>
             </div> <!-- End Sub Game Page -->
 
-            <!-- SUB-PAGE: 一分快三 (One-Minute Fast Three - Matches Screenshot) -->
+            <!-- SUB-PAGE: 一分快三 (New Sidebar Layout) -->
             <div class="sub-game-page" id="page-fast-three">
-              <!-- Game Header -->
-              <div class="sub-game-header">
-                <button id="btn-back-to-lobby-fastthree" class="game-back-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                <h3>一分快三</h3>
-                <div class="header-balance-box">
-                  <span id="fastthree-top-balance">1000.00</span>
-                  <i class="fa-solid fa-rotate" id="btn-refresh-fastthree-balance"></i>
+
+              <!-- ── 顶部标题栏 ── -->
+              <div class="f3new-header">
+                <div class="f3new-header-left">
+                  <button id="btn-back-to-lobby-fastthree" class="f3new-back-btn">
+                    <i class="fa-solid fa-th-large"></i>
+                  </button>
+                  <span class="f3new-title">一分快三</span>
+                </div>
+                <div class="f3new-header-right">
+                  <i class="fa-solid fa-bars f3new-menu-icon"></i>
                 </div>
               </div>
 
-              <!-- Opening Result panel -->
-              <div class="opening-result-panel">
-                <div class="result-top-info">
-                  <span class="issue-number">第<strong id="fastthree-issue">202606051280</strong>期</span>
-                  <span class="countdown-clock">本期截止 <strong id="fastthree-timer">00 : 30</strong></span>
+              <!-- ── 期号 + 上期结果行 ── -->
+              <div class="f3new-issue-bar">
+                <div class="f3new-issue-row">
+                  <span class="f3new-issue-label"><strong id="fastthree-issue">90636</strong>期</span>
+                  <div class="f3new-last-dice-row">
+                    <!-- 上期骰子（小圆点样式） -->
+                    <span class="f3new-mini-dice red-dot-mini">•</span>
+                    <span class="f3new-mini-dice">••</span>
+                    <span class="f3new-mini-dice">••• </span>
+                  </div>
+                  <i class="fa-solid fa-trophy f3new-trophy"></i>
                 </div>
-                
-                <!-- Open Dice Numbers (CSS-drawn premium dice) -->
-                <div class="balls-row" id="fastthree-balls-container" style="justify-content: center; gap: 12px; padding: 4px 0;">
-                  <!-- Styled dice faces -->
-                  <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                  <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                  <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                </div>
-
-                <!-- Opened tags (Sum / Size / Odd-Even) -->
-                <div class="balls-tags-row" id="fastthree-tags-container">
-                  <span class="tag-box bg-white" id="fastthree-sum-tag">10</span>
-                  <span class="tag-box bg-blue" id="fastthree-size-tag">小</span>
-                  <span class="tag-box bg-red" id="fastthree-oe-tag">双</span>
+                <div class="f3new-countdown-row">
+                  <span class="f3new-next-issue"><strong id="fastthree-next-issue">90637</strong>期</span>
+                  <span class="f3new-countdown-label">封盘 <strong id="fastthree-timer" class="f3new-red-time">00:00:00</strong></span>
+                  <span class="f3new-countdown-label">开奖 <strong id="fastthree-open-timer" class="f3new-red-time">00:00:00</strong></span>
+                  <i class="fa-solid fa-circle-play f3new-play-icon"></i>
                 </div>
               </div>
 
-              <!-- Quick Game Menu Tab Bar -->
-              <div class="game-sub-tabs">
-                <div class="sub-tab active">全部游戏</div>
-                <div class="sub-tab">玩法说明</div>
-                <div class="sub-tab">投注报表</div>
-                <div class="sub-tab">开奖记录</div>
-                <div class="sub-tab">投注历史</div>
+              <!-- ── 主体：左侧 + 右侧 ── -->
+              <div class="f3new-body">
+
+                <!-- 左侧玩法导航 -->
+                <div class="f3new-sidebar">
+                  <div class="f3new-nav-item active" data-f3play="changlong">长龙</div>
+                  <div class="f3new-nav-item" data-f3play="sanjun">三军</div>
+                  <div class="f3new-nav-item" data-f3play="duanpai">短牌</div>
+                  <div class="f3new-nav-item" data-f3play="changpai">长牌</div>
+                  <div class="f3new-nav-item" data-f3play="quansha">全骰</div>
+                  <div class="f3new-nav-item" data-f3play="hezhi">和值</div>
+                  <div class="f3new-nav-item" data-f3play="ertongbao">二同号</div>
+                  <div class="f3new-nav-item" data-f3play="santong">三不同</div>
+                </div>
+
+                <!-- 右侧内容区（可滚动） -->
+                <div class="f3new-content" id="f3new-content">
+
+                  <!-- 长龙 panel -->
+                  <div class="f3new-panel active" id="f3panel-changlong">
+                    <div class="f3new-group-title">和值-单 <span class="f3new-hot-label">5 期</span></div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="单" data-f3odds="2.05"><span class="f3new-dice-label">单</span><span class="f3new-odds">2.05</span></div>
+                      <div class="f3new-bet-item orange-item" data-f3name="双" data-f3odds="2.05"><span class="f3new-dice-label">双</span><span class="f3new-odds">2.05</span></div>
+                    </div>
+                    <div class="f3new-group-title">和值-小 <span class="f3new-hot-label">5 期</span></div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="小" data-f3odds="2.05"><span class="f3new-dice-label">小</span><span class="f3new-odds">2.05</span></div>
+                      <div class="f3new-bet-item orange-item" data-f3name="大" data-f3odds="2.05"><span class="f3new-dice-label">大</span><span class="f3new-odds">2.05</span></div>
+                    </div>
+                  </div>
+
+                  <!-- 三军 panel -->
+                  <div class="f3new-panel" id="f3panel-sanjun">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三军1" data-f3odds="2">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-odds">2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三军2" data-f3odds="2">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-odds">2</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三军3" data-f3odds="2">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-odds">2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三军4" data-f3odds="2">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-odds">2</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三军5" data-f3odds="2">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-odds">2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三军6" data-f3odds="2">
+                        <span class="f3new-dice-dot">••••••</span><span class="f3new-odds">2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 短牌 panel -->
+                  <div class="f3new-panel" id="f3panel-duanpai">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="短牌13.5" data-f3odds="13.5">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">••</span><span class="f3new-odds">13.5</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="短牌13.5b" data-f3odds="13.5">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">13.5</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="短牌13.5c" data-f3odds="13.5">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">13.5</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="短牌13.5d" data-f3odds="13.5">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-odds">13.5</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 长牌 panel -->
+                  <div class="f3new-panel" id="f3panel-changpai">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="长牌7.2" data-f3odds="7.2">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="长牌7.2b" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="长牌7.2c" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="长牌7.2d" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="长牌7.2e" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="长牌7.2f" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="长牌7.2g" data-f3odds="7.2">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="长牌7.2h" data-f3odds="7.2">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">7.2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 全骰 panel -->
+                  <div class="f3new-panel" id="f3panel-quansha">
+                    <div class="f3new-row-single">
+                      <div class="f3new-bet-item f3new-wide-item blue-item" data-f3name="全骰" data-f3odds="36">
+                        <span class="f3new-dice-label">全骰</span><span class="f3new-odds">36</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 和值 panel -->
+                  <div class="f3new-panel" id="f3panel-hezhi">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="3" data-f3odds="216"><span class="f3new-dice-label">3</span><span class="f3new-odds">216</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="4" data-f3odds="72"><span class="f3new-dice-label">4</span><span class="f3new-odds">72</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="5" data-f3odds="36"><span class="f3new-dice-label">5</span><span class="f3new-odds">36</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="6" data-f3odds="21.6"><span class="f3new-dice-label">6</span><span class="f3new-odds">21.6</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="7" data-f3odds="14.4"><span class="f3new-dice-label">7</span><span class="f3new-odds">14.4</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="8" data-f3odds="10.28"><span class="f3new-dice-label">8</span><span class="f3new-odds">10.28</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="9" data-f3odds="8.64"><span class="f3new-dice-label">9</span><span class="f3new-odds">8.64</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="10" data-f3odds="8"><span class="f3new-dice-label">10</span><span class="f3new-odds">8</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="11" data-f3odds="8"><span class="f3new-dice-label">11</span><span class="f3new-odds">8</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="12" data-f3odds="8.64"><span class="f3new-dice-label">12</span><span class="f3new-odds">8.64</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="13" data-f3odds="10.28"><span class="f3new-dice-label">13</span><span class="f3new-odds">10.28</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="14" data-f3odds="14.4"><span class="f3new-dice-label">14</span><span class="f3new-odds">14.4</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="15" data-f3odds="21.6"><span class="f3new-dice-label">15</span><span class="f3new-odds">21.6</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="16" data-f3odds="36"><span class="f3new-dice-label">16</span><span class="f3new-odds">36</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="17" data-f3odds="72"><span class="f3new-dice-label">17</span><span class="f3new-odds">72</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="18" data-f3odds="216"><span class="f3new-dice-label">18</span><span class="f3new-odds">216</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item orange-item" data-f3name="大" data-f3odds="2.05"><span class="f3new-dice-label">大</span><span class="f3new-odds">2.05</span></div>
+                      <div class="f3new-bet-item blue-item" data-f3name="小" data-f3odds="2.05"><span class="f3new-dice-label">小</span><span class="f3new-odds">2.05</span></div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item blue-item" data-f3name="单" data-f3odds="2.05"><span class="f3new-dice-label">单</span><span class="f3new-odds">2.05</span></div>
+                      <div class="f3new-bet-item orange-item" data-f3name="双" data-f3odds="2.05"><span class="f3new-dice-label">双</span><span class="f3new-odds">2.05</span></div>
+                    </div>
+                  </div>
+
+                  <!-- 二同号 panel -->
+                  <div class="f3new-panel" id="f3panel-ertongbao">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同1" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同2" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同3" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同4" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••••</span><span class="f3new-dice-dot">•••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同5" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同6" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同7" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同8" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同9" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同10" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同11" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同12" data-f3odds="72">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同13" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同14" data-f3odds="72">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="二同15" data-f3odds="72">
+                        <span class="f3new-dice-dot red-dot-mini">•</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="二同16" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 三不同 panel -->
+                  <div class="f3new-panel" id="f3panel-santong">
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同1" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同2" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同3" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同4" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同5" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同6" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同7" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同8" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同9" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同10" data-f3odds="72">
+                        <span class="f3new-dice-dot">•</span><span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同11" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同12" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同13" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同14" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同15" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同16" data-f3odds="72">
+                        <span class="f3new-dice-dot">••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同17" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同18" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                    <div class="f3new-row-2col">
+                      <div class="f3new-bet-item" data-f3name="三不同19" data-f3odds="72">
+                        <span class="f3new-dice-dot">•••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                      <div class="f3new-bet-item" data-f3name="三不同20" data-f3odds="72">
+                        <span class="f3new-dice-dot">••••</span><span class="f3new-dice-dot">•••••</span><span class="f3new-dice-dot">••••••</span><span class="f3new-odds">72</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div><!-- end f3new-content -->
+              </div><!-- end f3new-body -->
+
+              <!-- ── 底部投注控制台 ── -->
+              <div class="f3new-console">
+                <div class="f3new-console-info">
+                  <span>余额: <strong id="fastthree-console-balance">110,000</strong> <i class="fa-solid fa-rotate" id="btn-refresh-fastthree-console-balance"></i></span>
+                  <span>共 <strong id="fastthree-selected-count">0</strong>注 &nbsp; 下注金额: <strong id="fastthree-total-cost">0</strong></span>
+                </div>
+                <div class="f3new-console-amounts">
+                  <div class="f3new-quick-btn active" data-val="10">10</div>
+                  <div class="f3new-quick-btn" data-val="1">1</div>
+                  <div class="f3new-quick-btn" data-val="40">40</div>
+                  <div class="f3new-quick-btn" data-val="1">1</div>
+                  <div class="f3new-quick-btn" data-val="5000">5000</div>
+                  <div class="f3new-quick-btn f3new-edit-btn" id="btn-edit-fastthree-quick"><i class="fa-solid fa-pen"></i></div>
+                </div>
+                <div class="f3new-console-input-row">
+                  <input type="number" id="fastthree-input-amount" class="f3new-input-amount" placeholder="输入金额" value="10">
+                </div>
+                <div class="f3new-console-btns">
+                  <button class="f3new-reset-btn" id="btn-fastthree-cancel">重置</button>
+                  <button class="f3new-submit-btn" id="btn-fastthree-submit">投注</button>
+                </div>
               </div>
-
-              <!-- Play Methods Top Tab Bar matching screenshot -->
-              <div class="fast3-play-tabs">
-                <div class="fast3-tab active" data-tab="two_sides">两面</div>
-                <div class="fast3-tab" data-tab="double_num">对子</div>
-                <div class="fast3-tab" data-tab="triple_num">豹子</div>
-                <div class="fast3-tab" data-tab="sum_num">总和</div>
-                <div class="fast3-tab" data-tab="single_dice">单骰</div>
-              </div>
-
-              <!-- Main Betting Layout -->
-              <div class="fast3-betting-main">
-                
-                <!-- 1. 两面 Layout -->
-                <div class="fast3-play-panel active" id="play-panel-two_sides">
-                  <div class="fast3-odds-cards-grid two-sides-grid">
-                    <div class="fast3-odds-card" data-name="大" data-odds="9.75">
-                      <span class="odds-title">大</span>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card" data-name="小" data-odds="9.75">
-                      <span class="odds-title">小</span>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card" data-name="单" data-odds="9.75">
-                      <span class="odds-title">单</span>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card" data-name="双" data-odds="9.75">
-                      <span class="odds-title">双</span>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 2. 对子 Layout -->
-                <div class="fast3-play-panel" id="play-panel-double_num">
-                  <div class="fast3-odds-cards-grid double-grid">
-                    <div class="fast3-odds-card dice-card" data-name="11" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                        <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="22" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="33" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="44" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="55" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="66" data-odds="9.75">
-                      <div class="dice-pair">
-                        <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 3. 豹子 Layout -->
-                <div class="fast3-play-panel" id="play-panel-triple_num">
-                  <div class="fast3-odds-cards-grid triple-grid">
-                    <div class="fast3-odds-card dice-card" data-name="111" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                        <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                        <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="222" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="333" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="444" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="555" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="666" data-odds="9.75">
-                      <div class="dice-triple">
-                        <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                        <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      </div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card text-triple-card" data-name="全豹" data-odds="9.75">
-                      <span class="odds-title">全豹</span>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 4. 总和 Layout -->
-                <div class="fast3-play-panel" id="play-panel-sum_num">
-                  <div class="fast3-odds-cards-grid sum-grid">
-                    <div class="fast3-odds-card sum-card" data-name="3" data-odds="9.75"><span class="sum-num">3</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="4" data-odds="9.75"><span class="sum-num">4</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="5" data-odds="9.75"><span class="sum-num">5</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="6" data-odds="9.75"><span class="sum-num">6</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="7" data-odds="9.75"><span class="sum-num">7</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="8" data-odds="9.75"><span class="sum-num">8</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="9" data-odds="9.75"><span class="sum-num">9</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="10" data-odds="9.75"><span class="sum-num">10</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="11" data-odds="9.75"><span class="sum-num">11</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="12" data-odds="9.75"><span class="sum-num">12</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="13" data-odds="9.75"><span class="sum-num">13</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="14" data-odds="9.75"><span class="sum-num">14</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="15" data-odds="9.75"><span class="sum-num">15</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="16" data-odds="9.75"><span class="sum-num">16</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="17" data-odds="9.75"><span class="sum-num">17</span><span class="odds-value">9.75</span></div>
-                    <div class="fast3-odds-card sum-card" data-name="18" data-odds="9.75"><span class="sum-num">18</span><span class="odds-value">9.75</span></div>
-                  </div>
-                </div>
-
-                <!-- 5. 单骰 Layout -->
-                <div class="fast3-play-panel" id="play-panel-single_dice">
-                  <div class="fast3-odds-cards-grid single-dice-grid">
-                    <div class="fast3-odds-card dice-card" data-name="1" data-odds="9.75">
-                      <div class="dice dice-1"><span class="dot red-dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="2" data-odds="9.75">
-                      <div class="dice dice-2"><span class="dot"></span><span class="dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="3" data-odds="9.75">
-                      <div class="dice dice-3"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="4" data-odds="9.75">
-                      <div class="dice dice-4"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="5" data-odds="9.75">
-                      <div class="dice dice-5"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                    <div class="fast3-odds-card dice-card" data-name="6" data-odds="9.75">
-                      <div class="dice dice-6"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-                      <span class="odds-value">9.75</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- Bottom Betting console -->
-              <div class="embedded-bet-console">
-                <!-- Top Info Row: Balance & Total count -->
-                <div class="bet-console-info-row">
-                  <div class="info-balance-box">
-                    余额: <span id="fastthree-console-balance" class="console-balance-value">0.00</span>
-                    <i class="fa-solid fa-rotate console-refresh-icon" id="btn-refresh-fastthree-console-balance"></i>
-                  </div>
-                  <div class="info-selected-box">
-                    下注金额: <span id="fastthree-total-cost" class="console-selected-value">0</span>
-                    <span id="fastthree-selected-count" style="display:none;">0</span>
-                  </div>
-                </div>
-
-                <!-- Middle Action Row: Quick buttons + input box -->
-                <div class="bet-console-action-row">
-                  <div class="quick-amounts-bar" id="fastthree-quick-amounts">
-                    <div class="quick-amount-btn edit-quick-btn" id="btn-edit-fastthree-quick"><i class="fa-solid fa-pen"></i></div>
-                    <div class="quick-amount-btn active" data-val="50">50</div>
-                    <div class="quick-amount-btn" data-val="100">100</div>
-                    <div class="quick-amount-btn" data-val="500">500</div>
-                    <div class="quick-amount-btn" data-val="1000">1000</div>
-                  </div>
-                  <input type="number" id="fastthree-input-amount" class="manual-amount-input" placeholder="输入金额" value="50">
-                </div>
-
-                <!-- Bottom Button Row: Withdraw + Confirm -->
-                <div class="bet-console-buttons-row">
-                  <button class="console-cancel-btn" id="btn-fastthree-cancel"><i class="fa-solid fa-arrow-rotate-left"></i> 撤回</button>
-                  <button class="console-confirm-btn" id="btn-fastthree-submit">确认投注</button>
-                </div>
-              </div>
-            </div> <!-- End Sub Game Page -->
 
             <!-- APP BOTTOM NAVIGATION BAR -->
             <div class="bottom-nav">
@@ -2569,6 +2680,6 @@
     </div> <!-- End Phone Wrapper -->
   </div>
 
-  <script src="app.js?v=3.8"></script>
+  <script src="app.js?v=3.9"></script>
 </body>
 </html>
