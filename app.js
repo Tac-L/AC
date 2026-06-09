@@ -1036,6 +1036,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 1a. Listeners for live room header sub-tabs (跟注, 计划, 更多)
+  const liveTabs = document.querySelectorAll('.live-tab');
+  liveTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.getAttribute('data-tab');
+      if (tabName === 'follow' || tabName === 'plan' || tabName === 'more') {
+        showPopupToast("对接中，敬请期待！");
+      } else {
+        liveTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      }
+    });
+  });
+
+  // 1b. Listener for live room betting panel playbook button (玩法)
+  const livePlaybookBtn = document.querySelector('.live-playbook-btn');
+  if (livePlaybookBtn) {
+    livePlaybookBtn.addEventListener('click', () => {
+      showPopupToast("对接中，敬请期待！");
+    });
+  }
+
   // 2. Play Sub-tab switching logic
   livePlayTabs.forEach(tab => {
     tab.addEventListener('click', () => {
