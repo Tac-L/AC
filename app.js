@@ -1358,7 +1358,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Perform drawing animation and values update
   function performMarkSixDrawing() {
     mark6Timer.textContent = "正在开奖...";
-    showPopupToast(`第 ${activeBetIssue} 期开奖进行中，请留意球号！`);
 
     setTimeout(() => {
       // Increment issue number
@@ -1416,12 +1415,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="tag-box bg-orange">${zodiacTag}</span>
       `;
 
-      showPopupToast(`第 ${activeBetIssue - 1} 期开奖完毕！特码开出：${specialNum} (${zodiacTag} / ${isBig} / ${isSingle})`);
-      setTimeout(() => {
-        const name = winPlayerNames[Math.floor(Math.random() * winPlayerNames.length)];
-        const amount = Math.floor(Math.random() * 45000) + 5000;
-        showWinNotification(name, amount);
-      }, 3500);
     }, 2500);
   }
 
@@ -1642,8 +1635,8 @@ document.addEventListener('DOMContentLoaded', () => {
     showWinNotification(name, amount, gameType);
   }
 
-  // Set interval to periodically trigger player wins every 18-24 seconds
-  setInterval(triggerRandomWinNotification, 18000 + Math.random() * 6000);
+  // Set interval to periodically trigger player wins every 4 seconds
+  setInterval(triggerRandomWinNotification, 4000);
 
   // Switch phone theme skins (Dark/Gold/Purple/Coral) via sidebar
   const mobileDevice = document.getElementById('mobile-device');
@@ -1724,7 +1717,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fast Three Drawing animation and result resolution
   function performFast3Drawing() {
     if (fast3Timer) fast3Timer.textContent = '开奖中...';
-    showPopupToast(`一分快三 第 ${fast3ActiveIssue} 期开始摇号！`);
 
     let rollCount = 0;
     const rollInterval = setInterval(() => {
@@ -1760,8 +1752,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Increment issue and display
         fast3ActiveIssue++;
         if (fast3Issue) fast3Issue.textContent = fast3ActiveIssue + '期';
-
-        showPopupToast(`一分快三 第 ${fast3ActiveIssue - 1} 期开奖结果: ${finalVals.join(',')} = ${results.sum} (${results.size} / ${results.oe})`);
       }
     }, 100);
   }
@@ -2129,7 +2119,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fast Three Drawing animation and result resolution
   function performF3DrawingLoop() {
     if (f3Timer) f3Timer.textContent = '开奖中...';
-    showPopupToast(`一分快三 第 ${f3ActiveIssue} 期开始摇号！`);
 
     let rollCount = 0;
     const rollInterval = setInterval(() => {
@@ -2165,15 +2154,6 @@ document.addEventListener('DOMContentLoaded', () => {
           f3OeTag.textContent = oe;
           f3OeTag.className = `tag-box ${oe === '双' ? 'bg-red' : 'bg-blue'}`;
         }
-
-        showPopupToast(`一分快三 第 ${f3ActiveIssue} 期开奖结果: ${finalVals.join(',')} = ${sum} (${size} / ${oe})`);
-
-        // Send winner notification periodically aligned with draws
-        setTimeout(() => {
-          const randomWinner = winPlayerNames[Math.floor(Math.random() * winPlayerNames.length)];
-          const randomAmount = Math.floor(Math.random() * 7500) + 1500;
-          showWinNotification(randomWinner, randomAmount, 'fast_three');
-        }, 2500);
 
         f3ActiveIssue++;
         if (f3Issue) f3Issue.textContent = `第${f3ActiveIssue}期`;
