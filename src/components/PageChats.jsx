@@ -681,8 +681,8 @@ export default function PageChats() {
                           {/* Streamer Card 2: 弹珠官方直播 */}
                           <div className="streamer-card">
                             <div className="streamer-thumb xcm-logo-card-styled">
-                              <div className="xcm-logo-text">X<span>.CM</span></div>
-                              <div className="xcm-logo-sub">无界娱乐</div>
+                              <div className="xcm-logo-text">黑<span>豹</span></div>
+                              <div className="xcm-logo-sub">黑豹娱乐</div>
                             </div>
                             <div className="streamer-info">
                               <h4 className="streamer-title">弹珠官方直播</h4>

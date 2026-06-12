@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, showToast } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage } = useApp();
 
   const handleEditUsername = () => {
     showToast('提示：修改昵称功能暂未开放！');
@@ -59,7 +59,7 @@ export default function PageProfile() {
     },
     {
       name: '投注记录',
-      action: () => handleFeatureClick('投注记录'),
+      action: () => setActivePage('page-bet-records'),
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -73,7 +73,7 @@ export default function PageProfile() {
     },
     {
       name: '活动中心',
-      action: () => handleFeatureClick('活动中心'),
+      action: () => setActivePage('page-activity'),
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 12 2 12 2 21 22 21 22 12" />
@@ -98,7 +98,7 @@ export default function PageProfile() {
     },
     {
       name: '消息公告',
-      action: handleNotifications,
+      action: () => setActivePage('page-mail'),
       badge: 'dot',
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageGames() {
-  const { 
-    balance, 
-    updateBalance, 
-    setActiveSubGame, 
-    activeGameCategory, 
+  const {
+    balance,
+    updateBalance,
+    setActiveSubGame,
+    activeGameCategory,
     setActiveGameCategory,
-    autoOpenGameId, 
+    autoOpenGameId,
     setAutoOpenGameId,
     showToast,
     openDepositPage,
@@ -16,22 +16,48 @@ export default function PageGames() {
   } = useApp();
 
   const [rotate, setRotate] = useState(false);
+  const [bannerIndex, setBannerIndex] = useState(0);
 
-  // Main Tabs categories with icon classes
+  // Banner carousel slides
+  const bannerSlides = [
+    'assets/banner.png',
+    'assets/sports_cover.png',
+    'assets/bti_sports.png',
+    'assets/fb_sports.png'
+  ];
+
+  // Left vertical category menu (icon + label)
   const categories = [
-    { id: 'hot', label: '热门', icon: 'fa-solid fa-fire' },
-    { id: 'lottery', label: '彩票', icon: 'fa-solid fa-ticket' },
-    { id: 'pg', label: 'PG', icon: 'fa-solid fa-gamepad' },
-    { id: 'wali', label: '瓦力', icon: 'fa-solid fa-dice' }
+    { id: 'hot', label: '热门游戏', icon: 'fa-solid fa-fire' },
+    { id: 'egame', label: '电子游艺', icon: 'fa-solid fa-gamepad' },
+    { id: 'chess', label: '棋牌对战', icon: 'fa-solid fa-chess' },
+    { id: 'fish', label: '捕鱼达人', icon: 'fa-solid fa-fish' },
+    { id: 'live', label: '真人视讯', icon: 'fa-solid fa-video' },
+    { id: 'lottery', label: '彩票游戏', icon: 'fa-solid fa-ticket' },
+    { id: 'sport', label: '体育竞技', icon: 'fa-solid fa-futbol' }
   ];
 
   const gamesData = [
-    { id: 'mark_six', name: '一分六合彩', category: ['hot', 'lottery'], img: 'assets/chat_cover.png', isLive: true },
-    { id: 'fast_three', name: '一分快三', category: ['hot', 'lottery', 'wali'], img: 'assets/game_fast3.png', isLive: true },
-    { id: 'baccarat', name: '极速百家乐', category: ['hot', 'pg', 'wali'], img: 'assets/lego.png', isLive: false },
-    { id: 'canada28', name: '加拿大28', category: ['hot', 'lottery'], img: 'assets/sports_cover.png', isLive: false },
-    { id: 'mahjong', name: '麻将胡了', category: ['hot', 'pg'], img: 'assets/game_mahjong.png', isLive: false }
+    { id: 'mark_six', name: '一分六合彩', category: ['hot', 'lottery'], img: 'assets/mo_mark_six.png', isLive: true },
+    { id: 'fast_three', name: '一分快三', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true },
+    { id: 'mahjong', name: '麻将胡了', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
+    { id: 'mahjong2', name: '麻将胡了2', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
+    { id: 'gold_city', name: '寻宝黄金城', category: ['hot', 'egame'], img: 'assets/gold_dragon_bg.png', isLive: false },
+    { id: 'qilin', name: '麒麟送宝', category: ['hot', 'egame'], img: 'assets/lego.png', isLive: false },
+    { id: 'queen', name: '赏金女王', category: ['hot', 'egame'], img: 'assets/origami.png', isLive: false },
+    { id: 'bounty', name: '赏金大对决', category: ['hot', 'egame'], img: 'assets/drawing.png', isLive: false },
+    { id: 'lucky_cat', name: '招财喵', category: ['hot', 'egame'], img: 'assets/science.png', isLive: false },
+    { id: 'undead', name: '亡灵大盗', category: ['hot', 'egame'], img: 'assets/chat_cover.png', isLive: false },
+    { id: 'fortune', name: '福运象财神', category: ['hot', 'egame'], img: 'assets/game_fast3.png', isLive: false }
   ];
+
+  // Auto-rotate banner carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBannerIndex(prev => (prev + 1) % bannerSlides.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
 
   // Run auto open checks on mount/updates
   useEffect(() => {
@@ -66,9 +92,14 @@ export default function PageGames() {
     }, 500);
   };
 
-  const handleOnekeyRetrieve = () => {
-    showToast("一键额度回收成功！所有子钱包额度已全部取回至系统主账户。");
-  };
+  // Wallet round-icon actions
+  const walletActions = [
+    { id: 'recharge', label: '充值', icon: 'fa-solid fa-sack-dollar', cls: 'recharge', onClick: openDepositPage },
+    { id: 'vip', label: 'Vip钱包', icon: 'fa-brands fa-bitcoin', cls: 'vip', onClick: () => showToast('提示：【Vip钱包】功能正在对接中，敬请期待！') },
+    { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', badge: '送1.5%', onClick: () => showToast('提示：【优惠活动】功能正在对接中，敬请期待！') },
+    { id: 'withdraw', label: '提款', icon: 'fa-solid fa-credit-card', cls: 'withdraw', onClick: openWithdrawPage },
+    { id: 'more', label: '更多', icon: 'fa-solid fa-table-cells', cls: 'more', onClick: () => showToast('提示：【更多功能】正在对接中，敬请期待！') }
+  ];
 
   // Filter game data based on activeCategory
   const filteredGames = gamesData.filter(game => {
@@ -77,74 +108,79 @@ export default function PageGames() {
 
   return (
     <div className="app-page active" id="page-games">
-      {/* Header Bar */}
+      {/* Header Bar with logo pill */}
       <div className="lobby-header-bar">
-        <div className="lobby-logo-title">
-          <img src="assets/black_panther_logo.png" className="lobby-logo-avatar" alt="LOGO" />
-          <div>
-            <h4>黑豹视频</h4>
-            <span>1068.tv</span>
-          </div>
-        </div>
-        <button className="lobby-customer-btn" onClick={() => showToast('提示：【在线客服】正在接入中！')}>
-          <i className="fa-solid fa-headset"></i> 客服
-        </button>
-      </div>
-
-      {/* Top Marquee Activity Announcement */}
-      <div className="marquee-announcement">
-        <i className="fa-solid fa-bullhorn announcement-icon"></i>
-        <div className="marquee-text-container">
-          <div className="marquee-text">欢迎光临黑豹视频！全球顶级观影app，无限看片，充值赠送300%，天天返水...</div>
+        <div className="lobby-logo-pill">
+          <img src="assets/black_panther_logo.png" className="lobby-pill-avatar" alt="LOGO" />
+          <span>黑豹娱乐城</span>
         </div>
       </div>
 
       {/* Scroll Content Container */}
       <div className="scroll-content lobby-scroll-area">
-        {/* Promotional Banner */}
-        <div className="lobby-banner-wrapper" onClick={() => showToast('点击广告：今日存，明日送！首充红利狂欢中！')}>
-          <img src="assets/banner.png" alt="首充福利" className="lobby-banner-img" />
-          <div className="banner-overlay-text">
-            <h2>新会员</h2>
-            <h3>首充赠送<span>300%</span></h3>
-            <p>限时活动 先到先得</p>
+        {/* Banner Carousel */}
+        <div
+          className="lobby-carousel"
+          onClick={() => showToast('点击广告：今日存，明日送！首充红利狂欢中！')}
+        >
+          <img src={bannerSlides[bannerIndex]} alt="活动横幅" className="lobby-banner-img" />
+          <div className="carousel-dots">
+            {bannerSlides.map((_, i) => (
+              <span
+                key={i}
+                className={`carousel-dot ${i === bannerIndex ? 'active' : ''}`}
+                onClick={(e) => { e.stopPropagation(); setBannerIndex(i); }}
+              ></span>
+            ))}
           </div>
         </div>
 
-        {/* Account Status Panel */}
-        <div className="account-status-panel">
-          <div className="account-info">
-            <span className="username">伯人心贤oyo</span>
-            <div className="balance-row">
-              <strong className="balance-val" id="app-balance-display">¥{balance.toFixed(2)}</strong>
-              <i 
-                className="fa-solid fa-rotate balance-refresh-icon" 
+        {/* Top Marquee Activity Announcement */}
+        <div className="marquee-announcement">
+          <i className="fa-solid fa-volume-high announcement-icon"></i>
+          <div className="marquee-text-container">
+            <div className="marquee-text">【BG】视讯将于北京时间 2025/11/04 凌晨04:00-凌晨05:00进行维护，给您带来不便敬请谅解！</div>
+          </div>
+        </div>
+
+        {/* Wallet Panel: balance + round icon actions */}
+        <div className="lobby-wallet-panel">
+          <div className="wallet-info">
+            <span className="wallet-username">伯人心贤oyo</span>
+            <div className="wallet-balance-row">
+              <strong className="wallet-balance-val" id="app-balance-display">¥{balance.toFixed(2)}</strong>
+              <i
+                className="fa-solid fa-rotate wallet-refresh-icon"
                 id="btn-refresh-balance"
                 onClick={handleRefreshBalance}
-                style={{ 
-                  transition: 'transform 0.5s ease', 
+                style={{
+                  transition: 'transform 0.5s ease',
                   transform: rotate ? 'rotate(360deg)' : 'none',
                   cursor: 'pointer'
                 }}
               ></i>
             </div>
           </div>
-          <div className="account-actions">
-            <button className="action-mini-btn" onClick={handleOnekeyRetrieve}>一键取回</button>
-            <button className="action-mini-btn highlight" onClick={openDepositPage}>充值</button>
-            <button className="action-mini-btn" onClick={openWithdrawPage}>提现</button>
-            <button className="action-mini-btn" onClick={() => showToast('提示：【优惠活动】功能正在对接中，敬请期待！')}>活动</button>
-            <button className="action-mini-btn" onClick={() => showToast('提示：【投注记录】功能正在对接中，敬请期待！')}>记录</button>
+          <div className="wallet-actions-row">
+            {walletActions.map(action => (
+              <div key={action.id} className="wallet-action-item" onClick={action.onClick}>
+                <div className={`wallet-action-circle ${action.cls}`}>
+                  {action.badge && <span className="wallet-promo-badge">{action.badge}</span>}
+                  <i className={action.icon}></i>
+                </div>
+                <span>{action.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Split Left Sidebar Categories & Right Game Grid */}
         <div className="lobby-main-split">
-          {/* Left category menu bar */}
+          {/* Left vertical category menu */}
           <div className="lobby-left-menu">
             {categories.map(cat => (
-              <div 
-                key={cat.id} 
+              <div
+                key={cat.id}
                 className={`menu-tab-item ${activeGameCategory === cat.id ? 'active' : ''}`}
                 onClick={() => handleCategoryClick(cat.id)}
               >
@@ -154,20 +190,29 @@ export default function PageGames() {
             ))}
           </div>
 
-          {/* Right game grid list */}
-          <div className="lobby-right-grid" id="lobby-games-list">
-            {filteredGames.map(game => (
-              <div 
-                key={game.id} 
-                className="lobby-game-card" 
-                onClick={() => handleGameCardClick(game)}
-              >
-                <div className="game-icon-container">
-                  <img src={game.img} alt={game.name} />
+          {/* Right column: sub-promo banner + game grid */}
+          <div className="lobby-right-col">
+            <div
+              className="lobby-sub-promo"
+              onClick={() => showToast('点击进入：疯狂台球 斯诺克 中式黑八 正在对接中！')}
+            >
+              <img src="assets/sports_cover.png" alt="疯狂台球" />
+            </div>
+
+            <div className="lobby-right-grid" id="lobby-games-list">
+              {filteredGames.map(game => (
+                <div
+                  key={game.id}
+                  className="lobby-game-card"
+                  onClick={() => handleGameCardClick(game)}
+                >
+                  <div className="game-icon-container">
+                    <img src={game.img} alt={game.name} />
+                  </div>
+                  <span>{game.name}</span>
                 </div>
-                <span>{game.name}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
