@@ -11368,4 +11368,596 @@ body {
   color: #94a3b8;
 }
 
+/* ==========================================================================
+   Profile Features Redesign (Mockup Refactoring)
+   ========================================================================== */
+
+/* Base SVG icon style */
+.feature-svg-icon {
+  width: 22px;
+  height: 22px;
+  color: #4b5563; /* Slate grey in light mode */
+  display: block;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.profile-feature-item:hover .feature-svg-icon {
+  color: #1d4ed8; /* Blue accent color on hover */
+  transform: translateY(-1px);
+}
+
+/* Container for outline icons - removes circular background, border and shadows to match mockup */
+.profile-feature-icon-box.outline-box {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  margin: 0;
+}
+
+/* Container for the Customer Support robot avatar */
+.profile-feature-icon-box.robot-box {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* Robot Avatar Wrapper */
+.profile-feature-robot-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-feature-item:hover .profile-feature-robot-avatar {
+  transform: scale(1.06) rotate(3deg);
+  box-shadow: 0 6px 14px rgba(29, 78, 216, 0.35);
+}
+
+.robot-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Red Dot Badge for notification/announcements */
+.profile-feature-badge-dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 7px;
+  height: 7px;
+  background-color: #ef4444 !important; /* Premium crimson red */
+  border-radius: 50% !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+}
+
+/* Adjustments for dark skins/modes to maintain readability */
+.phone.phone-dark .feature-svg-icon {
+  color: #94a3b8 !important; /* Zinc 400 */
+}
+
+.phone.phone-dark .profile-feature-badge-dot {
+  border-color: #0f0e17 !important; /* Match dark theme background */
+}
+
+.phone.phone-dark .profile-feature-item:hover .feature-svg-icon {
+  color: #60a5fa !important; /* Light blue on hover in dark mode */
+}
+
+/* Simulated Webview Browser Header for One Minute Fast 3 */
+.f3new-webview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1e293b !important; /* Dark slate browser bar */
+  padding: 8px 12px !important;
+  flex-shrink: 0;
+  border-bottom: 1px solid #334155 !important;
+  height: 44px !important;
+  box-sizing: border-box !important;
+}
+
+.f3new-webview-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.f3new-webview-btn {
+  background: none !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer;
+  padding: 4px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.f3new-webview-btn:hover {
+  color: #f1f5f9 !important;
+}
+
+.f3new-webview-url-bar {
+  flex: 1;
+  margin: 0 10px;
+  background: #0f172a !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 180px;
+  box-sizing: border-box;
+}
+
+.f3new-webview-secure-icon {
+  color: #10b981 !important; /* green secure lock icon */
+  font-size: 0.65rem !important;
+}
+
+.f3new-webview-url-text {
+  color: #64748b !important;
+  font-size: 0.6rem !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.f3new-webview-refresh-icon {
+  color: #64748b !important;
+  font-size: 0.65rem !important;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.f3new-webview-refresh-icon:hover {
+  color: #f1f5f9 !important;
+}
+
+.f3new-webview-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Sports Platforms Sub-page (体育平台)
+   ========================================================================== */
+.sports-platforms-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f8fafc;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+.sports-platforms-header {
+  height: 50px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+
+.sp-back-btn {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  color: #334155;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.sp-back-btn:hover {
+  color: #000000;
+}
+
+.sp-header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+
+.sp-header-logo-wrapper {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e293b;
+}
+
+.sp-ball-icon {
+  font-size: 0.95rem;
+}
+
+.sp-headset-icon {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 0.6rem;
+  color: #3b82f6;
+  background: #ffffff;
+  padding: 1px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.sp-header-titles {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.sp-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.sp-subtitle {
+  font-size: 0.6rem;
+  color: #64748b;
+  font-weight: normal;
+}
+
+.sports-platforms-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.sports-platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding-bottom: 24px;
+}
+
+.platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.platform-card:active {
+  transform: scale(0.97);
+}
+
+.platform-card-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  background-color: #e2e8f0;
+}
+
+.platform-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s;
+}
+
+.platform-card:hover .platform-card-img {
+  transform: scale(1.04);
+}
+
+.platform-card-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1.5px 5px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 0.52rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+
+.platform-badge-icon {
+  font-size: 0.52rem;
+}
+
+.platform-badge-text {
+  font-size: 0.5rem;
+}
+
+.platform-card-fav-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 2;
+  font-size: 0.65rem;
+}
+
+.platform-card-fav-btn:hover {
+  background-color: #ffffff;
+  color: #f59e0b;
+}
+
+.platform-card-fav-btn.fav-active {
+  background-color: #ffffff;
+  color: #f59e0b;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.platform-card-center-logo-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.22);
+  z-index: 1;
+}
+
+.platform-center-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-sizing: border-box;
+}
+
+/* Logos Custom Styling */
+.saba-logo {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+}
+
+.logo-saba-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.logo-saba-inner .logo-ball {
+  font-size: 0.8rem;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.logo-saba-inner span {
+  font-size: 0.45rem;
+  font-weight: 900;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+
+.fb-logo {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #ffffff;
+}
+
+.logo-fb-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.logo-fb-inner .logo-bolt {
+  font-size: 0.75rem;
+  color: #fbbf24;
+}
+
+.logo-fb-inner span {
+  font-size: 0.45rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.im-logo {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+.logo-im-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-im-box {
+  font-size: 0.95rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+.cmd-logo {
+  background-color: #ffffff;
+  border: 2px solid #2563eb;
+  color: #1e3a8a;
+}
+
+.logo-cmd-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.logo-cmd-inner .logo-trophy {
+  font-size: 0.7rem;
+  color: #f59e0b;
+  margin-bottom: 1px;
+}
+
+.logo-cmd-inner span {
+  font-size: 0.4rem;
+  font-weight: 900;
+}
+
+.bti-logo {
+  background: linear-gradient(135deg, #ea580c, #dc2626);
+  color: #ffffff;
+}
+
+.logo-bti-inner {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.crown-logo {
+  background-color: #0f172a;
+  border: 1.5px solid #fbbf24;
+  color: #fbbf24;
+}
+
+.logo-crown-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.logo-crown-inner .logo-crown-icon {
+  font-size: 0.7rem;
+  color: #fbbf24;
+}
+
+.logo-crown-inner span {
+  font-size: 0.4rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.platform-card-name {
+  margin-top: 5px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: center;
+}
+
+/* Loading Overlay */
+.platform-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-loading-card {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 170px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.platform-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f1f5f9;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: platformSpin 0.75s linear infinite;
+}
+
+@keyframes platformSpin {
+  to { transform: rotate(360deg); }
+}
+
+.platform-loading-text {
+  font-size: 0.58rem;
+  color: #64748b;
+  margin-top: 14px;
+}
+
+.platform-loading-target {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #0f172a;
+  margin-top: 4px;
+}
+
 

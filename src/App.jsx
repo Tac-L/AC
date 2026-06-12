@@ -18,6 +18,7 @@ import PageWithdraw from './components/PageWithdraw';
 // Sub games
 import SubGameMarkSix from './components/SubGameMarkSix';
 import SubGameFastThree from './components/SubGameFastThree';
+import PageSportsPlatforms from './components/PageSportsPlatforms';
 
 // Modals
 import ModalBetDetails from './components/ModalBetDetails';
@@ -34,6 +35,9 @@ function MainApp() {
     }
     if (activeSubGame === 'fast_three') {
       return <SubGameFastThree />;
+    }
+    if (activeSubGame === 'sports_platforms') {
+      return <PageSportsPlatforms />;
     }
 
     switch (activePage) {

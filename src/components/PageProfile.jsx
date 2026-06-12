@@ -33,14 +33,103 @@ export default function PageProfile() {
   };
 
   const features = [
-    { name: '推广赚钱', icon: 'fa-coins' },
-    { name: '交易记录', icon: 'fa-file-invoice-dollar' },
-    { name: '观看历史', icon: 'fa-clock' },
-    { name: '收藏记录', icon: 'fa-star' },
-    { name: '收款方式', icon: 'fa-credit-card' },
-    { name: '分享好友', icon: 'fa-gift' },
-    { name: '客服中心', icon: 'fa-headset' },
-    { name: '设置', icon: 'fa-gear' }
+    {
+      name: '提款账户',
+      action: openWithdrawPage,
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="3" />
+          <line x1="2" y1="10" x2="22" y2="10" />
+          <line x1="6" y1="15" x2="10" y2="15" />
+        </svg>
+      )
+    },
+    {
+      name: '交易明细',
+      action: () => handleFeatureClick('交易明细'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+          <rect x="8" y="2" width="8" height="4" rx="1" />
+          <line x1="8" y1="9" x2="16" y2="9" />
+          <line x1="8" y1="13" x2="16" y2="13" />
+          <line x1="8" y1="17" x2="13" y2="17" />
+        </svg>
+      )
+    },
+    {
+      name: '投注记录',
+      action: () => handleFeatureClick('投注记录'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+          <rect x="8" y="2" width="8" height="4" rx="1" />
+          <line x1="8" y1="9" x2="16" y2="9" />
+          <line x1="8" y1="13" x2="13" y2="13" />
+          <path d="M14 17.5l5.5-5.5a1 1 0 0 1 1.4 1.4L15.4 19H14v-1.5z" fill="currentColor" stroke="none" />
+          <path d="M14 17.5l5.5-5.5a1 1 0 0 1 1.4 1.4L15.4 19H14v-1.5z" />
+        </svg>
+      )
+    },
+    {
+      name: '活动中心',
+      action: () => handleFeatureClick('活动中心'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 12 2 12 2 21 22 21 22 12" />
+          <rect x="1" y="7" width="22" height="5" />
+          <line x1="12" y1="22" x2="12" y2="7" />
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+        </svg>
+      )
+    },
+    {
+      name: '个人资料',
+      action: handleEditUsername,
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M16 19.5l5.5-5.5a1 1 0 0 0-1.4-1.4L14.6 18H14v1.5z" fill="currentColor" stroke="none" />
+          <path d="M16 19.5l5.5-5.5a1 1 0 0 0-1.4-1.4L14.6 18H14v1.5z" />
+        </svg>
+      )
+    },
+    {
+      name: '消息公告',
+      action: handleNotifications,
+      badge: 'dot',
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#3b82f6" fill="#3b82f6" />
+        </svg>
+      )
+    },
+    {
+      name: '我的背包',
+      action: () => handleFeatureClick('我的背包'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 6a3 3 0 0 1 6 0" />
+          <rect x="5" y="6" width="14" height="15" rx="3" />
+          <rect x="8" y="13" width="8" height="8" rx="2" />
+          <line x1="10" y1="17.5" x2="14" y2="17.5" stroke="#3b82f6" strokeWidth="1.8" />
+        </svg>
+      )
+    },
+    {
+      name: '客服中心',
+      action: () => showToast('正在为您连接在线客服，请稍候...'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 11a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+          <path d="M21 16v2a4 4 0 0 1-4 4h-5" />
+          <path d="M3 18v-3a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+        </svg>
+      )
+    }
   ];
 
   return (
@@ -170,10 +259,11 @@ export default function PageProfile() {
               <div 
                 key={idx} 
                 className="profile-feature-item"
-                onClick={() => handleFeatureClick(feat.name)}
+                onClick={feat.action}
               >
-                <div className="profile-feature-icon-box" style={{ color: feat.color }}>
-                  <i className={`fa-solid ${feat.icon}`}></i>
+                <div className={`profile-feature-icon-box ${feat.isRobot ? 'robot-box' : 'outline-box'}`}>
+                  {feat.icon}
+                  {feat.badge === 'dot' && <span className="profile-feature-badge-dot" />}
                 </div>
                 <span>{feat.name}</span>
               </div>

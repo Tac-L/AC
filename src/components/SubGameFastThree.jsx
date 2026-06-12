@@ -12,21 +12,10 @@ export default function SubGameFastThree() {
   const [analysisTags, setAnalysisTags] = useState({ sum: 10, size: '小', oe: '双' });
 
   // Betting states
-  const [activePlay, setActivePlay] = useState('changlong'); // left sidebar navigation
+  const [activePlay, setActivePlay] = useState('sanjun'); // left sidebar navigation, default to sanjun
   const [selectedItem, setSelectedItem] = useState(null); // stores { name, odds } or null
   const [betPrice, setBetPrice] = useState(10); // default amount is 10
   const [manualAmount, setManualAmount] = useState('');
-
-  // Countdown effect
-  useEffect(() => {
-    let timer;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
-    } else {
-      performDrawing();
-    }
-    return () => clearTimeout(timer);
-  }, [countdown]);
 
   const performDrawing = () => {
     setIsDrawing(true);
@@ -59,7 +48,21 @@ export default function SubGameFastThree() {
     }, 100);
   };
 
+  // Countdown effect
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
+    } else {
+      setTimeout(() => performDrawing(), 0);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
   const handleSidebarTabClick = (playKey) => {
+    if (playKey !== 'sanjun') {
+      return; // "其他按鈕點了先不用有反應" (no response for other tabs)
+    }
     setActivePlay(playKey);
     setSelectedItem(null); // clear selections
   };
@@ -80,6 +83,7 @@ export default function SubGameFastThree() {
   const currentAmount = manualAmount !== '' ? parseFloat(manualAmount) || 0 : betPrice;
   const betCount = selectedItem ? 1 : 0;
   const totalCost = betCount * currentAmount;
+  const activeQuickAmount = manualAmount === '' ? betPrice : 0;
 
   const handleResetBets = () => {
     setSelectedItem(null);
@@ -119,16 +123,25 @@ export default function SubGameFastThree() {
 
   return (
     <div className="sub-game-page active" id="page-fast-three">
-      {/* 顶部标题栏 */}
-      <div className="f3new-header">
-        <div className="f3new-header-left">
-          <button id="btn-back-to-lobby-fastthree" className="f3new-back-btn" onClick={() => setActiveSubGame(null)}>
-            <i className="fa-solid fa-th-large"></i>
+      {/* 模擬嵌套頁面的瀏覽器頭部樣式 */}
+      <div className="f3new-webview-header">
+        <div className="f3new-webview-controls-left">
+          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="返回">
+            <i className="fa-solid fa-chevron-left"></i>
           </button>
-          <span className="f3new-title">一分快三</span>
+          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="关闭">
+            <i className="fa-solid fa-xmark"></i>
+          </button>
         </div>
-        <div className="f3new-header-right" onClick={() => showToast('菜单开发中...')}>
-          <i className="fa-solid fa-bars f3new-menu-icon"></i>
+        <div className="f3new-webview-url-bar">
+          <i className="fa-solid fa-lock f3new-webview-secure-icon"></i>
+          <span className="f3new-webview-url-text">game.1068tv.com/fast3_play</span>
+          <i className="fa-solid fa-rotate-right f3new-webview-refresh-icon" onClick={performDrawing} title="刷新"></i>
+        </div>
+        <div className="f3new-webview-controls-right">
+          <button className="f3new-webview-btn" onClick={() => showToast('安全嵌套连接')} title="选项">
+            <i className="fa-solid fa-ellipsis"></i>
+          </button>
         </div>
       </div>
 

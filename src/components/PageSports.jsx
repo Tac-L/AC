@@ -13,6 +13,7 @@ export default function PageSports() {
     setParlayBetAmount,
     sportsDrawerActive,
     setSportsDrawerActive,
+    setActiveSubGame,
     showToast 
   } = useApp();
 
@@ -30,7 +31,6 @@ export default function PageSports() {
   const filters = [
     { id: 'hot', label: '热门', icon: 'fa-fire icon-hot' },
     { id: 'live', label: '滚球', icon: 'fa-futbol icon-live' },
-    { id: 'anchor', label: '主播', icon: 'fa-microphone icon-anchor' },
     { id: 'today', label: '今日', icon: 'fa-calendar-days icon-today' },
     { id: 'early', label: '早盘', icon: 'fa-hourglass-start icon-early' },
     { id: 'filter', label: '筛选', icon: 'fa-filter icon-filter' }
@@ -81,6 +81,144 @@ export default function PageSports() {
         handicapAwayText: '0', handicapAwayVal: 1.81,
         ouOverText: '大 0.5', ouOverVal: 2.25,
         ouUnderText: '小 0.5', ouUnderVal: 1.58
+      }
+    },
+    {
+      id: '103',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '美国',
+      away: '巴拉圭',
+      homeFlag: '🇺🇸',
+      awayFlag: '🇵🇾',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-13 09:00',
+      odds: {
+        winHome: 1.98, winAway: 4.2, winDraw: 3.25,
+        handicapHomeText: '-0.5', handicapHomeVal: 1.98,
+        handicapAwayText: '+0.5', handicapAwayVal: 1.92,
+        ouOverText: '大 2/2.5', ouOverVal: 2.04,
+        ouUnderText: '小 2/2.5', ouUnderVal: 1.84
+      }
+    },
+    {
+      id: '104',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '卡塔尔',
+      away: '瑞士',
+      homeFlag: '🇶🇦',
+      awayFlag: '🇨🇭',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-14 03:00',
+      odds: {
+        winHome: 15, winAway: 1.2, winDraw: 6.25,
+        handicapHomeText: '+1.5/2', handicapHomeVal: 1.98,
+        handicapAwayText: '-1.5/2', handicapAwayVal: 1.9,
+        ouOverText: '大 2.5/3', ouOverVal: 1.93,
+        ouUnderText: '小 2.5/3', ouUnderVal: 1.93
+      }
+    },
+    {
+      id: '105',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '巴西',
+      away: '摩洛哥',
+      homeFlag: '🇧🇷',
+      awayFlag: '🇲🇦',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-14 06:00',
+      odds: {
+        winHome: 1.62, winAway: 5.7, winDraw: 3.76,
+        handicapHomeText: '-0.5/1', handicapHomeVal: 1.83,
+        handicapAwayText: '+0.5/1', handicapAwayVal: 2.05,
+        ouOverText: '大 2/2.5', ouOverVal: 1.81,
+        ouUnderText: '小 2/2.5', ouUnderVal: 2.05
+      }
+    },
+    {
+      id: '106',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '海地',
+      away: '苏格兰',
+      homeFlag: '🇭🇹',
+      awayFlag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-14 09:00',
+      odds: {
+        winHome: 5.9, winAway: 1.58, winDraw: 3.96,
+        handicapHomeText: '+1', handicapHomeVal: 1.85,
+        handicapAwayText: '-1', handicapAwayVal: 2.03,
+        ouOverText: '大 2.5', ouOverVal: 1.94,
+        ouUnderText: '小 2.5', ouUnderVal: 1.92
+      }
+    },
+    {
+      id: '107',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '德国',
+      away: '库拉索',
+      homeFlag: '🇩🇪',
+      awayFlag: '🇨🇼',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-15 01:00',
+      odds: {
+        winHome: 1.01, winAway: 27, winDraw: 14.8,
+        handicapHomeText: '-3/3.5', handicapHomeVal: 1.87,
+        handicapAwayText: '+3/3.5', handicapAwayVal: 2.01,
+        ouOverText: '大 4/4.5', ouOverVal: 1.96,
+        ouUnderText: '小 4/4.5', ouUnderVal: 1.9
+      }
+    },
+    {
+      id: '108',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot', 'early'],
+      league: '世界杯2026(在加拿大、墨西哥&美国)',
+      home: '荷兰',
+      away: '日本',
+      homeFlag: '🇳🇱',
+      awayFlag: '🇯🇵',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '(GMT+8) 06-15 04:00',
+      odds: {
+        winHome: 2.01, winAway: 3.61, winDraw: 3.47,
+        handicapHomeText: '-0.5', handicapHomeVal: 2.01,
+        handicapAwayText: '+0.5', handicapAwayVal: 1.87,
+        ouOverText: '大 2.5', ouOverVal: 1.98,
+        ouUnderText: '小 2.5', ouUnderVal: 1.88
       }
     },
     {
@@ -286,7 +424,7 @@ export default function PageSports() {
               </div>
             ))}
           </div>
-          <button className="sports-more-platform" onClick={() => showToast('提示：【更多体育平台】正在接入中，敬请期待！')}>
+          <button className="sports-more-platform" onClick={() => setActiveSubGame('sports_platforms')}>
             更多平台 <i className="fa-solid fa-chevron-right"></i>
           </button>
         </div>
