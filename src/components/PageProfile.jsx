@@ -107,6 +107,7 @@ export default function PageProfile() {
         </svg>
       )
     },
+    /*
     {
       name: '我的背包',
       action: () => handleFeatureClick('我的背包'),
@@ -130,6 +131,7 @@ export default function PageProfile() {
         </svg>
       )
     }
+    */
   ];
 
   return (
