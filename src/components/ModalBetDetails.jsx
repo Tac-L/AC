@@ -29,10 +29,12 @@ export default function ModalBetDetails() {
     gameTitle = '一分极速赛车 投注详情';
   }
 
-  // Handle amount change for specific staged item
+  // Handle amount change for specific staged item.
+  // The input shows baseVal * currentMultiplier, so divide back to store the 1x base.
   const handleAmountChange = (index, value) => {
     const nextItems = [...stagedItems];
-    nextItems[index].baseVal = parseFloat(value) || 0;
+    const displayed = parseFloat(value) || 0;
+    nextItems[index].baseVal = currentMultiplier ? displayed / currentMultiplier : displayed;
     setStagedItems(nextItems);
   };
 
@@ -102,10 +104,10 @@ export default function ModalBetDetails() {
               </div>
               <div className="item-right">
                 <span className="item-odds-lbl">赔率 <span className="item-odds-val">{item.odds}</span></span>
-                <input 
-                  type="number" 
-                  className="item-amount-input" 
-                  value={item.baseVal} 
+                <input
+                  type="number"
+                  className="item-amount-input"
+                  value={item.baseVal * currentMultiplier}
                   onChange={(e) => handleAmountChange(index, e.target.value)}
                 />
                 <i 
