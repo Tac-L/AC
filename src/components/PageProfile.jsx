@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage, openActivityPage } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
 
   const handleEditUsername = () => {
     showToast('提示：修改昵称功能暂未开放！');
@@ -42,7 +42,7 @@ export default function PageProfile() {
     },
     {
       name: '交易明细',
-      action: () => handleFeatureClick('交易明细'),
+      action: () => openBetRecordsPage('transactions'),
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -55,7 +55,7 @@ export default function PageProfile() {
     },
     {
       name: '投注记录',
-      action: () => setActivePage('page-bet-records'),
+      action: () => openBetRecordsPage('bets'),
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />

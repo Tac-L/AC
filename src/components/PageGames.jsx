@@ -14,7 +14,8 @@ export default function PageGames() {
     openDepositPage,
     openWithdrawPage,
     openOffersPage,
-    openActivityPage
+    openActivityPage,
+    openGameDetailModal
   } = useApp();
 
   const [rotate, setRotate] = useState(false);
@@ -82,7 +83,7 @@ export default function PageGames() {
     if (game.isLive) {
       setActiveSubGame(game.id);
     } else {
-      showToast(`提示：【${game.name}】正在对接中，目前请体验【一分六合彩】和【一分快三】哦！`);
+      openGameDetailModal({ name: game.name, img: game.img });
     }
   };
 

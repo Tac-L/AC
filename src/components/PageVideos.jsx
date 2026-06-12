@@ -112,10 +112,10 @@ export default function PageVideos() {
     { type: 'deposit', value: '新人福利', label: '新人福利', img: 'assets/drawing.png' },
     { type: 'deposit', value: '充值入口', label: '充值入口', img: 'assets/sports_cover.png' },
     { type: 'activity', value: 'rebate', label: '活动中心', img: 'assets/drawing.png' },
-    { type: 'toast', value: 'BG视讯', label: 'BG视讯', img: 'assets/science.png' },
-    { type: 'toast', value: 'BBIN视讯', label: 'BBIN视讯', img: 'assets/science.png' },
-    { type: 'game', value: 'pg', label: '寻宝黄金城 PG', img: 'assets/origami.png' },
-    { type: 'game', value: 'pg', label: '亡灵大盗 PG', img: 'assets/lego.png' }
+    { type: 'gameDetail', value: 'bg', label: 'BG视讯', img: 'assets/science.png' },
+    { type: 'gameDetail', value: 'bbin', label: 'BBIN视讯', img: 'assets/science.png' },
+    { type: 'gameDetail', value: 'gold_city', label: '寻宝黄金城 PG', img: 'assets/origami.png' },
+    { type: 'gameDetail', value: 'undead', label: '亡灵大盗 PG', img: 'assets/lego.png' }
   ];
 
   // Click handlers
@@ -135,7 +135,7 @@ export default function PageVideos() {
         setAutoOpenGameId(null);
       }
     } else if (slot.type === 'gameDetail') {
-      openGameDetailModal({ name: '赏金女王', img: slot.img });
+      openGameDetailModal({ name: slot.label.replace(/\s*PG$/, ''), img: slot.img });
     } else if (slot.type === 'deposit') {
       setActivePage('page-deposit');
     } else if (slot.type === 'activity') {

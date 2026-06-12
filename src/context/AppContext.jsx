@@ -20,6 +20,7 @@ export const AppProvider = ({ children }) => {
   const [activeVideo, setActiveVideo] = useState(null);
   const [videoPlayerActive, setVideoPlayerActive] = useState(false);
   const [activityTab, setActivityTab] = useState('task'); // initial tab for Activity Center
+  const [betRecordsTab, setBetRecordsTab] = useState('bets'); // initial tab for 详细记录 ('bets' | 'unsettled' | 'transactions')
 
   // 2. Custom Configs
   const [quickAmounts, setQuickAmounts] = useState([50, 100, 500, 1000]);
@@ -138,6 +139,13 @@ export const AppProvider = ({ children }) => {
     setActiveSubGame(null);
   };
 
+  // Open 详细记录 page on a specific tab ('bets' | 'unsettled' | 'transactions')
+  const openBetRecordsPage = (tab = 'bets') => {
+    setBetRecordsTab(tab);
+    setActivePage('page-bet-records');
+    setActiveSubGame(null);
+  };
+
   // PG Game Detail modal + nested game embed helpers
   const openGameDetailModal = (game) => {
     setGameDetailData(game || { name: '赏金大对决', img: 'assets/drawing.png' });
@@ -217,6 +225,8 @@ export const AppProvider = ({ children }) => {
       openOffersPage,
       openActivityPage,
       activityTab,
+      openBetRecordsPage,
+      betRecordsTab,
 
       activeChatroom,
       setActiveChatroom,

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageBetRecords() {
-  const { goBack, showToast } = useApp();
+  const { goBack, showToast, betRecordsTab } = useApp();
 
   // Active tab: 'bets' | 'unsettled' | 'transactions'
-  const [activeTab, setActiveTab] = useState('bets');
+  const [activeTab, setActiveTab] = useState(betRecordsTab || 'bets');
 
   const handleQuery = () => {
     showToast('查询完成：当前条件下暂无记录！');
@@ -51,50 +51,88 @@ export default function PageBetRecords() {
         ))}
       </div>
 
-      <div className="scroll-content" style={{ paddingBottom: '30px' }}>
-        {/* Filter Card */}
-        <div className="bet-records-filter-card">
-          <div className="bet-records-filter-row" onClick={() => handleSelect('投注日期')}>
-            <span className="filter-label">投注日期</span>
-            <span className="filter-value">2026/06/10 – 2026/06/12</span>
-            <i className="fa-solid fa-chevron-right filter-arrow"></i>
+      {activeTab === 'transactions' ? (
+        <div className="scroll-content" style={{ paddingBottom: '30px' }}>
+          {/* Filter Card */}
+          <div className="bet-records-filter-card">
+            <div className="bet-records-filter-row" onClick={() => handleSelect('交易类型')}>
+              <span className="filter-label">交易类型</span>
+              <span className="filter-value">全部</span>
+              <i className="fa-solid fa-chevron-right filter-arrow"></i>
+            </div>
+            <div className="bet-records-filter-row" onClick={() => handleSelect('交易日期')}>
+              <span className="filter-label">交易日期</span>
+              <span className="filter-value">2026/06/10 – 2026/06/12</span>
+              <i className="fa-solid fa-chevron-right filter-arrow"></i>
+            </div>
           </div>
-          <div className="bet-records-filter-row" onClick={() => handleSelect('游戏厂商')}>
-            <span className="filter-label">游戏厂商</span>
-            <span className="filter-value placeholder">点击选择游戏厂商</span>
-            <i className="fa-solid fa-chevron-right filter-arrow"></i>
-          </div>
-          <div className="bet-records-filter-row" onClick={() => handleSelect('游戏平台')}>
-            <span className="filter-label">游戏平台</span>
-            <span className="filter-value placeholder">点击选择游戏平台</span>
-            <i className="fa-solid fa-chevron-right filter-arrow"></i>
-          </div>
-        </div>
 
-        {/* Actions Row */}
-        <div className="bet-records-actions-row">
-          <span className="bet-records-more-conditions" onClick={handleMoreConditions}>更多查询条件</span>
-          <div className="bet-records-action-buttons">
-            <button className="bet-records-query-btn" onClick={handleQuery}>查询</button>
-            <button className="bet-records-reset-btn" onClick={handleReset}>重置</button>
-          </div>
-        </div>
+          {/* Search Button */}
+          <button className="bet-records-search-btn" onClick={handleQuery}>
+            <i className="fa-solid fa-magnifying-glass"></i> 搜索
+          </button>
 
-        {/* Summary Bar */}
-        <div className="bet-records-summary-bar">
-          <div className="summary-item">
-            <span className="summary-label">有效投注额：</span>
-            <span className="summary-value blue">¥0.00</span>
+          {/* Summary Bar */}
+          <div className="bet-records-summary-bar">
+            <div className="summary-item">
+              <span className="summary-label">总交易额度：</span>
+              <span className="summary-value blue">¥0.00</span>
+            </div>
+            <div className="summary-item">
+              <span className="summary-label">总优惠额度：</span>
+              <span className="summary-value green">¥0.00</span>
+            </div>
           </div>
-          <div className="summary-item">
-            <span className="summary-label">损益：</span>
-            <span className="summary-value green">¥0.00</span>
-          </div>
-        </div>
 
-        {/* Empty State Footer */}
-        <div className="bet-records-empty-footer">没有更多了</div>
-      </div>
+          {/* Empty State Footer */}
+          <div className="bet-records-empty-footer">没有更多了</div>
+        </div>
+      ) : (
+        <div className="scroll-content" style={{ paddingBottom: '30px' }}>
+          {/* Filter Card */}
+          <div className="bet-records-filter-card">
+            <div className="bet-records-filter-row" onClick={() => handleSelect('投注日期')}>
+              <span className="filter-label">投注日期</span>
+              <span className="filter-value">2026/06/10 – 2026/06/12</span>
+              <i className="fa-solid fa-chevron-right filter-arrow"></i>
+            </div>
+            <div className="bet-records-filter-row" onClick={() => handleSelect('游戏厂商')}>
+              <span className="filter-label">游戏厂商</span>
+              <span className="filter-value placeholder">点击选择游戏厂商</span>
+              <i className="fa-solid fa-chevron-right filter-arrow"></i>
+            </div>
+            <div className="bet-records-filter-row" onClick={() => handleSelect('游戏平台')}>
+              <span className="filter-label">游戏平台</span>
+              <span className="filter-value placeholder">点击选择游戏平台</span>
+              <i className="fa-solid fa-chevron-right filter-arrow"></i>
+            </div>
+          </div>
+
+          {/* Actions Row */}
+          <div className="bet-records-actions-row">
+            <span className="bet-records-more-conditions" onClick={handleMoreConditions}>更多查询条件</span>
+            <div className="bet-records-action-buttons">
+              <button className="bet-records-query-btn" onClick={handleQuery}>查询</button>
+              <button className="bet-records-reset-btn" onClick={handleReset}>重置</button>
+            </div>
+          </div>
+
+          {/* Summary Bar */}
+          <div className="bet-records-summary-bar">
+            <div className="summary-item">
+              <span className="summary-label">有效投注额：</span>
+              <span className="summary-value blue">¥0.00</span>
+            </div>
+            <div className="summary-item">
+              <span className="summary-label">损益：</span>
+              <span className="summary-value green">¥0.00</span>
+            </div>
+          </div>
+
+          {/* Empty State Footer */}
+          <div className="bet-records-empty-footer">没有更多了</div>
+        </div>
+      )}
     </div>
   );
 }

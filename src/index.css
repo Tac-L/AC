@@ -13103,6 +13103,29 @@ body {
   transform: scale(0.96) !important;
 }
 
+.bet-records-search-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: calc(100% - 28px) !important;
+  margin: 0 14px 16px !important;
+  background-color: #5b7cf6 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 26px !important;
+  padding: 14px 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: transform 0.12s !important;
+}
+
+.bet-records-search-btn:active {
+  transform: scale(0.98) !important;
+}
+
 .bet-records-summary-bar {
   display: flex !important;
   align-items: center !important;
