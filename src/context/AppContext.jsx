@@ -7,7 +7,8 @@ export const useApp = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
   // 1. Core State
   const [balance, setBalance] = useState(1000.00);
-  const [activePage, setActivePage] = useState('page-dramas'); // default page is dramas
+  const [activePage, setActivePageState] = useState('page-dramas'); // default page is dramas
+  const [pageHistory, setPageHistory] = useState([]); // navigation history stack
   const [activeSubGame, setActiveSubGame] = useState(null); // 'mark_six' or 'fast_three'
   const [phoneSkin, setPhoneSkin] = useState('phone-dark'); // phone-dark, phone-gold, phone-purple, phone-coral
   const [systemTime, setSystemTime] = useState('22:03');
@@ -18,6 +19,7 @@ export const AppProvider = ({ children }) => {
   const [autoOpenGameId, setAutoOpenGameId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [videoPlayerActive, setVideoPlayerActive] = useState(false);
+  const [activityTab, setActivityTab] = useState('task'); // initial tab for Activity Center
 
   // 2. Custom Configs
   const [quickAmounts, setQuickAmounts] = useState([50, 100, 500, 1000]);
@@ -41,6 +43,12 @@ export const AppProvider = ({ children }) => {
   // 6. Config Modals Active States
   const [editMultipliersActive, setEditMultipliersActive] = useState(false);
   const [editQuickAmountsActive, setEditQuickAmountsActive] = useState(false);
+
+  // 7. PG Game Detail modal + nested game embed
+  const [gameDetailModalActive, setGameDetailModalActive] = useState(false);
+  const [gameDetailData, setGameDetailData] = useState(null); // { name, img }
+  const [pgGameActive, setPgGameActive] = useState(false);
+  const [pgGameData, setPgGameData] = useState(null); // { name, img }
 
   // Clock Update Effect
   useEffect(() => {
@@ -86,6 +94,27 @@ export const AppProvider = ({ children }) => {
     setBetDetailsModalActive(false);
   };
 
+  // Navigation: wrap setActivePage to record previous page in history
+  const setActivePage = (page) => {
+    if (page !== activePage) {
+      setPageHistory(h => [...h, activePage]);
+    }
+    setActivePageState(page);
+  };
+
+  // Go back to the previously visited page (fallback used when history is empty)
+  const goBack = (fallback = 'page-profile') => {
+    setPageHistory(h => {
+      if (h.length === 0) {
+        setActivePageState(fallback);
+        return h;
+      }
+      setActivePageState(h[h.length - 1]);
+      return h.slice(0, -1);
+    });
+    setActiveSubGame(null);
+  };
+
   // Navigation helpers
   const openDepositPage = () => {
     setActivePage('page-deposit');
@@ -97,6 +126,39 @@ export const AppProvider = ({ children }) => {
     setActiveSubGame(null);
   };
 
+  const openOffersPage = () => {
+    setActivePage('page-offers');
+    setActiveSubGame(null);
+  };
+
+  // Open Activity Center on a specific tab ('task' | 'rebate' | 'vip' | 'tournament')
+  const openActivityPage = (tab = 'task') => {
+    setActivityTab(tab);
+    setActivePage('page-activity');
+    setActiveSubGame(null);
+  };
+
+  // PG Game Detail modal + nested game embed helpers
+  const openGameDetailModal = (game) => {
+    setGameDetailData(game || { name: '赏金大对决', img: 'assets/drawing.png' });
+    setGameDetailModalActive(true);
+  };
+
+  const closeGameDetailModal = () => {
+    setGameDetailModalActive(false);
+  };
+
+  // Launch the nested PG game embed (image 3) from the detail modal
+  const openPgGame = (game) => {
+    setPgGameData(game || gameDetailData || { name: '赏金大对决', img: 'assets/drawing.png' });
+    setGameDetailModalActive(false);
+    setPgGameActive(true);
+  };
+
+  const closePgGame = () => {
+    setPgGameActive(false);
+  };
+
   return (
     <AppContext.Provider value={{
       balance,
@@ -105,7 +167,8 @@ export const AppProvider = ({ children }) => {
       
       activePage,
       setActivePage,
-      
+      goBack,
+
       activeSubGame,
       setActiveSubGame,
       
@@ -151,6 +214,9 @@ export const AppProvider = ({ children }) => {
       
       openDepositPage,
       openWithdrawPage,
+      openOffersPage,
+      openActivityPage,
+      activityTab,
 
       activeChatroom,
       setActiveChatroom,
@@ -166,7 +232,18 @@ export const AppProvider = ({ children }) => {
       editMultipliersActive,
       setEditMultipliersActive,
       editQuickAmountsActive,
-      setEditQuickAmountsActive
+      setEditQuickAmountsActive,
+
+      gameDetailModalActive,
+      setGameDetailModalActive,
+      gameDetailData,
+      openGameDetailModal,
+      closeGameDetailModal,
+      pgGameActive,
+      setPgGameActive,
+      pgGameData,
+      openPgGame,
+      closePgGame
     }}>
       {children}
     </AppContext.Provider>

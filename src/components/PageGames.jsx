@@ -12,7 +12,9 @@ export default function PageGames() {
     setAutoOpenGameId,
     showToast,
     openDepositPage,
-    openWithdrawPage
+    openWithdrawPage,
+    openOffersPage,
+    openActivityPage
   } = useApp();
 
   const [rotate, setRotate] = useState(false);
@@ -40,6 +42,7 @@ export default function PageGames() {
   const gamesData = [
     { id: 'mark_six', name: '一分六合彩', category: ['hot', 'lottery'], img: 'assets/mo_mark_six.png', isLive: true },
     { id: 'fast_three', name: '一分快三', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true },
+    { id: 'speed_race', name: '一分极速赛车', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true },
     { id: 'mahjong', name: '麻将胡了', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
     { id: 'mahjong2', name: '麻将胡了2', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
     { id: 'gold_city', name: '寻宝黄金城', category: ['hot', 'egame'], img: 'assets/gold_dragon_bg.png', isLive: false },
@@ -62,7 +65,7 @@ export default function PageGames() {
   // Run auto open checks on mount/updates
   useEffect(() => {
     if (autoOpenGameId) {
-      if (autoOpenGameId === 'fast_three' || autoOpenGameId === 'mark_six') {
+      if (autoOpenGameId === 'fast_three' || autoOpenGameId === 'mark_six' || autoOpenGameId === 'speed_race') {
         setActiveSubGame(autoOpenGameId);
       } else {
         showToast('加拿大28 正在对接中，请先体验一分快三和一分六合彩哦！');
@@ -95,8 +98,8 @@ export default function PageGames() {
   // Wallet round-icon actions
   const walletActions = [
     { id: 'recharge', label: '充值', icon: 'fa-solid fa-sack-dollar', cls: 'recharge', onClick: openDepositPage },
-    { id: 'vip', label: 'Vip钱包', icon: 'fa-brands fa-bitcoin', cls: 'vip', onClick: () => showToast('提示：【Vip钱包】功能正在对接中，敬请期待！') },
-    { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', badge: '送1.5%', onClick: () => showToast('提示：【优惠活动】功能正在对接中，敬请期待！') },
+    { id: 'vip', label: 'Vip钱包', icon: 'fa-brands fa-bitcoin', cls: 'vip', onClick: () => openActivityPage('vip') },
+    { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', badge: '送1.5%', onClick: openOffersPage },
     { id: 'withdraw', label: '提款', icon: 'fa-solid fa-credit-card', cls: 'withdraw', onClick: openWithdrawPage },
     { id: 'more', label: '更多', icon: 'fa-solid fa-table-cells', cls: 'more', onClick: () => showToast('提示：【更多功能】正在对接中，敬请期待！') }
   ];

@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage, openActivityPage } = useApp();
 
   const handleEditUsername = () => {
     showToast('提示：修改昵称功能暂未开放！');
@@ -17,11 +17,7 @@ export default function PageProfile() {
   };
 
   const handleBuyVip = () => {
-    showToast('提示：VIP通道正在对接中，敬请期待！');
-  };
-
-  const handlePerkClick = (perkName) => {
-    showToast(`提示：【${perkName}】项目即将开启！`);
+    openActivityPage('vip');
   };
 
   const handleOnekeyRetrieve = () => {
@@ -86,7 +82,7 @@ export default function PageProfile() {
     },
     {
       name: '个人资料',
-      action: handleEditUsername,
+      action: () => setActivePage('page-settings'),
       icon: (
         <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -205,14 +201,14 @@ export default function PageProfile() {
 
         {/* Grid Perks Row */}
         <div className="profile-perks-row">
-          <div className="profile-perk-card" id="btn-daily-task" onClick={() => handlePerkClick('每日任务')}>
+          <div className="profile-perk-card" id="btn-daily-task" onClick={() => openActivityPage('task')}>
             <div className="profile-perk-info">
               <h4>每日任务</h4>
               <p>7天连续签到 轻松赚大奖</p>
             </div>
             <img src="assets/game_fast3.png" alt="每日任务" className="profile-perk-icon-img" />
           </div>
-          <div className="profile-perk-card" id="btn-premium-vip" onClick={() => handlePerkClick('尊享VIP')}>
+          <div className="profile-perk-card" id="btn-premium-vip" onClick={() => openActivityPage('vip')}>
             <div className="profile-perk-info">
               <h4>尊享VIP</h4>
               <p>晋级礼金+周俸禄<br />+月俸禄 终身收益</p>

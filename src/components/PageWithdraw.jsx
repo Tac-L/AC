@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageWithdraw() {
-  const { balance, updateBalance, setActivePage, showToast } = useApp();
+  const { balance, updateBalance, goBack, showToast } = useApp();
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [pwdDigits, setPwdDigits] = useState(['', '', '', '']);
@@ -103,7 +103,7 @@ export default function PageWithdraw() {
     <div className="app-page active" id="page-withdraw">
       {/* Header Bar */}
       <div className="withdraw-header-bar">
-        <i className="fa-solid fa-chevron-left" id="btn-withdraw-back" onClick={() => setActivePage('page-profile')}></i>
+        <i className="fa-solid fa-chevron-left" id="btn-withdraw-back" onClick={() => goBack('page-profile')}></i>
         <span className="withdraw-header-title">在线取款</span>
         <div></div> {/* Spacer for flex-between alignment */}
       </div>

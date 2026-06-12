@@ -1,108 +1,81 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+
+// 标准六合彩号码颜色对照
+const RED_NUMS = [1, 2, 7, 8, 12, 13, 18, 19, 23, 24, 29, 30, 34, 35, 40, 45, 46];
+const BLUE_NUMS = [3, 4, 9, 10, 14, 15, 20, 25, 26, 31, 36, 37, 41, 42, 47, 48];
+const ZODIACS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
+const getBallColor = (num) => {
+  if (RED_NUMS.includes(num)) return 'red';
+  if (BLUE_NUMS.includes(num)) return 'blue';
+  return 'green';
+};
 
 export default function SubGameMarkSix() {
   const { balance, updateBalance, quickAmounts, openBetDetailsModal, setEditQuickAmountsActive, setActiveSubGame, showToast } = useApp();
 
-  // Draw states
-  const [countdown, setCountdown] = useState(45);
+  // 开奖状态
+  const [issue, setIssue] = useState(20062);
+  const [countdown, setCountdown] = useState(263); // 04:23
   const [isDrawing, setIsDrawing] = useState(false);
-  const [issue, setIssue] = useState(202606051273);
-  const [balls, setBalls] = useState([8, 12, 24, 33, 41, 48, 8]); // default mock results
-  const [analysisTags, setAnalysisTags] = useState({ num: 8, size: '小', oe: '双', color: '蓝', zodiac: '猴' });
+  // 上期结果（含特别号）：默认与设计图一致
+  const [lastResult, setLastResult] = useState([
+    { n: 2, z: '蛇' }, { n: 49, z: '马' }, { n: 16, z: '兔' },
+    { n: 5, z: '虎' }, { n: 40, z: '兔' }, { n: 21, z: '狗' },
+    { n: 36, z: '羊' } // 特别号
+  ]);
 
-  // Betting selections
-  const [activePlayTab, setActivePlayTab] = useState('twoside'); // twoside, colorwave, zodiac, number
-  const [selectedOddsKeys, setSelectedOddsKeys] = useState(new Set());
-  const [betAmount, setBetAmount] = useState(50); // defaults to 50
+  // 投注状态
+  const [activePlay, setActivePlay] = useState('tema'); // 左侧导航：默认特码
+  const [betTab, setBetTab] = useState('A');             // 特码A / 特码B
+  const [quickOpen, setQuickOpen] = useState(true);      // 快捷投注 折叠
+  const [selectedKeys, setSelectedKeys] = useState(new Set());
+  const [betAmount, setBetAmount] = useState(quickAmounts[0] || 10);
   const [manualAmount, setManualAmount] = useState('');
-
-  // Countdown effect
-  useEffect(() => {
-    let timer;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
-    } else {
-      performDrawing();
-    }
-    return () => clearTimeout(timer);
-  }, [countdown]);
 
   const performDrawing = () => {
     setIsDrawing(true);
     setTimeout(() => {
-      // Pick 7 random numbers 1-49
       const drawn = [];
       while (drawn.length < 7) {
         const num = Math.floor(Math.random() * 49) + 1;
         if (!drawn.includes(num)) drawn.push(num);
       }
-
-      setBalls(drawn);
+      setLastResult(drawn.map(n => ({ n, z: ZODIACS[n % 12] })));
       setIssue(prev => prev + 1);
-
-      // Analyze special ball (7th element)
-      const spec = drawn[6];
-      const colors = ['red', 'green', 'blue'];
-      const colorVal = colors[spec % 3];
-      const colorName = colorVal === 'red' ? '红' : (colorVal === 'green' ? '绿' : '蓝');
-      
-      const isBig = spec >= 25 ? '大' : '小';
-      const isSingle = spec % 2 !== 0 ? '单' : '双';
-      
-      const zodiacs = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
-      const zodiacName = zodiacs[spec % 12];
-
-      setAnalysisTags({
-        num: spec,
-        size: isBig,
-        oe: isSingle,
-        color: colorName,
-        zodiac: zodiacName
-      });
-
-      setCountdown(45);
+      setCountdown(263);
       setIsDrawing(false);
-    }, 2500);
+    }, 2000);
   };
 
-  const getBallColorClass = (num) => {
-    const colors = ['red', 'green', 'blue'];
-    return `ball-${colors[num % 3]}`;
-  };
-
-  // Odds databases
-  const playOddsDatabase = {
-    twoside: [
-      { name: "单", odds: "1.97" },
-      { name: "双", odds: "1.97" },
-      { name: "大", odds: "1.97" },
-      { name: "小", odds: "1.97" }
-    ],
-    colorwave: [
-      { name: "红波", odds: "2.80" },
-      { name: "蓝波", odds: "2.80" },
-      { name: "绿波", odds: "2.80" }
-    ],
-    zodiac: [
-      { name: "鼠", odds: "11.5" }, { name: "牛", odds: "11.5" },
-      { name: "虎", odds: "11.5" }, { name: "兔", odds: "11.5" },
-      { name: "龙", odds: "11.5" }, { name: "蛇", odds: "11.5" },
-      { name: "马", odds: "11.5" }, { name: "羊", odds: "11.5" },
-      { name: "猴", odds: "11.5" }, { name: "鸡", odds: "11.5" },
-      { name: "狗", odds: "11.5" }, { name: "猪", odds: "11.5" }
-    ],
-    number: Array.from({ length: 49 }, (_, i) => ({ name: String(i + 1).padStart(2, '0'), odds: "48.0" }))
-  };
-
-  const handleOddsCardClick = (name) => {
-    const nextSet = new Set(selectedOddsKeys);
-    if (nextSet.has(name)) {
-      nextSet.delete(name);
+  // 倒计时
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
     } else {
-      nextSet.add(name);
+      setTimeout(() => performDrawing(), 0);
     }
-    setSelectedOddsKeys(nextSet);
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  const formatTime = (sec) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `00:${m}:${s}`;
+  };
+
+  // 左侧导航：特码以外暂不响应（与一分快三一致）
+  const handleSidebarClick = (id) => {
+    if (id !== 'tema') return;
+    setActivePlay(id);
+  };
+
+  const handleNumClick = (name) => {
+    const next = new Set(selectedKeys);
+    next.has(name) ? next.delete(name) : next.add(name);
+    setSelectedKeys(next);
   };
 
   const handleQuickAmountClick = (val) => {
@@ -110,45 +83,32 @@ export default function SubGameMarkSix() {
     setManualAmount('');
   };
 
-  const handleManualAmountChange = (e) => {
-    setManualAmount(e.target.value);
-  };
-
   const activeQuickAmount = manualAmount === '' ? betAmount : 0;
   const currentBetPrice = manualAmount !== '' ? parseFloat(manualAmount) || 0 : betAmount;
-  
-  const count = selectedOddsKeys.size;
+  const count = selectedKeys.size;
   const totalCost = count * currentBetPrice;
 
-  const handleResetBets = () => {
-    selectedOddsKeys.clear();
-    setSelectedOddsKeys(new Set());
+  const handleReset = () => {
+    setSelectedKeys(new Set());
     setManualAmount('');
-    setBetAmount(50);
+    setBetAmount(quickAmounts[0] || 10);
   };
 
-  const handleConfirmBets = () => {
+  const handleSubmit = () => {
     if (count === 0) {
-      alert("请至少选择一个投注盘口！");
+      showToast('请先选择投注号码！');
       return;
     }
     if (currentBetPrice <= 0) {
-      alert("请输入有效的每注投注金额！");
+      showToast('请输入有效金额！');
       return;
     }
-
-    const activeLabel = activePlayTab === 'twoside' ? '特码两面' : (activePlayTab === 'colorwave' ? '特码色波' : (activePlayTab === 'zodiac' ? '特码生肖' : '特码直选'));
-    
-    const items = Array.from(selectedOddsKeys).map(name => {
-      const card = playOddsDatabase[activePlayTab].find(item => item.name === name);
-      return {
-        name,
-        odds: card ? card.odds : '1.97',
-        baseVal: currentBetPrice,
-        category: activeLabel
-      };
-    });
-
+    const items = Array.from(selectedKeys).map(name => ({
+      name,
+      odds: '48.0',
+      baseVal: currentBetPrice,
+      category: `特码${betTab}`
+    }));
     openBetDetailsModal('mark_six', items);
   };
 
@@ -157,159 +117,164 @@ export default function SubGameMarkSix() {
     showToast('余额已刷新为 ¥3000.00！');
   };
 
+  const sidebarTabs = [
+    { id: 'changlong', label: '长龙' },
+    { id: 'tema', label: '特码' },
+    { id: 'zhengma', label: '正码' },
+    { id: 'zhengte', label: '正特' },
+    { id: 'texiao', label: '特肖' },
+    { id: 'zhengxiao', label: '正肖' },
+    { id: 'yixiao', label: '一肖' },
+    { id: 'yixiaobuzhong', label: '一肖不中' }
+  ];
+
+  const numbers = Array.from({ length: 49 }, (_, i) => i + 1);
+
   return (
     <div className="sub-game-page active" id="page-mark-six">
-      {/* Header */}
-      <div className="game-header-bar">
-        <i className="fa-solid fa-chevron-left" id="btn-back-to-lobby" onClick={() => setActiveSubGame(null)}></i>
-        <span className="game-header-title">一分六合彩</span>
-        <div className="game-header-right">
-          <span>余额: <span id="game-top-balance">{balance.toFixed(2)}</span></span>
-          <i className="fa-solid fa-rotate" id="btn-refresh-mark6-balance" onClick={handleRefreshBalance}></i>
+      {/* 顶部应用栏：全屏 / 退出（与一分快三一致） */}
+      <div className="f3new-appbar">
+        <button className="f3new-appbar-btn" onClick={() => showToast('全屏模式')} title="全屏">
+          <i className="fa-solid fa-expand"></i>
+        </button>
+        <button className="f3new-appbar-btn" onClick={() => setActiveSubGame(null)} title="退出游戏">
+          <i className="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+
+      {/* 游戏标题栏 */}
+      <div className="m6new-title-bar">
+        <div className="m6new-title-left">
+          <i className="fa-solid fa-table-cells m6new-title-icon"></i>
+          <span>十分澳门六合彩</span>
+        </div>
+        <div className="m6new-title-right">
+          <div className="m6new-pan-select" onClick={() => showToast('盘口切换功能对接中')}>
+            A盘 <i className="fa-solid fa-chevron-down"></i>
+          </div>
+          <button className="m6new-menu-btn" onClick={() => showToast('更多玩法菜单对接中')}>
+            <i className="fa-solid fa-bars"></i>
+          </button>
         </div>
       </div>
 
-      {/* Sub header countdown & lottery results */}
-      <div className="game-lottery-board">
-        <div className="board-top-row">
-          <span className="issue-label">第 <span id="mark6-issue">{issue}</span> 期</span>
-          <span className="timer-label" id="mark6-timer">
-            {isDrawing ? "正在开奖..." : `00 : ${countdown.toString().padStart(2, '0')}`}
-          </span>
+      {/* 开奖结果行 */}
+      <div className="m6new-result-bar">
+        <div className="m6new-result-row">
+          <span className="m6new-issue">{issue - 1}期</span>
+          <div className="m6new-balls">
+            {lastResult.slice(0, 6).map((b, i) => (
+              <div key={i} className="m6new-ball-wrap">
+                <div className={`m6new-ball ball-${getBallColor(b.n)}`}>{b.n.toString().padStart(2, '0')}</div>
+                <span className="m6new-ball-zodiac">{b.z}</span>
+              </div>
+            ))}
+            <span className="m6new-plus">+</span>
+            <div className="m6new-ball-wrap">
+              <div className={`m6new-ball ball-${getBallColor(lastResult[6].n)}`}>{lastResult[6].n.toString().padStart(2, '0')}</div>
+              <span className="m6new-ball-zodiac">{lastResult[6].z}</span>
+            </div>
+          </div>
+          <i className="fa-solid fa-trophy m6new-trophy"></i>
         </div>
-        
-        {/* Draw Balls wrapper */}
-        <div className="board-balls-row" id="mark6-balls-container">
-          {balls.slice(0, 6).map((num, idx) => (
-            <div key={idx} className={`ball ${getBallColorClass(num)}`}>{num.toString().padStart(2, '0')}</div>
-          ))}
-          <div className="balls-plus">+</div>
-          <div className={`ball ${getBallColorClass(balls[6])}`}>{balls[6].toString().padStart(2, '0')}</div>
-        </div>
-
-        {/* Results Tags */}
-        <div className="board-tags-row" id="mark6-tags-container">
-          <span className="tag-box bg-white">{analysisTags.num.toString().padStart(2, '0')}</span>
-          <span className="tag-box bg-blue">{analysisTags.size}</span>
-          <span className="tag-box bg-light-blue">{analysisTags.oe}</span>
-          <span className="tag-box bg-red">{analysisTags.color}波</span>
-          <span className="tag-box bg-orange">{analysisTags.zodiac}</span>
+        <div className="m6new-countdown-row">
+          <span className="m6new-next-issue">{issue}期</span>
+          <span className="m6new-cd-label">封盘 <strong className="m6new-cd-red">{isDrawing ? '正在开奖' : formatTime(countdown)}</strong></span>
+          <span className="m6new-cd-label">开奖 <strong className="m6new-cd-green">{isDrawing ? '正在开奖' : formatTime(countdown)}</strong></span>
+          <i className="fa-solid fa-circle-play m6new-play-icon" onClick={performDrawing}></i>
         </div>
       </div>
 
-      <div style={{
-        backgroundColor: '#fffbeb',
-        color: '#d97706',
-        fontSize: '0.62rem',
-        padding: '6px 12px',
-        borderBottom: '1px solid #fef3c7',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        fontWeight: 'bold'
-      }}>
-        <i className="fa-solid fa-triangle-exclamation"></i>
-        <span>设计MEMO：本頁面點擊遊戲會開啟完整遊戲頁面，與直播內的玩法不同</span>
-      </div>
-
-      {/* Main Game Contents */}
-      <div className="game-main-content">
-        {/* Play Categories Side Tabs */}
-        <div className="game-play-side-tabs">
-          {[
-            { id: 'twoside', label: '特码两面' },
-            { id: 'colorwave', label: '特码色波' },
-            { id: 'zodiac', label: '特码生肖' },
-            { id: 'number', label: '特码直选' }
-          ].map(tab => (
-            <div 
+      {/* 主体：左侧导航 + 右侧内容 */}
+      <div className="m6new-body">
+        <div className="m6new-sidebar">
+          {sidebarTabs.map(tab => (
+            <div
               key={tab.id}
-              className={`play-side-tab ${activePlayTab === tab.id ? 'active' : ''}`}
-              onClick={() => {
-                setActivePlayTab(tab.id);
-                selectedOddsKeys.clear();
-                setSelectedOddsKeys(new Set());
-              }}
+              className={`m6new-nav-item ${activePlay === tab.id ? 'active' : ''}`}
+              onClick={() => handleSidebarClick(tab.id)}
             >
               {tab.label}
             </div>
           ))}
         </div>
 
-        {/* Odds Cards grid */}
-        <div className="game-odds-container">
-          <div className="scroll-content">
-            <div className={`game-odds-grid ${activePlayTab === 'number' ? 'grid-4-cols' : ''}`} id="mark6-odds-grid">
-              {playOddsDatabase[activePlayTab].map(card => {
-                const isSelected = selectedOddsKeys.has(card.name);
-                return (
-                  <div 
-                    key={card.name} 
-                    className={`odds-card ${isSelected ? 'selected' : ''}`}
-                    onClick={() => handleOddsCardClick(card.name)}
-                  >
-                    <span className="odds-name">{card.name}</span>
-                    <strong className="odds-value">{card.odds}</strong>
-                  </div>
-                );
-              })}
-            </div>
+        <div className="m6new-content">
+          {/* 特码A / 特码B */}
+          <div className="m6new-sub-tabs">
+            <div className={`m6new-sub-tab ${betTab === 'A' ? 'active' : ''}`} onClick={() => setBetTab('A')}>特码A</div>
+            <div className={`m6new-sub-tab ${betTab === 'B' ? 'active' : ''}`} onClick={() => setBetTab('B')}>特码B</div>
           </div>
+
+          {/* 快捷投注 折叠头 */}
+          <div className="m6new-collapse-header" onClick={() => setQuickOpen(prev => !prev)}>
+            <span>快捷投注</span>
+            <i className={`fa-solid ${quickOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+          </div>
+
+          {quickOpen && (
+            <>
+              {/* 数字 下拉头 */}
+              <div className="m6new-dropdown-header" onClick={() => showToast('显示方式切换对接中')}>
+                <span>数字</span>
+                <i className="fa-solid fa-chevron-down"></i>
+              </div>
+
+              {/* 号码网格 */}
+              <div className="m6new-num-grid">
+                {numbers.map(n => {
+                  const name = n.toString().padStart(2, '0');
+                  const selected = selectedKeys.has(name);
+                  return (
+                    <div
+                      key={n}
+                      className={`m6new-num-card ${selected ? 'selected' : ''}`}
+                      onClick={() => handleNumClick(name)}
+                    >
+                      <span className={`m6new-num-ball ball-${getBallColor(n)}`}>{name}</span>
+                      <span className="m6new-num-odds">48</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Betting Console */}
-      <div className="game-bet-console">
-        {/* Row 1: Balance, Selected odds tags details */}
-        <div className="console-info-row">
-          <span className="console-balance">
-            余额: <span id="mark6-console-balance">{balance.toFixed(2)}</span>
+      {/* 底部投注控制台 */}
+      <div className="m6new-console">
+        <div className="m6new-console-info">
+          <span>
+            余额：<strong>{balance.toFixed(2)}</strong>
+            <i className="fa-solid fa-rotate" onClick={handleRefreshBalance} style={{ cursor: 'pointer', marginLeft: '6px' }}></i>
           </span>
-          <span className="console-bet-summary">
-            已选 <span id="bet-selected-count" className="count-value">{count}</span> 注，
-            共 <span id="bet-total-cost" className="cost-value">{totalCost.toFixed(2)}</span> 元
-          </span>
+          <span>共 <strong className="m6new-orange">{count}</strong> 注 &nbsp; 下注金额: <strong>{totalCost.toFixed(0)}</strong></span>
         </div>
-
-        {/* Row 2: Quick chip buttons presets */}
-        <div className="console-amount-row">
-          <div className="console-amount-left">
-            <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
-              <i className="fa-solid fa-pencil"></i>
-            </button>
-            <div className="console-quick-amounts" id="mark6-quick-amounts">
-              {quickAmounts.map(val => (
-                <button 
-                  key={val} 
-                  className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
-                  onClick={() => handleQuickAmountClick(val)}
-                >
-                  {val}
-                </button>
-              ))}
+        <div className="m6new-console-amounts">
+          {quickAmounts.map(val => (
+            <div
+              key={val}
+              className={`m6new-quick-btn ${activeQuickAmount === val ? 'active' : ''}`}
+              onClick={() => handleQuickAmountClick(val)}
+            >
+              {val}
             </div>
+          ))}
+          <div className="m6new-quick-btn m6new-edit-btn" onClick={() => setEditQuickAmountsActive(true)}>
+            <i className="fa-solid fa-pen"></i>
           </div>
-          <input 
-            type="number" 
-            id="mark6-input-amount" 
-            className="console-manual-input" 
-            placeholder="自定义" 
-            value={manualAmount}
-            onChange={handleManualAmountChange}
-          />
         </div>
-
-        {/* Row 3: Action checkouts */}
-        <div className="console-action-row">
-          <button className="console-cancel-btn" onClick={handleResetBets}>
-            <i className="fa-solid fa-rotate-left"></i> 重置
-          </button>
-          <button 
-            className={`console-submit-btn ${count > 0 && currentBetPrice > 0 ? 'active' : ''}`}
-            onClick={handleConfirmBets}
-          >
-            提交
-          </button>
+        <div className="m6new-console-btns">
+          <input
+            type="number"
+            className="m6new-input-amount"
+            placeholder="输入金额"
+            value={manualAmount}
+            onChange={(e) => setManualAmount(e.target.value)}
+          />
+          <button className="m6new-reset-btn" onClick={handleReset}>重置</button>
+          <button className="m6new-submit-btn" onClick={handleSubmit}>投注</button>
         </div>
       </div>
     </div>

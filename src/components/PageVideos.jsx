@@ -85,9 +85,11 @@ export default function PageVideos() {
     setActivePage, 
     setActiveGameCategory, 
     setAutoOpenGameId, 
-    setActiveVideo, 
-    setVideoPlayerActive, 
-    showToast 
+    setActiveVideo,
+    setVideoPlayerActive,
+    showToast,
+    openActivityPage,
+    openGameDetailModal
   } = useApp();
 
   const [activeCat, setActiveCat] = useState('recommend');
@@ -104,17 +106,15 @@ export default function PageVideos() {
   // Initialize state synchronously with helper function
   const [layoutBlocks, setLayoutBlocks] = useState(() => initBlocksData('recommend', categories));
 
-  // 10 portals configured exactly matching the screenshot
+  // 8 portals (4 per row)
   const portals = [
-    { type: 'game', value: 'pg', label: '赏金女王 PG', img: 'assets/game_mahjong.png' },
+    { type: 'gameDetail', value: 'queen', label: '赏金女王 PG', img: 'assets/game_mahjong.png' },
     { type: 'deposit', value: '新人福利', label: '新人福利', img: 'assets/drawing.png' },
     { type: 'deposit', value: '充值入口', label: '充值入口', img: 'assets/sports_cover.png' },
-    { type: 'toast', value: '在线客服', label: '在线客服', img: 'assets/chat_cover.png' },
-    { type: 'toast', value: '活动中心', label: '活动中心', img: 'assets/drawing.png' },
+    { type: 'activity', value: 'rebate', label: '活动中心', img: 'assets/drawing.png' },
     { type: 'toast', value: 'BG视讯', label: 'BG视讯', img: 'assets/science.png' },
     { type: 'toast', value: 'BBIN视讯', label: 'BBIN视讯', img: 'assets/science.png' },
     { type: 'game', value: 'pg', label: '寻宝黄金城 PG', img: 'assets/origami.png' },
-    { type: 'game', value: 'wali', label: '抢庄牛牛', img: 'assets/game_fast3.png' },
     { type: 'game', value: 'pg', label: '亡灵大盗 PG', img: 'assets/lego.png' }
   ];
 
@@ -134,8 +134,12 @@ export default function PageVideos() {
         setActiveGameCategory('wali');
         setAutoOpenGameId(null);
       }
+    } else if (slot.type === 'gameDetail') {
+      openGameDetailModal({ name: '赏金女王', img: slot.img });
     } else if (slot.type === 'deposit') {
       setActivePage('page-deposit');
+    } else if (slot.type === 'activity') {
+      openActivityPage(slot.value);
     } else {
       showToast(`提示：【${slot.value}】正在對接中，敬請期待！`);
     }
@@ -216,7 +220,6 @@ export default function PageVideos() {
           <img src="assets/black_panther_logo.png" className="lobby-logo-avatar" alt="LOGO" />
           <div>
             <h4>黑豹视频</h4>
-            <span>1068.tv</span>
           </div>
         </div>
         <div className="search-bar-middle" onClick={handleSearch}>
@@ -243,7 +246,7 @@ export default function PageVideos() {
       {/* Scrollable Content Container */}
       <div className="scroll-content" style={{ padding: '0 0 80px 0' }}>
         {/* Marquee Announcement */}
-        <div className="video-marquee-announcement" style={{ margin: '10px 12px' }}>
+        <div className="video-marquee-announcement" style={{ margin: '0 12px' }}>
           <i className="fa-solid fa-bullhorn text-orange announcement-icon"></i>
           <div className="marquee-text-container">
             <div className="marquee-text">欢迎光临黑豹视频！全球顶级观影app，无限看片，全部免费！首充即送300%红利...</div>

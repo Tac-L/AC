@@ -17,16 +17,21 @@ import PageWithdraw from './components/PageWithdraw';
 import PageMail from './components/PageMail';
 import PageBetRecords from './components/PageBetRecords';
 import PageActivity from './components/PageActivity';
+import PageOffers from './components/PageOffers';
+import PageSettings from './components/PageSettings';
 
 // Sub games
 import SubGameMarkSix from './components/SubGameMarkSix';
 import SubGameFastThree from './components/SubGameFastThree';
+import SubGameSpeedRace from './components/SubGameSpeedRace';
 import PageSportsPlatforms from './components/PageSportsPlatforms';
 
 // Modals
 import ModalBetDetails from './components/ModalBetDetails';
 import ModalVideoPlayer from './components/ModalVideoPlayer';
 import ModalsConfig from './components/ModalsConfig';
+import ModalGameDetail from './components/ModalGameDetail';
+import ModalPgGame from './components/ModalPgGame';
 
 function MainApp() {
   const { activePage, activeSubGame } = useApp();
@@ -38,6 +43,9 @@ function MainApp() {
     }
     if (activeSubGame === 'fast_three') {
       return <SubGameFastThree />;
+    }
+    if (activeSubGame === 'speed_race') {
+      return <SubGameSpeedRace />;
     }
     if (activeSubGame === 'sports_platforms') {
       return <PageSportsPlatforms />;
@@ -68,6 +76,10 @@ function MainApp() {
         return <PageBetRecords />;
       case 'page-activity':
         return <PageActivity />;
+      case 'page-offers':
+        return <PageOffers />;
+      case 'page-settings':
+        return <PageSettings />;
       default:
         return <PageDramas />;
     }
@@ -83,13 +95,15 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && <BottomNav />}
       </PhoneContainer>
 
       {/* 3. Global Overlays / Modals */}
       <ModalBetDetails />
       <ModalVideoPlayer />
       <ModalsConfig />
+      <ModalGameDetail />
+      <ModalPgGame />
     </div>
   );
 }

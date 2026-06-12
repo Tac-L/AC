@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageMail() {
-  const { setActivePage, showToast } = useApp();
+  const { goBack, showToast } = useApp();
 
   // Active tab state: 'inbox' or 'outbox'
   const [activeTab, setActiveTab] = useState('inbox');
@@ -89,7 +89,7 @@ export default function PageMail() {
     <div className="app-page active" id="page-mail">
       {/* Header Bar */}
       <div className="mail-header-bar">
-        <i className="fa-solid fa-chevron-left" id="btn-mail-back" onClick={() => setActivePage('page-profile')}></i>
+        <i className="fa-solid fa-chevron-left" id="btn-mail-back" onClick={() => goBack('page-profile')}></i>
         <span className="mail-header-title">站内信</span>
         <div></div> {/* Spacer */}
       </div>

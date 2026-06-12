@@ -1,5 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+
+// 骰子点位布局（3x3 九宫格索引）
+const DICE_PIPS = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8]
+};
+
+// 单个骰子面（用 CSS 点阵绘制，1 和 4 为红点）
+function DiceFace({ value, className = '' }) {
+  const pips = DICE_PIPS[value] || [];
+  const red = value === 1 || value === 4;
+  return (
+    <span className={`dice-face ${className}`}>
+      {Array.from({ length: 9 }).map((_, i) => (
+        <span key={i} className={`dice-pip ${pips.includes(i) ? 'on' : ''} ${red ? 'red' : ''}`} />
+      ))}
+    </span>
+  );
+}
 
 export default function SubGameFastThree() {
   const { balance, updateBalance, quickAmounts, setEditQuickAmountsActive, setActiveSubGame, showToast } = useApp();
@@ -7,8 +30,8 @@ export default function SubGameFastThree() {
   // Draw states
   const [countdown, setCountdown] = useState(30);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [issue, setIssue] = useState(90636);
-  const [lastDice, setLastDice] = useState([1, 3, 6]);
+  const [issue, setIssue] = useState(20616);
+  const [lastDice, setLastDice] = useState([5, 1, 4]);
   const [analysisTags, setAnalysisTags] = useState({ sum: 10, size: '小', oe: '双' });
 
   // Betting states
@@ -35,7 +58,7 @@ export default function SubGameFastThree() {
           Math.floor(Math.random() * 6) + 1
         ];
         setLastDice(finalDice);
-        
+
         const sumVal = finalDice[0] + finalDice[1] + finalDice[2];
         const sizeVal = sumVal >= 11 ? '大' : '小';
         const oeVal = sumVal % 2 === 0 ? '双' : '单';
@@ -115,32 +138,27 @@ export default function SubGameFastThree() {
     showToast('余额已刷新为 ¥3000.00！');
   };
 
-  // Helper to render mini dot text representation
-  const renderDiceText = (val) => {
-    const dots = ['•', '••', '•••', '••••', '•••••', '••••••'];
-    return dots[val - 1] || '•';
-  };
-
   return (
     <div className="sub-game-page active" id="page-fast-three">
-      {/* 模擬嵌套頁面的瀏覽器頭部樣式 */}
-      <div className="f3new-webview-header">
-        <div className="f3new-webview-controls-left">
-          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="返回">
-            <i className="fa-solid fa-chevron-left"></i>
-          </button>
-          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="关闭">
-            <i className="fa-solid fa-xmark"></i>
-          </button>
+      {/* 顶部应用栏：全屏 / 退出 */}
+      <div className="f3new-appbar">
+        <button className="f3new-appbar-btn" onClick={() => showToast('全屏模式')} title="全屏">
+          <i className="fa-solid fa-expand"></i>
+        </button>
+        <button className="f3new-appbar-btn" onClick={() => setActiveSubGame(null)} title="退出游戏">
+          <i className="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+
+      {/* 游戏标题栏 */}
+      <div className="m6new-title-bar">
+        <div className="m6new-title-left">
+          <i className="fa-solid fa-table-cells m6new-title-icon"></i>
+          <span>一分快三</span>
         </div>
-        <div className="f3new-webview-url-bar">
-          <i className="fa-solid fa-lock f3new-webview-secure-icon"></i>
-          <span className="f3new-webview-url-text">game.1068tv.com/fast3_play</span>
-          <i className="fa-solid fa-rotate-right f3new-webview-refresh-icon" onClick={performDrawing} title="刷新"></i>
-        </div>
-        <div className="f3new-webview-controls-right">
-          <button className="f3new-webview-btn" onClick={() => showToast('安全嵌套连接')} title="选项">
-            <i className="fa-solid fa-ellipsis"></i>
+        <div className="m6new-title-right">
+          <button className="m6new-menu-btn" onClick={() => showToast('更多玩法菜单对接中')}>
+            <i className="fa-solid fa-bars"></i>
           </button>
         </div>
       </div>
@@ -150,17 +168,11 @@ export default function SubGameFastThree() {
         <div className="f3new-issue-row">
           <span className="f3new-issue-label"><strong>{issue - 1}</strong>期</span>
           <div className="f3new-last-dice-row">
-            <span className={`f3new-mini-dice ${lastDice[0] === 1 ? 'red-dot-mini' : ''}`}>
-              {renderDiceText(lastDice[0])}
-            </span>
-            <span className={`f3new-mini-dice ${lastDice[1] === 1 ? 'red-dot-mini' : ''}`}>
-              {renderDiceText(lastDice[1])}
-            </span>
-            <span className={`f3new-mini-dice ${lastDice[2] === 1 ? 'red-dot-mini' : ''}`}>
-              {renderDiceText(lastDice[2])}
-            </span>
+            <DiceFace value={lastDice[0]} className="dice-face-sm" />
+            <DiceFace value={lastDice[1]} className="dice-face-sm" />
+            <DiceFace value={lastDice[2]} className="dice-face-sm" />
           </div>
-          <i className="fa-solid fa-trophy f3new-trophy" style={{ color: '#ff9f43' }}></i>
+          <i className="fa-solid fa-trophy f3new-trophy" style={{ color: '#3b5bdb' }}></i>
         </div>
         <div className="f3new-countdown-row">
           <span className="f3new-next-issue"><strong>{issue}</strong>期</span>
@@ -171,7 +183,7 @@ export default function SubGameFastThree() {
           </span>
           <span className="f3new-countdown-label">
             开奖 <strong className="f3new-red-time">
-              {isDrawing ? "开奖中" : `00:00:${(countdown + 2).toString().padStart(2, '0')}`}
+              {isDrawing ? "开奖中" : `00:00:${countdown.toString().padStart(2, '0')}`}
             </strong>
           </span>
           <i className="fa-solid fa-circle-play f3new-play-icon" onClick={performDrawing}></i>
@@ -192,7 +204,7 @@ export default function SubGameFastThree() {
             { id: 'ertongbao', label: '二同号' },
             { id: 'santong', label: '三不同' }
           ].map(tab => (
-            <div 
+            <div
               key={tab.id}
               className={`f3new-nav-item ${activePlay === tab.id ? 'active' : ''}`}
               onClick={() => handleSidebarTabClick(tab.id)}
@@ -204,20 +216,20 @@ export default function SubGameFastThree() {
 
         {/* 右侧内容区 */}
         <div className="f3new-content" id="f3new-content">
-          
+
           {/* 长龙 panel */}
           {activePlay === 'changlong' && (
             <div className="f3new-panel active">
               <div className="f3new-group-title">和值-单 <span className="f3new-hot-label">5 期</span></div>
               <div className="f3new-row-2col">
-                <div 
+                <div
                   className={`f3new-bet-item blue-item ${selectedItem?.name === '单' ? 'selected' : ''}`}
                   onClick={() => handleBetItemClick('单', '2.05')}
                 >
                   <span className="f3new-dice-label">单</span>
                   <span className="f3new-odds">2.05</span>
                 </div>
-                <div 
+                <div
                   className={`f3new-bet-item orange-item ${selectedItem?.name === '双' ? 'selected' : ''}`}
                   onClick={() => handleBetItemClick('双', '2.05')}
                 >
@@ -227,14 +239,14 @@ export default function SubGameFastThree() {
               </div>
               <div className="f3new-group-title">和值-小 <span className="f3new-hot-label">5 期</span></div>
               <div className="f3new-row-2col">
-                <div 
+                <div
                   className={`f3new-bet-item blue-item ${selectedItem?.name === '小' ? 'selected' : ''}`}
                   onClick={() => handleBetItemClick('小', '2.05')}
                 >
                   <span className="f3new-dice-label">小</span>
                   <span className="f3new-odds">2.05</span>
                 </div>
-                <div 
+                <div
                   className={`f3new-bet-item orange-item ${selectedItem?.name === '大' ? 'selected' : ''}`}
                   onClick={() => handleBetItemClick('大', '2.05')}
                 >
@@ -248,30 +260,18 @@ export default function SubGameFastThree() {
           {/* 三军 panel */}
           {activePlay === 'sanjun' && (
             <div className="f3new-panel active">
-              <div className="f3new-row-2col">
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军1' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军1', '2')}>
-                  <span className="f3new-dice-dot red-dot-mini">•</span><span className="f3new-odds">2</span>
-                </div>
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军2' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军2', '2')}>
-                  <span className="f3new-dice-dot">••</span><span className="f3new-odds">2</span>
-                </div>
-              </div>
-              <div className="f3new-row-2col">
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军3' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军3', '2')}>
-                  <span className="f3new-dice-dot">•••</span><span className="f3new-odds">2</span>
-                </div>
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军4' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军4', '2')}>
-                  <span className="f3new-dice-dot">••••</span><span className="f3new-odds">2</span>
-                </div>
-              </div>
-              <div className="f3new-row-2col">
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军5' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军5', '2')}>
-                  <span className="f3new-dice-dot">•••••</span><span className="f3new-odds">2</span>
-                </div>
-                <div className={`f3new-bet-item ${selectedItem?.name === '三军6' ? 'selected' : ''}`} onClick={() => handleBetItemClick('三军6', '2')}>
-                  <span className="f3new-dice-dot">••••••</span><span className="f3new-odds">2</span>
-                </div>
-              </div>
+              {[1, 2, 3, 4, 5, 6].map((v, idx) => (
+                idx % 2 === 0 ? (
+                  <div className="f3new-row-2col" key={v}>
+                    <div className={`f3new-bet-item ${selectedItem?.name === `三军${v}` ? 'selected' : ''}`} onClick={() => handleBetItemClick(`三军${v}`, '1.96')}>
+                      <DiceFace value={v} /><span className="f3new-odds">1.96</span>
+                    </div>
+                    <div className={`f3new-bet-item ${selectedItem?.name === `三军${v + 1}` ? 'selected' : ''}`} onClick={() => handleBetItemClick(`三军${v + 1}`, '1.96')}>
+                      <DiceFace value={v + 1} /><span className="f3new-odds">1.96</span>
+                    </div>
+                  </div>
+                ) : null
+              ))}
             </div>
           )}
 
@@ -280,18 +280,18 @@ export default function SubGameFastThree() {
             <div className="f3new-panel active">
               <div className="f3new-row-2col">
                 <div className={`f3new-bet-item ${selectedItem?.name === '短牌1-2' ? 'selected' : ''}`} onClick={() => handleBetItemClick('短牌1-2', '13.5')}>
-                  <span className="f3new-dice-dot red-dot-mini">•</span><span className="f3new-dice-dot">••</span><span className="f3new-odds">13.5</span>
+                  <span className="f3new-dice-group"><DiceFace value={1} /><DiceFace value={2} /></span><span className="f3new-odds">13.5</span>
                 </div>
                 <div className={`f3new-bet-item ${selectedItem?.name === '短牌3-4' ? 'selected' : ''}`} onClick={() => handleBetItemClick('短牌3-4', '13.5')}>
-                  <span className="f3new-dice-dot">•••</span><span className="f3new-dice-dot">••••</span><span className="f3new-odds">13.5</span>
+                  <span className="f3new-dice-group"><DiceFace value={3} /><DiceFace value={4} /></span><span className="f3new-odds">13.5</span>
                 </div>
               </div>
               <div className="f3new-row-2col">
                 <div className={`f3new-bet-item ${selectedItem?.name === '短牌5-6' ? 'selected' : ''}`} onClick={() => handleBetItemClick('短牌5-6', '13.5')}>
-                  <span className="f3new-dice-dot">•••••</span><span className="f3new-dice-dot">••••••</span><span className="f3new-odds">13.5</span>
+                  <span className="f3new-dice-group"><DiceFace value={5} /><DiceFace value={6} /></span><span className="f3new-odds">13.5</span>
                 </div>
                 <div className={`f3new-bet-item ${selectedItem?.name === '短牌2-3' ? 'selected' : ''}`} onClick={() => handleBetItemClick('短牌2-3', '13.5')}>
-                  <span className="f3new-dice-dot">••</span><span className="f3new-dice-dot">•••</span><span className="f3new-odds">13.5</span>
+                  <span className="f3new-dice-group"><DiceFace value={2} /><DiceFace value={3} /></span><span className="f3new-odds">13.5</span>
                 </div>
               </div>
             </div>
@@ -302,26 +302,26 @@ export default function SubGameFastThree() {
             <div className="f3new-panel active">
               <div className="f3new-row-2col">
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌1-2' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌1-2', '7.2')}>
-                  <span className="f3new-dice-dot red-dot-mini">•</span><span className="f3new-dice-dot">••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={1} /><DiceFace value={2} /></span><span className="f3new-odds">7.2</span>
                 </div>
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌3-2' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌3-2', '7.2')}>
-                  <span className="f3new-dice-dot">•••</span><span className="f3new-dice-dot">••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={3} /><DiceFace value={2} /></span><span className="f3new-odds">7.2</span>
                 </div>
               </div>
               <div className="f3new-row-2col">
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌4-3' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌4-3', '7.2')}>
-                  <span className="f3new-dice-dot">••••</span><span className="f3new-dice-dot">•••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={4} /><DiceFace value={3} /></span><span className="f3new-odds">7.2</span>
                 </div>
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌5-4' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌5-4', '7.2')}>
-                  <span className="f3new-dice-dot">•••••</span><span className="f3new-dice-dot">••••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={5} /><DiceFace value={4} /></span><span className="f3new-odds">7.2</span>
                 </div>
               </div>
               <div className="f3new-row-2col">
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌3-4' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌3-4', '7.2')}>
-                  <span className="f3new-dice-dot">•••</span><span className="f3new-dice-dot">••••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={3} /><DiceFace value={4} /></span><span className="f3new-odds">7.2</span>
                 </div>
                 <div className={`f3new-bet-item ${selectedItem?.name === '长牌4-5' ? 'selected' : ''}`} onClick={() => handleBetItemClick('长牌4-5', '7.2')}>
-                  <span className="f3new-dice-dot">••••</span><span className="f3new-dice-dot">•••••</span><span className="f3new-odds">7.2</span>
+                  <span className="f3new-dice-group"><DiceFace value={4} /><DiceFace value={5} /></span><span className="f3new-odds">7.2</span>
                 </div>
               </div>
             </div>
@@ -331,8 +331,8 @@ export default function SubGameFastThree() {
           {activePlay === 'quansha' && (
             <div className="f3new-panel active">
               <div className="f3new-row-single">
-                <div 
-                  className={`f3new-bet-item f3new-wide-item blue-item ${selectedItem?.name === '全骰' ? 'selected' : ''}`} 
+                <div
+                  className={`f3new-bet-item f3new-wide-item blue-item ${selectedItem?.name === '全骰' ? 'selected' : ''}`}
                   onClick={() => handleBetItemClick('全骰', '36')}
                 >
                   <span className="f3new-dice-label">全骰</span>
@@ -353,7 +353,7 @@ export default function SubGameFastThree() {
 
                 return (
                   <div key={idx} className="f3new-row-2col">
-                    <div 
+                    <div
                       className={`f3new-bet-item blue-item ${selectedItem?.name === String(num1) ? 'selected' : ''}`}
                       onClick={() => handleBetItemClick(String(num1), odds1.toString())}
                     >
@@ -361,7 +361,7 @@ export default function SubGameFastThree() {
                       <span className="f3new-odds">{odds1}</span>
                     </div>
                     {num1 !== num2 && (
-                      <div 
+                      <div
                         className={`f3new-bet-item blue-item ${selectedItem?.name === String(num2) ? 'selected' : ''}`}
                         onClick={() => handleBetItemClick(String(num2), odds2.toString())}
                       >
@@ -396,17 +396,17 @@ export default function SubGameFastThree() {
             <div className="f3new-panel active">
               {Array.from({ length: 8 }).map((_, idx) => (
                 <div key={idx} className="f3new-row-2col">
-                  <div 
-                    className={`f3new-bet-item ${selectedItem?.name === `二同${idx * 2 + 1}` ? 'selected' : ''}`} 
+                  <div
+                    className={`f3new-bet-item ${selectedItem?.name === `二同${idx * 2 + 1}` ? 'selected' : ''}`}
                     onClick={() => handleBetItemClick(`二同${idx * 2 + 1}`, '72')}
                   >
-                    <span className="f3new-dice-dot">••</span><span className="f3new-dice-dot">•••</span><span className="f3new-odds">72</span>
+                    <span className="f3new-dice-group"><DiceFace value={2} /><DiceFace value={3} /></span><span className="f3new-odds">72</span>
                   </div>
-                  <div 
-                    className={`f3new-bet-item ${selectedItem?.name === `二同${idx * 2 + 2}` ? 'selected' : ''}`} 
+                  <div
+                    className={`f3new-bet-item ${selectedItem?.name === `二同${idx * 2 + 2}` ? 'selected' : ''}`}
                     onClick={() => handleBetItemClick(`二同${idx * 2 + 2}`, '72')}
                   >
-                    <span className="f3new-dice-dot">••••</span><span className="f3new-dice-dot">•</span><span className="f3new-odds">72</span>
+                    <span className="f3new-dice-group"><DiceFace value={4} /><DiceFace value={1} /></span><span className="f3new-odds">72</span>
                   </div>
                 </div>
               ))}
@@ -418,17 +418,17 @@ export default function SubGameFastThree() {
             <div className="f3new-panel active">
               {Array.from({ length: 10 }).map((_, idx) => (
                 <div key={idx} className="f3new-row-2col">
-                  <div 
-                    className={`f3new-bet-item ${selectedItem?.name === `三不同${idx * 2 + 1}` ? 'selected' : ''}`} 
+                  <div
+                    className={`f3new-bet-item ${selectedItem?.name === `三不同${idx * 2 + 1}` ? 'selected' : ''}`}
                     onClick={() => handleBetItemClick(`三不同${idx * 2 + 1}`, '72')}
                   >
-                    <span className="f3new-dice-dot">•</span><span className="f3new-dice-dot">••</span><span className="f3new-dice-dot">•••</span><span className="f3new-odds">72</span>
+                    <span className="f3new-dice-group"><DiceFace value={1} /><DiceFace value={2} /><DiceFace value={3} /></span><span className="f3new-odds">72</span>
                   </div>
-                  <div 
-                    className={`f3new-bet-item ${selectedItem?.name === `三不同${idx * 2 + 2}` ? 'selected' : ''}`} 
+                  <div
+                    className={`f3new-bet-item ${selectedItem?.name === `三不同${idx * 2 + 2}` ? 'selected' : ''}`}
                     onClick={() => handleBetItemClick(`三不同${idx * 2 + 2}`, '72')}
                   >
-                    <span className="f3new-dice-dot">•</span><span className="f3new-dice-dot">••</span><span className="f3new-dice-dot">••••</span><span className="f3new-odds">72</span>
+                    <span className="f3new-dice-group"><DiceFace value={1} /><DiceFace value={2} /><DiceFace value={4} /></span><span className="f3new-odds">72</span>
                   </div>
                 </div>
               ))}
@@ -442,9 +442,9 @@ export default function SubGameFastThree() {
       <div className="f3new-console">
         <div className="f3new-console-info">
           <span>
-            余额: <strong id="fastthree-console-balance">{balance.toFixed(2)}</strong> 
-            <i 
-              className="fa-solid fa-rotate" 
+            余额: <strong id="fastthree-console-balance">{balance.toFixed(2)}</strong>
+            <i
+              className="fa-solid fa-rotate"
               onClick={handleRefreshBalance}
               style={{ cursor: 'pointer', marginLeft: '6px' }}
             ></i>
@@ -453,9 +453,9 @@ export default function SubGameFastThree() {
         </div>
         <div className="f3new-console-amounts">
           {quickAmounts.slice(0, 4).map(val => (
-            <div 
+            <div
               key={val}
-              className={`f3new-quick-btn ${activeQuickAmount === val ? 'active' : ''}`} 
+              className={`f3new-quick-btn ${activeQuickAmount === val ? 'active' : ''}`}
               onClick={() => handleQuickAmountClick(val)}
             >
               {val}
@@ -466,11 +466,11 @@ export default function SubGameFastThree() {
           </div>
         </div>
         <div className="f3new-console-input-row">
-          <input 
-            type="number" 
-            id="fastthree-input-amount" 
-            className="f3new-input-amount" 
-            placeholder="输入金额" 
+          <input
+            type="number"
+            id="fastthree-input-amount"
+            className="f3new-input-amount"
+            placeholder="输入金额"
             value={manualAmount}
             onChange={handleManualAmountChange}
           />

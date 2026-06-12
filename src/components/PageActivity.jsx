@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageActivity() {
-  const { setActivePage, showToast } = useApp();
+  const { goBack, showToast, activityTab } = useApp();
 
   // Active top tab: 'task' | 'rebate' | 'vip' | 'tournament'
-  const [activeTab, setActiveTab] = useState('task');
+  const [activeTab, setActiveTab] = useState(activityTab || 'task');
 
   // ===== 任务 (Tasks) =====
   const taskCategories = [
@@ -60,22 +60,24 @@ export default function PageActivity() {
     <div className="app-page active" id="page-activity">
       {/* Header Bar */}
       <div className="activity-header-bar">
-        <i className="fa-solid fa-chevron-left" id="btn-activity-back" onClick={() => setActivePage('page-profile')}></i>
+        <i className="fa-solid fa-chevron-left" id="btn-activity-back" onClick={() => goBack('page-profile')}></i>
         <span className="activity-header-title">活动中心</span>
         <div></div>
       </div>
 
       {/* Top Tab Pills */}
       <div className="activity-tabs">
-        {tabs.map((tab) => (
-          <div
-            key={tab.key}
-            className={`activity-tab ${activeTab === tab.key ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </div>
-        ))}
+        <div className="activity-tabs-inner">
+          {tabs.map((tab) => (
+            <div
+              key={tab.key}
+              className={`activity-tab ${activeTab === tab.key ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ===== 任务 ===== */}

@@ -24,6 +24,16 @@ const renderDiceOptionName = (name) => {
   return name;
 };
 
+// Mark Six (六合彩) number color mapping
+const M6_RED_NUMS = [1, 2, 7, 8, 12, 13, 18, 19, 23, 24, 29, 30, 34, 35, 40, 45, 46];
+const M6_BLUE_NUMS = [3, 4, 9, 10, 14, 15, 20, 25, 26, 31, 36, 37, 41, 42, 47, 48];
+const M6_ZODIACS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+const getM6BallColor = (num) => {
+  if (M6_RED_NUMS.includes(num)) return 'red';
+  if (M6_BLUE_NUMS.includes(num)) return 'blue';
+  return 'green';
+};
+
 export default function ModalVideoPlayer() {
   const {
     balance,
@@ -52,6 +62,12 @@ export default function ModalVideoPlayer() {
   const [selectedOdds, setSelectedOdds] = useState(new Set());
   const [betAmount, setBetAmount] = useState(50);
   const [manualAmount, setManualAmount] = useState('');
+
+  // Mark Six (六合彩) embedded selections: each entry is { name, odds, category }
+  const [selectedM6, setSelectedM6] = useState(new Set());
+  const [m6ActiveTab, setM6ActiveTab] = useState('two-sides'); // two-sides, color, zodiac, special
+  // Mark Six last draw result: 6 regular + 1 special number
+  const [m6Result, setM6Result] = useState([23, 41, 24, 26, 33, 7, 32]);
 
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
@@ -239,8 +255,12 @@ export default function ModalVideoPlayer() {
     }
   };
 
+  // Only Fast Three and Mark Six are playable for now
+  const playableCarouselGames = ['fast3', 'marksix'];
+
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
+    if (!playableCarouselGames.includes(item.key)) return;
     setActiveCarouselGame(item.key);
     showToast(`已切换至游戏：${item.label}`);
   };
@@ -380,6 +400,7 @@ export default function ModalVideoPlayer() {
   // Games carousel items
   const carouselGameItems = [
     { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
+    { key: 'marksix', label: '一分六合彩', img: 'assets/mo_mark_six.png' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
@@ -484,6 +505,45 @@ export default function ModalVideoPlayer() {
     openBetDetailsModal('fast_three_embedded', items);
     // Clear selections locally
     setSelectedOdds(new Set());
+  };
+
+  // ===== Mark Six (一分六合彩) embedded gameplay =====
+  // Each selection key is encoded as `${category}|${name}`
+  const handleM6CardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedM6);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedM6(next);
+  };
+
+  const m6Count = selectedM6.size;
+  const m6TotalCost = m6Count * currentBetPrice;
+
+  const handleM6Reset = () => {
+    setSelectedM6(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleM6Submit = () => {
+    if (m6Count === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (m6TotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedM6).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: '9.75', baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('mark_six', items);
+    setSelectedM6(new Set());
   };
 
   const toggleDropdownMenu = () => {
@@ -667,16 +727,19 @@ export default function ModalVideoPlayer() {
               <div className="vp-play-panel">
                 {/* Game Carousel Switcher */}
                 <div className="vp-game-carousel">
-                  {carouselGameItems.map(item => (
-                    <div 
-                      key={item.key}
-                      className={`vp-game-card ${activeCarouselGame === item.key ? 'active' : ''}`}
-                      onClick={() => handleCarouselGameClick(item)}
-                    >
-                      <img src={item.img} alt={item.label} />
-                      <span className="vp-game-label-capsule">{item.label}</span>
-                    </div>
-                  ))}
+                  {carouselGameItems.map(item => {
+                    const isPlayable = playableCarouselGames.includes(item.key);
+                    return (
+                      <div
+                        key={item.key}
+                        className={`vp-game-card ${activeCarouselGame === item.key ? 'active' : ''} ${isPlayable ? '' : 'disabled'}`}
+                        onClick={() => handleCarouselGameClick(item)}
+                      >
+                        <img src={item.img} alt={item.label} />
+                        <span className="vp-game-label-capsule">{item.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Betting Area - conditional on selected game */}
@@ -767,7 +830,7 @@ export default function ModalVideoPlayer() {
                                 key={card.name}
                                 className={`live-odds-card ${isSelected ? 'selected' : ''}`}
                                 onClick={() => handleOddsCardClick(card.name)}
-                                style={{ height: '42px', padding: '0 4px' }}
+                                style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                               >
                                 <div className="odds-card-name" style={{ fontSize: '0.75rem' }}>{renderDiceOptionName(card.name)}</div>
                                 <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>{card.odds}</div>
@@ -823,6 +886,186 @@ export default function ModalVideoPlayer() {
                             提交下注
                           </button>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'marksix' ? (
+                  // Mark Six (一分六合彩) lottery console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <i className="fa-solid fa-table-cells" style={{ color: '#e03131' }}></i>
+                          <span>一分六合彩</span>
+                        </div>
+                        <div className="vp-bet-countdown-box">
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-colon">:</span>
+                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
+                          <span className="vp-digit-box">{countdown % 10}</span>
+                        </div>
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="vp-m6-result-balls">
+                          {m6Result.slice(0, 6).map((n, idx) => (
+                            <span key={idx} className={`vp-m6-result-ball ball-${getM6BallColor(n)}`}>{n.toString().padStart(2, '0')}</span>
+                          ))}
+                          <span className="vp-m6-result-plus">+</span>
+                          <span className={`vp-m6-result-ball ball-${getM6BallColor(m6Result[6])}`}>{m6Result[6].toString().padStart(2, '0')}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play category tabs */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {[
+                          { cat: 'two-sides', label: '两面' },
+                          { cat: 'color', label: '色波' },
+                          { cat: 'zodiac', label: '生肖' },
+                          { cat: 'special', label: '特码' }
+                        ].map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${m6ActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setM6ActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 两面 */}
+                        {m6ActiveTab === 'two-sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {['大', '小', '单', '双'].map(name => {
+                              const isSelected = selectedM6.has(`两面|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleM6CardClick('两面', name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 色波 */}
+                        {m6ActiveTab === 'color' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {[{ name: '红', color: '#e03131' }, { name: '绿', color: '#2f9e44' }, { name: '蓝', color: '#1c7ed6' }].map(opt => {
+                              const isSelected = selectedM6.has(`色波|${opt.name}`);
+                              return (
+                                <div
+                                  key={opt.name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleM6CardClick('色波', opt.name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: opt.color }}>{opt.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 生肖 */}
+                        {m6ActiveTab === 'zodiac' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px' }}>
+                            {M6_ZODIACS.map(name => {
+                              const isSelected = selectedM6.has(`生肖|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleM6CardClick('生肖', name)}
+                                  style={{ height: '48px', padding: '0 2px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.8rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.62rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 特码 */}
+                        {m6ActiveTab === 'special' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(7, 1fr)', gap: '5px' }}>
+                            {Array.from({ length: 49 }, (_, i) => i + 1).map(n => {
+                              const name = n.toString().padStart(2, '0');
+                              const isSelected = selectedM6.has(`特码|${name}`);
+                              return (
+                                <div
+                                  key={n}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleM6CardClick('特码', name)}
+                                  style={{ height: '46px', padding: '2px' }}
+                                >
+                                  <span className={`m6new-num-ball ball-${getM6BallColor(n)}`} style={{ width: '24px', height: '24px', fontSize: '0.6rem', marginBottom: '2px' }}>{name}</span>
+                                  <div className="odds-card-val" style={{ fontSize: '0.55rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{m6Count}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{m6TotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleM6Reset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleM6Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
                       </div>
                     </div>
                   </div>

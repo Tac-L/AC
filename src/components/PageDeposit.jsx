@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageDeposit() {
-  const { balance, updateBalance, setActivePage, showToast } = useApp();
+  const { balance, updateBalance, goBack, showToast } = useApp();
 
   const [activeTab, setActiveTab] = useState('online'); // online, wallet
   const [activeChannel, setActiveChannel] = useState('alipay_scan'); // channel key
@@ -136,14 +136,14 @@ export default function PageDeposit() {
       {/* Header Bar */}
       <div className="deposit-header-bar">
         <div className="deposit-header-left">
-          <i className="fa-solid fa-chevron-left" id="btn-deposit-back" onClick={() => setActivePage('page-profile')}></i>
+          <i className="fa-solid fa-chevron-left" id="btn-deposit-back" onClick={() => goBack('page-profile')}></i>
           <span className="deposit-header-title">充值中心</span>
           <span className="deposit-header-balance-val">¥<span id="deposit-header-balance-display">{balance.toFixed(2)}</span></span>
           <i className="fa-solid fa-rotate" id="btn-refresh-deposit-balance" onClick={handleRefreshBalance}></i>
         </div>
         <div className="deposit-header-right">
           <i className="fa-solid fa-file-invoice-dollar" id="btn-deposit-record" title="充值记录" onClick={() => setRecordDialogOpen(true)}></i>
-          <i className="fa-solid fa-xmark" id="btn-deposit-close" onClick={() => setActivePage('page-profile')}></i>
+          <i className="fa-solid fa-xmark" id="btn-deposit-close" onClick={() => goBack('page-profile')}></i>
         </div>
       </div>
 

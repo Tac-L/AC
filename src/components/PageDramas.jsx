@@ -65,6 +65,10 @@ export default function PageDramas() {
   const [muted, setMuted] = useState(true);
   const [promoVisible, setPromoVisible] = useState(true);
 
+  // Long-press fast-forward (2x) state
+  const [fastForward, setFastForward] = useState(false);
+  const fastForwardTimer = useRef(null);
+
   // Betting Panel States
   const [betPanelOpen, setBetPanelOpen] = useState(false);
   const [selectedPlayCat, setSelectedPlayCat] = useState('size'); // size, pair, triple, sum, single
@@ -167,6 +171,30 @@ export default function PageDramas() {
   const handleUpgradeMember = () => {
     showToast('提示：升级会员观看完整版功能正在对接中，敬请期待！');
   };
+
+  // Long-press to fast-forward (2x). Hold the right-side zone to show ">> 快進 x2",
+  // release to hide it again.
+  const startFastForward = () => {
+    if (fastForwardTimer.current) clearTimeout(fastForwardTimer.current);
+    fastForwardTimer.current = setTimeout(() => {
+      setFastForward(true);
+    }, 400);
+  };
+
+  const stopFastForward = () => {
+    if (fastForwardTimer.current) {
+      clearTimeout(fastForwardTimer.current);
+      fastForwardTimer.current = null;
+    }
+    setFastForward(false);
+  };
+
+  // Clear any pending long-press timer on unmount
+  useEffect(() => {
+    return () => {
+      if (fastForwardTimer.current) clearTimeout(fastForwardTimer.current);
+    };
+  }, []);
 
   // Live betting Fast Three random drawings inside short drama
   useEffect(() => {
@@ -324,6 +352,25 @@ export default function PageDramas() {
           style={{ opacity, transition: 'opacity 0.2s ease-in-out' }}
         />
         
+        {/* Long-press fast-forward zone (right side). Sits below the HUD buttons
+            (z-index) so taps on like/comment/share still work. */}
+        <div
+          className="drama-fastforward-zone"
+          onPointerDown={startFastForward}
+          onPointerUp={stopFastForward}
+          onPointerLeave={stopFastForward}
+          onPointerCancel={stopFastForward}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+
+        {/* Fast-forward hint shown while long-pressing */}
+        {fastForward && (
+          <div className="drama-fastforward-hint">
+            <i className="fa-solid fa-angles-right"></i>
+            <span>快進 x2</span>
+          </div>
+        )}
+
         {/* Top Tabs Header Overlay */}
         <div className="drama-top-header" style={{ justifyContent: 'flex-end' }}>
           <i className="fa-solid fa-magnifying-glass drama-search-btn" onClick={() => showToast('搜索短剧功能开发中...')}></i>

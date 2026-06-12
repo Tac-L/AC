@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageBetRecords() {
-  const { setActivePage, showToast } = useApp();
+  const { goBack, showToast } = useApp();
 
   // Active tab: 'bets' | 'unsettled' | 'transactions'
   const [activeTab, setActiveTab] = useState('bets');
@@ -33,7 +33,7 @@ export default function PageBetRecords() {
     <div className="app-page active" id="page-bet-records">
       {/* Header Bar */}
       <div className="bet-records-header-bar">
-        <i className="fa-solid fa-chevron-left" id="btn-bet-records-back" onClick={() => setActivePage('page-profile')}></i>
+        <i className="fa-solid fa-chevron-left" id="btn-bet-records-back" onClick={() => goBack('page-profile')}></i>
         <span className="bet-records-header-title">详细记录</span>
         <div></div> {/* Spacer for flex-between alignment */}
       </div>
