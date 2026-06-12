@@ -98,7 +98,6 @@ export default function PageSportsPlatforms() {
         <div className="sp-header-info">
           <div className="sp-header-logo-wrapper">
             <i className="fa-solid fa-futbol sp-ball-icon"></i>
-            <i className="fa-solid fa-headset sp-headset-icon"></i>
           </div>
           <div className="sp-header-titles">
             <span className="sp-title">体育平台</span>

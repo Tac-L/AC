@@ -37,7 +37,9 @@ export default function PageChats() {
   } = useApp();
 
   // Redesigned Custom Top Nav states
-  const [activeCustomTab, setActiveCustomTab] = useState('全部'); // 关注, 预约, 预告, 全部, 房间, 游戏
+  const [activeCustomTab, setActiveCustomTab] = useState('关注'); // 关注, 预约, 预告, 全部, 房间, 游戏
+  const [followedSubTab, setFollowedSubTab] = useState('host'); // host (关注主播), player (关注玩家)
+  const [recOffset, setRecOffset] = useState(0); // For "为您推荐" rotatable list
   const [showSearchPage, setShowSearchPage] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -90,12 +92,14 @@ export default function PageChats() {
 
   // Upcoming room forecast state for "更多" tab
   const [forecastRooms, setForecastRooms] = useState([
-    { id: 1, title: '香港六合彩', creator: '香港六合彩官方', avatar: 'assets/black_panther_logo.png', img: 'assets/hk_mark_six.png', reserved: true, typeBadge: '六合彩', gameBadge: '六合彩' },
-    { id: 2, title: '澳门六合彩', creator: '澳门六合彩官方', avatar: 'assets/black_panther_logo.png', img: 'assets/mo_mark_six.png', reserved: true, typeBadge: '六合彩', gameBadge: '六合彩' },
+    { id: 2, title: '澳门六合彩', creator: '澳门六合彩官方', avatar: 'assets/black_panther_logo.png', img: 'assets/mo_mark_six.png', reserved: true, typeBadge: '预告', gameBadge: '六合彩' },
+    { id: 1, title: '香港六合彩', creator: '香港六合彩官方', avatar: 'assets/black_panther_logo.png', img: 'assets/hk_mark_six.png', reserved: true, typeBadge: '预告', gameBadge: '六合彩' },
+    { id: 5, title: 'VIP房', creator: 'XCM-九月', avatar: 'assets/drama_author.png', img: 'assets/game_mahjong.png', reserved: false, typeBadge: 'VIP房', gameBadge: '六合彩' },
+    { id: 4, title: '门票房', creator: 'XCM-甜馨', avatar: 'assets/drama_author.png', img: 'assets/ticket_room.png', reserved: false, typeBadge: '门票房', gameBadge: '六合彩' },
     { id: 3, title: '快三', creator: 'XCM-阿英', avatar: 'assets/drama_author.png', img: 'assets/fast_three.png', reserved: false, typeBadge: '快三游戏', gameBadge: '快三游戏' },
-    { id: 4, title: '门票房', creator: 'XCM-甜馨', avatar: 'assets/drama_author.png', img: 'assets/ticket_room.png', reserved: false, typeBadge: '直播大秀', gameBadge: '六合彩' },
-    { id: 5, title: 'VIP欢乐斗地主', creator: 'XCM-双双', avatar: 'assets/drama_author.png', img: 'assets/game_mahjong.png', reserved: false, typeBadge: 'VIP房', gameBadge: '斗地主' },
-    { id: 6, title: '密码大秀房', creator: 'XCM-雨熙', avatar: 'assets/drama_author.png', img: 'assets/chat_cover.png', reserved: false, typeBadge: '密码房', gameBadge: '大秀' }
+    { id: 6, title: '密码大秀房', creator: 'XCM-雨熙', avatar: 'assets/drama_author.png', img: 'assets/chat_cover.png', reserved: false, typeBadge: '密码房', gameBadge: '大秀' },
+    { id: 7, title: '户外直播大秀', creator: 'XCM-小艾', avatar: 'assets/drama_author.png', img: 'assets/sports_cover.png', reserved: false, typeBadge: '户外直播', gameBadge: '大秀' },
+    { id: 8, title: '百家乐官方直播', creator: '百家乐官方', avatar: 'assets/black_panther_logo.png', img: 'assets/video_swimsuit_pool.png', reserved: false, typeBadge: '百家乐', gameBadge: '百家乐' }
   ]);
 
   const handleToggleReserve = (id) => {
@@ -107,6 +111,20 @@ export default function PageChats() {
       }
       return room;
     }));
+  };
+
+  const getRecommendedRooms = () => {
+    const items = [];
+    const len = forecastRooms.length;
+    for (let i = 0; i < 4; i++) {
+      items.push(forecastRooms[(recOffset + i) % len]);
+    }
+    return items;
+  };
+
+  const handleRotateRecs = () => {
+    setRecOffset(prev => (prev + 4) % forecastRooms.length);
+    showToast('已为您推荐新批次直播');
   };
 
   // Chat stream messages state
@@ -585,34 +603,192 @@ export default function PageChats() {
               </div>
             ) : (
               <div className="scroll-content" style={{ overflowY: 'auto' }}>
-                <div className="chat-rooms-grid">
-                  {getCustomFilteredRooms().map(room => (
-                    <div 
-                      key={room.id} 
-                      className="chat-room-grid-card"
-                      onClick={() => handleEnterRoom(room)}
-                    >
-                      <div className="chat-room-thumb">
-                        <img src={room.img} alt={room.name} />
-                        <span className={`room-label-badge ${room.label.includes('快三') ? 'badge-fast3' : (room.label.includes('体育') ? 'badge-sports' : 'badge-voice')}`}>
-                          {room.label}
+                {activeCustomTab === '关注' ? (
+                  <div className="followed-tab-container">
+                    {/* Part 1: Active followed live rooms in 2x2 grid */}
+                    <div className="chat-rooms-grid">
+                      {getCustomFilteredRooms().map(room => (
+                        <div 
+                          key={room.id} 
+                          className="chat-room-grid-card"
+                          onClick={() => handleEnterRoom(room)}
+                        >
+                          <div className="chat-room-thumb">
+                            <img src={room.img} alt={room.name} />
+                            <span className={`room-label-badge ${room.label.includes('快三') ? 'badge-fast3' : (room.label.includes('体育') ? 'badge-sports' : 'badge-voice')}`}>
+                              {room.label}
+                            </span>
+                            <span className="room-hot-badge">{room.badge}</span>
+                            <div className="thumb-bottom-overlays">
+                              <span className="room-viewer-count"><i className="fa-solid fa-user"></i> {room.viewer.toLocaleString()}</span>
+                              <span className="room-status-tag"><i className="fa-solid fa-circle-play"></i> 热聊中</span>
+                            </div>
+                          </div>
+                          <div className="chat-room-info">
+                            <h4>{room.name}</h4>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Part 2: 您已关注 (Already Followed) section */}
+                    <div className="followed-section">
+                      <div className="followed-header">
+                        <span className="followed-title">
+                          <span className="followed-heart-wrapper">
+                            <i className="fa-solid fa-heart followed-heart-icon"></i>
+                          </span>
+                          您已关注
                         </span>
-                        <span className="room-hot-badge">{room.badge}</span>
-                        <div className="thumb-bottom-overlays">
-                          <span className="room-viewer-count"><i className="fa-solid fa-user"></i> {room.viewer.toLocaleString()}</span>
-                          <span className="room-status-tag"><i className="fa-solid fa-circle-play"></i> 热聊中</span>
+                      </div>
+                      
+                      <div className="followed-tabs-wrapper">
+                        <div className="followed-tabs-row">
+                          <button 
+                            className={`followed-sub-tab ${followedSubTab === 'host' ? 'active' : ''}`}
+                            onClick={() => setFollowedSubTab('host')}
+                          >
+                            关注主播
+                          </button>
+                          <button 
+                            className={`followed-sub-tab ${followedSubTab === 'player' ? 'active' : ''}`}
+                            onClick={() => setFollowedSubTab('player')}
+                          >
+                            关注玩家
+                          </button>
                         </div>
                       </div>
-                      <div className="chat-room-info">
-                        <h4>{room.name}</h4>
+
+                      {followedSubTab === 'host' ? (
+                        <div className="followed-streamers-grid">
+                          {/* Streamer Card 1: XCM-九月 */}
+                          <div className="streamer-card">
+                            <div className="streamer-thumb">
+                              <img src="assets/drama_still1.png" alt="XCM-九月" />
+                            </div>
+                            <div className="streamer-info">
+                              <h4 className="streamer-title">XCM-九月</h4>
+                              <div className="streamer-meta-row">
+                                <div className="streamer-meta-left">
+                                  <img src="assets/drama_author.png" alt="XCM-九月" className="streamer-avatar" />
+                                  <span className="streamer-name">XCM-九月</span>
+                                </div>
+                                <button className="streamer-detail-btn" onClick={() => showToast('已进入 XCM-九月 详情页')}>查看详情</button>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Streamer Card 2: 弹珠官方直播 */}
+                          <div className="streamer-card">
+                            <div className="streamer-thumb xcm-logo-card-styled">
+                              <div className="xcm-logo-text">X<span>.CM</span></div>
+                              <div className="xcm-logo-sub">无界娱乐</div>
+                            </div>
+                            <div className="streamer-info">
+                              <h4 className="streamer-title">弹珠官方直播</h4>
+                              <div className="streamer-meta-row">
+                                <div className="streamer-meta-left">
+                                  <img src="assets/black_panther_logo.png" alt="弹珠官方直播" className="streamer-avatar" />
+                                  <span className="streamer-name">弹珠官方直播</span>
+                                </div>
+                                <button className="streamer-detail-btn" onClick={() => showToast('已进入 弹珠官方直播 详情页')}>查看详情</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="followed-players-empty">
+                          <i className="fa-solid fa-users-slash"></i>
+                          <p>暂无关注的玩家</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Part 3: 为您推荐 (Recommended for You) section */}
+                    <div className="recommended-section">
+                      <div className="recommended-header">
+                        <span className="recommended-title">
+                          <span className="recommended-crown-wrapper">
+                            <i className="fa-solid fa-heart-circle-bolt recommended-crown-icon"></i>
+                          </span>
+                          为您推荐
+                        </span>
+                        <button className="rec-change-btn" onClick={handleRotateRecs}>
+                          换一批
+                        </button>
+                      </div>
+                      
+                      <div className="recommended-grid">
+                        {getRecommendedRooms().map(room => (
+                          <div key={room.id} className="rec-room-card">
+                            <div className="rec-room-thumb-wrapper">
+                              <img src={room.img} alt={room.title} />
+                              <span className="rec-preview-tag">预告</span>
+                              {room.typeBadge && (
+                                <span className={`rec-type-tag ${
+                                  room.typeBadge === 'VIP房' ? 'badge-vip' : 
+                                  room.typeBadge === '门票房' ? 'badge-ticket' : 
+                                  room.typeBadge.includes('快三') ? 'badge-k3' : 'badge-default'
+                                }`}>
+                                  {room.typeBadge}
+                                </span>
+                              )}
+                              <span className="rec-game-badge">
+                                <i className="fa-solid fa-coins"></i> {room.gameBadge}
+                              </span>
+                            </div>
+                            <div className="rec-room-info-box">
+                              <h4 className="rec-room-title">{room.title}</h4>
+                              <div className="rec-room-creator-row">
+                                <div className="rec-room-creator-left">
+                                  <img src={room.avatar} alt={room.creator} className="rec-room-avatar" />
+                                  <span className="rec-room-creator-name">{room.creator}</span>
+                                </div>
+                                <button 
+                                  className={`rec-room-reserve-btn ${room.reserved ? 'reserved' : ''}`}
+                                  onClick={() => handleToggleReserve(room.id)}
+                                >
+                                  {room.reserved ? '已预约' : '预约'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-                {getCustomFilteredRooms().length === 0 && (
-                  <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.75rem', padding: '40px 20px' }}>
-                    暂无相关直播间
                   </div>
+                ) : (
+                  <>
+                    <div className="chat-rooms-grid">
+                      {getCustomFilteredRooms().map(room => (
+                        <div 
+                          key={room.id} 
+                          className="chat-room-grid-card"
+                          onClick={() => handleEnterRoom(room)}
+                        >
+                          <div className="chat-room-thumb">
+                            <img src={room.img} alt={room.name} />
+                            <span className={`room-label-badge ${room.label.includes('快三') ? 'badge-fast3' : (room.label.includes('体育') ? 'badge-sports' : 'badge-voice')}`}>
+                              {room.label}
+                            </span>
+                            <span className="room-hot-badge">{room.badge}</span>
+                            <div className="thumb-bottom-overlays">
+                              <span className="room-viewer-count"><i className="fa-solid fa-user"></i> {room.viewer.toLocaleString()}</span>
+                              <span className="room-status-tag"><i className="fa-solid fa-circle-play"></i> 热聊中</span>
+                            </div>
+                          </div>
+                          <div className="chat-room-info">
+                            <h4>{room.name}</h4>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {getCustomFilteredRooms().length === 0 && (
+                      <div style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.75rem', padding: '40px 20px' }}>
+                        暂无相关直播间
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
