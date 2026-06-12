@@ -163,13 +163,28 @@ export default function PageProfile() {
           </div>
         </div>
         
-        {/* VIP Progress Row */}
-        <div className="profile-vip-progress-row">
-          <span className="vip-label">V5 · 普通</span>
-          <div className="vip-progress-container">
-            <div className="vip-progress-bar" style={{ width: '60%' }}></div>
+        {/* VIP Level Card */}
+        <div className="vip-level-bar" onClick={() => openActivityPage('vip')}>
+          <div className="vip-level-gem">
+            <i className="fa-solid fa-gem"></i>
           </div>
-          <span className="vip-upgrade-hint">升级还差 ¥880</span>
+          <div className="vip-level-main">
+            <div className="vip-level-top">
+              <span className="vip-level-progress-text">V0 累计打码：0/50000</span>
+              <span className="vip-level-next">V1</span>
+            </div>
+            <div className="vip-level-track">
+              <div className="vip-level-fill" style={{ width: '0%' }}></div>
+            </div>
+            <div className="vip-level-perks">
+              <span>升级礼金</span>
+              <span>每周俸禄</span>
+              <span>每月俸禄</span>
+            </div>
+          </div>
+          <div className="vip-level-arrow">
+            <i className="fa-solid fa-chevron-right"></i>
+          </div>
         </div>
       </div>
 
