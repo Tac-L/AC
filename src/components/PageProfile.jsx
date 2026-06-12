@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, openRebatePage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
 
   const handleEditUsername = () => {
     showToast('提示：修改昵称功能暂未开放！');
@@ -245,6 +245,9 @@ export default function PageProfile() {
             </button>
             <button className="profile-action-btn withdraw" id="btn-profile-withdraw" onClick={openWithdrawPage}>
               <i className="fa-solid fa-money-bill-transfer"></i> 提现
+            </button>
+            <button className="profile-action-btn rebate" id="btn-profile-rebate" onClick={openRebatePage}>
+              <i className="fa-solid fa-rotate-left"></i> 返水
             </button>
           </div>
         </div>

@@ -3281,8 +3281,8 @@ input:checked + .slider:before {
 
 .profile-wallet-actions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .profile-action-btn {
@@ -3852,6 +3852,81 @@ input:checked + .slider:before {
 
 .time-lbl {
   font-family: var(--font-display);
+}
+
+/* Player bottom HUD control icons (设置 / 沉浸式 / 全屏) */
+.player-hud-icon {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.player-hud-icon.active {
+  color: var(--color-primary);
+}
+
+/* 沉浸式：视频铺满整个竖屏，隐藏下方内容 */
+.split-player-container.immersive .mock-player-box {
+  flex: 1;
+  height: auto;
+}
+
+.split-player-container.immersive .mock-player-box img {
+  object-fit: contain;
+}
+
+.split-player-container.immersive .player-scroll-content {
+  display: none;
+}
+
+/* 全屏：强制横屏观看 */
+.player-landscape-overlay {
+  position: absolute;
+  background-color: #000;
+  z-index: 130;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+.landscape-video-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.landscape-exit-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landscape-hud-bottom {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 0.7rem;
 }
 
 /* Scroll content styling */
@@ -10899,6 +10974,11 @@ body {
   cursor: pointer;
 }
 
+.vp-moregames-item.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .vp-moregames-icon-box {
   width: 44px;
   height: 44px;
@@ -14869,4 +14949,224 @@ body {
   color: #94a3b8;
   border-top: 1px solid #e2e8f0;
   padding-top: 10px;
+}
+
+/* ============================================
+   返水 button (Profile wallet actions)
+   ============================================ */
+.profile-action-btn.rebate {
+  background-color: #f1f5f9;
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+}
+/* Tighten wallet action button font so 3 buttons fit nicely */
+.profile-wallet-actions .profile-action-btn {
+  font-size: 0.74rem;
+  gap: 5px;
+}
+
+/* ============================================
+   自助返水 (Self-service Rebate) Page
+   ============================================ */
+#page-rebate {
+  background-color: #f1f3f7;
+}
+
+.rebate-header-bar {
+  height: 46px;
+  background-color: #ffffff;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.rebate-header-bar i.fa-chevron-left {
+  font-size: 0.9rem;
+  color: #1e293b;
+  cursor: pointer;
+}
+.rebate-header-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #1e293b;
+  text-align: center;
+  flex-grow: 1;
+  margin-right: 14px;
+}
+
+.rebate-summary-card {
+  margin: 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-casino);
+  flex-shrink: 0;
+}
+.rebate-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #334155;
+}
+.rebate-summary-label {
+  color: #334155;
+}
+.rebate-summary-amount {
+  color: var(--color-orange);
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+.rebate-refresh-icon {
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.rebate-claim-all-btn {
+  background-color: #c7ccd6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: not-allowed;
+}
+
+.rebate-body {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  padding: 0 12px 16px 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.rebate-cat-tabs {
+  flex-shrink: 0;
+  width: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rebate-cat-tab {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.rebate-cat-tab .rebate-cat-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.rebate-cat-tab .rebate-cat-name {
+  font-size: 0.8rem;
+  color: #334155;
+  font-weight: 600;
+}
+.rebate-cat-tab.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+.rebate-cat-tab.active .rebate-cat-name {
+  color: #ffffff;
+}
+
+.rebate-platform-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 2px;
+}
+.rebate-platform-list::-webkit-scrollbar {
+  width: 4px;
+}
+.rebate-platform-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.rebate-platform-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: var(--shadow-casino);
+  transition: transform 0.1s ease;
+}
+.rebate-platform-card:active {
+  transform: scale(0.99);
+}
+.rebate-platform-logo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+.rebate-platform-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rebate-platform-name {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+.rebate-platform-ratio {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+.rebate-platform-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.rebate-stat-line {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+.rebate-stat-line b {
+  color: #1e293b;
+  font-weight: bold;
+}
+.rebate-stat-line b.rebate-claimable {
+  color: var(--color-orange);
+}
+.rebate-platform-arrow {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  flex-shrink: 0;
 }

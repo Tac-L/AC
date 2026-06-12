@@ -34,6 +34,12 @@ const getM6BallColor = (num) => {
   return 'green';
 };
 
+// Speed Race (极速赛车) 1~10 名次球颜色（PK10 标准配色）
+const RACE_COLORS = {
+  1: '#f5c211', 2: '#2f6fdb', 3: '#3a3a3a', 4: '#f07c19', 5: '#16b1c4',
+  6: '#7a52d6', 7: '#9aa1a8', 8: '#e03131', 9: '#7a2222', 10: '#2f9e44'
+};
+
 export default function ModalVideoPlayer() {
   const {
     balance,
@@ -69,6 +75,12 @@ export default function ModalVideoPlayer() {
   // Mark Six last draw result: 6 regular + 1 special number
   const [m6Result, setM6Result] = useState([23, 41, 24, 26, 33, 7, 32]);
 
+  // Speed Race (一分极速赛车) embedded selections: key encoded as `${category}|${name}`
+  const [selectedSR, setSelectedSR] = useState(new Set());
+  const [srActiveTab, setSrActiveTab] = useState('two-sides'); // two-sides, sum, single
+  // Speed Race last draw result:排列 1~10
+  const [srResult, setSrResult] = useState([1, 2, 7, 9, 4, 10, 6, 5, 8, 3]);
+
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
   const [activeCarouselGame, setActiveCarouselGame] = useState('fast3');
@@ -84,6 +96,12 @@ export default function ModalVideoPlayer() {
 
   // Rotating banner index
   const [bannerIdx, setBannerIdx] = useState(0);
+
+  // Player view modes
+  const [immersive, setImmersive] = useState(false); // 沉浸式：视频铺满竖屏
+  const [landscape, setLandscape] = useState(false);  // 全屏：强制横屏观看
+  const [landscapeSize, setLandscapeSize] = useState({ w: 0, h: 0 });
+  const overlayRef = useRef(null);
 
   // Simulated live chatroom messages
   const [chatMessages, setChatMessages] = useState([
@@ -255,8 +273,8 @@ export default function ModalVideoPlayer() {
     }
   };
 
-  // Only Fast Three and Mark Six are playable for now
-  const playableCarouselGames = ['fast3', 'marksix'];
+  // Only Fast Three, Mark Six and Speed Race are playable for now
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -376,7 +394,8 @@ export default function ModalVideoPlayer() {
     ],
     lottery: [
       { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
-      { key: 'racing', label: '一分赛车', img: 'assets/sports_cover.png' }
+      { key: 'marksix', label: '一分六合彩', img: 'assets/mo_mark_six.png' },
+      { key: 'racing', label: '一分赛车', img: 'assets/speed_race.png' }
     ],
     fish: [
       { key: 'fish1', label: '财神捕鱼', img: 'assets/chat_cover.png' },
@@ -384,13 +403,18 @@ export default function ModalVideoPlayer() {
     ]
   };
 
+  // Mirror the 边看边玩 menu: only Fast Three, Mark Six and Speed Race are openable.
+  // Map a more-games key to its playable carousel console.
+  const moreGamesPlayableMap = {
+    fast3: 'fast3',
+    marksix: 'marksix',
+    racing: 'speedrace'
+  };
+
   const handleMoreGamesGameClick = (game) => {
-    const gameKeys = ['fast3', 'mahjong', 'captain', 'queen', 'goldcity', 'richman'];
-    if (gameKeys.includes(game.key)) {
-      setActiveCarouselGame(game.key);
-    } else {
-      setActiveCarouselGame('mahjong');
-    }
+    const target = moreGamesPlayableMap[game.key];
+    if (!target) return;
+    setActiveCarouselGame(target);
     setVpActiveTab('play');
     showToast(`已为您切入：【${game.label}】`);
   };
@@ -401,6 +425,7 @@ export default function ModalVideoPlayer() {
   const carouselGameItems = [
     { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
     { key: 'marksix', label: '一分六合彩', img: 'assets/mo_mark_six.png' },
+    { key: 'speedrace', label: '一分极速赛车', img: 'assets/speed_race.png' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
@@ -546,6 +571,44 @@ export default function ModalVideoPlayer() {
     setSelectedM6(new Set());
   };
 
+  // ===== Speed Race (一分极速赛车) embedded gameplay =====
+  const handleSRCardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedSR);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedSR(next);
+  };
+
+  const srCount = selectedSR.size;
+  const srTotalCost = srCount * currentBetPrice;
+
+  const handleSRReset = () => {
+    setSelectedSR(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleSRSubmit = () => {
+    if (srCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (srTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedSR).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: '9.75', baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('speed_race', items);
+    setSelectedSR(new Set());
+  };
+
   const toggleDropdownMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -555,10 +618,29 @@ export default function ModalVideoPlayer() {
     setMenuOpen(false);
   };
 
+  // 沉浸式：切换视频铺满竖屏
+  const toggleImmersive = () => {
+    setImmersive(prev => {
+      const next = !prev;
+      showToast(next ? '已进入沉浸模式' : '已退出沉浸模式');
+      return next;
+    });
+  };
+
+  // 全屏：强制横屏观看（按播放器容器尺寸旋转 90°）
+  const enterLandscape = () => {
+    const el = overlayRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setLandscapeSize({ w: r.width, h: r.height });
+    }
+    setLandscape(true);
+  };
+
   return (
-    <div className="video-player-overlay active" id="video-player-modal" style={{ display: 'flex' }}>
-      <div className="split-player-container">
-        
+    <div className="video-player-overlay active" id="video-player-modal" style={{ display: 'flex' }} ref={overlayRef}>
+      <div className={`split-player-container ${immersive ? 'immersive' : ''}`}>
+
         {/* 1/3 Top Mock Video Player */}
         <div className="mock-player-box">
           <img id="modal-player-still" src={activeVideo?.img || "assets/sports_cover.png"} alt="播放视频" />
@@ -577,6 +659,9 @@ export default function ModalVideoPlayer() {
               <div className="progress-indicator" style={{ width: '32%' }}></div>
             </div>
             <span className="time-lbl">02:18 / 95:00</span>
+            <i className="fa-solid fa-gear player-hud-icon" title="设置" onClick={() => showToast('画质 / 倍速设置开发中')}></i>
+            <i className={`fa-solid fa-film player-hud-icon ${immersive ? 'active' : ''}`} title="沉浸式" onClick={toggleImmersive}></i>
+            <i className="fa-solid fa-up-right-and-down-left-from-center player-hud-icon" title="全屏" onClick={enterLandscape}></i>
           </div>
         </div>
 
@@ -1069,6 +1154,180 @@ export default function ModalVideoPlayer() {
                       </div>
                     </div>
                   </div>
+                ) : activeCarouselGame === 'speedrace' ? (
+                  // Speed Race (一分极速赛车) lottery console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <i className="fa-solid fa-flag-checkered" style={{ color: '#2f9e44' }}></i>
+                          <span>一分极速赛车</span>
+                        </div>
+                        <div className="vp-bet-countdown-box">
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-colon">:</span>
+                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
+                          <span className="vp-digit-box">{countdown % 10}</span>
+                        </div>
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="vp-sr-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+                          {srResult.map((n, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                width: '18px', height: '18px', borderRadius: '50%',
+                                background: RACE_COLORS[n], color: '#fff', fontSize: '0.6rem', fontWeight: 'bold'
+                              }}
+                            >
+                              {n}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play category tabs */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {[
+                          { cat: 'two-sides', label: '冠军两面' },
+                          { cat: 'sum', label: '冠亚和' },
+                          { cat: 'single', label: '冠军单码' }
+                        ].map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${srActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setSrActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 冠军两面 */}
+                        {srActiveTab === 'two-sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {['大', '小', '单', '双'].map(name => {
+                              const isSelected = selectedSR.has(`冠军两面|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRCardClick('冠军两面', name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 冠亚和 */}
+                        {srActiveTab === 'sum' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {['和大', '和小', '和单', '和双'].map(name => {
+                              const isSelected = selectedSR.has(`冠亚和|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRCardClick('冠亚和', name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 冠军单码 */}
+                        {srActiveTab === 'single' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => {
+                              const name = String(num);
+                              const isSelected = selectedSR.has(`冠军单码|${name}`);
+                              return (
+                                <div
+                                  key={num}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRCardClick('冠军单码', name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <span
+                                    style={{
+                                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                      width: '22px', height: '22px', borderRadius: '50%',
+                                      background: RACE_COLORS[num], color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '2px'
+                                    }}
+                                  >
+                                    {num}
+                                  </span>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.75</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{srCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{srTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleSRReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleSRSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   // Interactive slots gameplay panel
                   <div className="vp-slots-betting-box">
@@ -1192,14 +1451,21 @@ export default function ModalVideoPlayer() {
 
                 {/* Games grid */}
                 <div className="vp-moregames-grid">
-                  {moreGamesList[activeMoreGamesCat]?.map(game => (
-                    <div key={game.key} className="vp-moregames-item" onClick={() => handleMoreGamesGameClick(game)}>
-                      <div className="vp-moregames-icon-box">
-                        <img src={game.img} alt={game.label} />
+                  {moreGamesList[activeMoreGamesCat]?.map(game => {
+                    const isPlayable = !!moreGamesPlayableMap[game.key];
+                    return (
+                      <div
+                        key={game.key}
+                        className={`vp-moregames-item ${isPlayable ? '' : 'disabled'}`}
+                        onClick={() => handleMoreGamesGameClick(game)}
+                      >
+                        <div className="vp-moregames-icon-box">
+                          <img src={game.img} alt={game.label} />
+                        </div>
+                        <span className="vp-moregames-label">{game.label}</span>
                       </div>
-                      <span className="vp-moregames-label">{game.label}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -1208,6 +1474,34 @@ export default function ModalVideoPlayer() {
         </div>
 
       </div>
+
+      {/* 全屏：强制横屏观看，按容器尺寸旋转 90° 铺满 */}
+      {landscape && (
+        <div
+          className="player-landscape-overlay"
+          style={{
+            width: landscapeSize.h,
+            height: landscapeSize.w,
+            left: (landscapeSize.w - landscapeSize.h) / 2,
+            top: (landscapeSize.h - landscapeSize.w) / 2,
+            transform: 'rotate(90deg)'
+          }}
+        >
+          <img className="landscape-video-img" src={activeVideo?.img || 'assets/sports_cover.png'} alt="横屏播放" />
+          <button className="landscape-exit-btn" onClick={() => setLandscape(false)}>
+            <i className="fa-solid fa-chevron-left"></i>
+          </button>
+          <span className="video-watermark-overlay">激情裸聊 1v1</span>
+          <div className="landscape-hud-bottom">
+            <i className="fa-solid fa-pause"></i>
+            <div className="player-progress-track">
+              <div className="progress-indicator" style={{ width: '32%' }}></div>
+            </div>
+            <span className="time-lbl">02:18 / 95:00</span>
+            <i className="fa-solid fa-down-left-and-up-right-to-center player-hud-icon" title="退出全屏" onClick={() => setLandscape(false)}></i>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

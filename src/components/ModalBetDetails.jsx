@@ -25,6 +25,8 @@ export default function ModalBetDetails() {
     gameTitle = '一分六合彩 投注详情';
   } else if (currentActiveGame === 'fast_three_embedded') {
     gameTitle = '一分快三(视频) 投注详情';
+  } else if (currentActiveGame === 'speed_race') {
+    gameTitle = '一分极速赛车 投注详情';
   }
 
   // Handle amount change for specific staged item
@@ -69,6 +71,8 @@ export default function ModalBetDetails() {
       gameName = '一分六合彩';
     } else if (currentActiveGame === 'fast_three_embedded') {
       gameName = '一分快三(视频)';
+    } else if (currentActiveGame === 'speed_race') {
+      gameName = '一分极速赛车';
     }
 
     showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);

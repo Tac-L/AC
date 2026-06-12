@@ -14,6 +14,7 @@ import PageGames from './components/PageGames';
 import PageProfile from './components/PageProfile';
 import PageDeposit from './components/PageDeposit';
 import PageWithdraw from './components/PageWithdraw';
+import PageRebate from './components/PageRebate';
 import PageMail from './components/PageMail';
 import PageBetRecords from './components/PageBetRecords';
 import PageActivity from './components/PageActivity';
@@ -70,6 +71,8 @@ function MainApp() {
         return <PageDeposit />;
       case 'page-withdraw':
         return <PageWithdraw />;
+      case 'page-rebate':
+        return <PageRebate />;
       case 'page-mail':
         return <PageMail />;
       case 'page-bet-records':
@@ -95,7 +98,7 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && <BottomNav />}
       </PhoneContainer>
 
       {/* 3. Global Overlays / Modals */}
