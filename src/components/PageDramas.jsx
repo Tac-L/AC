@@ -371,11 +371,6 @@ export default function PageDramas() {
           </div>
         )}
 
-        {/* Top Tabs Header Overlay */}
-        <div className="drama-top-header" style={{ justifyContent: 'flex-end' }}>
-          <i className="fa-solid fa-magnifying-glass drama-search-btn" onClick={() => showToast('搜索短剧功能开发中...')}></i>
-        </div>
-
         {/* Left Promo Gift Badge */}
         {promoVisible && (
           <div className="drama-left-promo" id="drama-promo-badge">
