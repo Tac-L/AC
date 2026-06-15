@@ -101,8 +101,7 @@ export default function PageGames() {
     { id: 'recharge', label: '充值', icon: 'fa-solid fa-sack-dollar', cls: 'recharge', onClick: openDepositPage },
     { id: 'vip', label: 'Vip钱包', icon: 'fa-brands fa-bitcoin', cls: 'vip', onClick: () => openActivityPage('vip') },
     { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', badge: '送1.5%', onClick: openOffersPage },
-    { id: 'withdraw', label: '提款', icon: 'fa-solid fa-credit-card', cls: 'withdraw', onClick: openWithdrawPage },
-    { id: 'more', label: '更多', icon: 'fa-solid fa-table-cells', cls: 'more', onClick: () => showToast('提示：【更多功能】正在对接中，敬请期待！') }
+    { id: 'withdraw', label: '提款', icon: 'fa-solid fa-credit-card', cls: 'withdraw', onClick: openWithdrawPage }
   ];
 
   // Filter game data based on activeCategory
