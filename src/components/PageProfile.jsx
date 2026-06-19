@@ -4,10 +4,6 @@ import { useApp } from '../context/AppContext';
 export default function PageProfile() {
   const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
 
-  const handleEditUsername = () => {
-    showToast('提示：修改昵称功能暂未开放！');
-  };
-
   const handleCopyId = () => {
     showToast('复制成功：用户ID已复制到剪贴板！');
   };
@@ -147,7 +143,6 @@ export default function PageProfile() {
             <div className="profile-meta">
               <div className="profile-username-row">
                 <h3 id="profile-username-lbl">伯人心贤oyo</h3>
-                <i className="fa-regular fa-pen-to-square" id="btn-edit-username" onClick={handleEditUsername}></i>
               </div>
               <div className="profile-id-row">
                 <span>ID:301636280</span>
@@ -156,13 +151,12 @@ export default function PageProfile() {
             </div>
           </div>
           <div className="profile-header-right-box">
+            <div className="profile-header-right" id="btn-profile-settings" onClick={() => setActivePage('page-account-settings')}>
+              <i className="fa-solid fa-gear"></i>
+            </div>
             <div className="profile-header-right" id="btn-profile-notifications" onClick={handleNotifications}>
               <i className="fa-regular fa-bell"></i>
               <span className="profile-bell-badge">3</span>
-            </div>
-            <div className="profile-header-balance-box">
-              <span className="balance-lbl">余额</span>
-              <strong className="balance-amount" id="profile-header-balance-display">¥{balance.toFixed(2)}</strong>
             </div>
           </div>
         </div>
@@ -279,7 +273,12 @@ export default function PageProfile() {
 
         {/* "常用功能" Features list */}
         <div className="profile-features-section">
-          <h4>常用功能</h4>
+          <div className="profile-features-header">
+            <span className="profile-features-title">活动中心 <em>尽享福利</em></span>
+            <button className="profile-features-claim-btn" id="btn-profile-claim-welfare" onClick={() => openActivityPage('task')}>
+              领取福利 <i className="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
           <div className="profile-features-grid">
             {features.map((feat, idx) => (
               <div 

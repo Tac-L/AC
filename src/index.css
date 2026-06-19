@@ -2920,9 +2920,9 @@ input:checked + .slider:before {
 
 .profile-header-right-box {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
 }
 
 .profile-header-balance-box {
@@ -3431,28 +3431,65 @@ input:checked + .slider:before {
 
 .profile-features-section {
   margin: 0 12px 20px 12px;
-  background-color: #0f0e17;
+  background-color: #fff;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.profile-features-section h4 {
-  font-size: 0.8rem;
+.profile-features-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, #7c6cf0 0%, #c3b2f5 100%);
+}
+
+.profile-features-title {
+  font-size: 0.92rem;
   font-weight: bold;
   color: #fff;
-  margin: 0;
-  text-align: left;
+  letter-spacing: 1px;
+}
+
+.profile-features-title em {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 0.92;
+}
+
+.profile-features-claim-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: bold;
+  color: #6d28d9;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.profile-features-claim-btn:active {
+  transform: scale(0.96);
+}
+
+.profile-features-claim-btn i {
+  font-size: 0.7rem;
 }
 
 .profile-features-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  row-gap: 14px;
+  row-gap: 18px;
   column-gap: 6px;
+  padding: 18px 14px;
 }
 
 .profile-feature-item {
@@ -3482,8 +3519,8 @@ input:checked + .slider:before {
 }
 
 .profile-feature-item span {
-  font-size: 0.58rem;
-  color: var(--text-grey);
+  font-size: 0.72rem;
+  color: #334155;
   white-space: nowrap;
 }
 
@@ -9245,16 +9282,8 @@ body {
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-casino) !important;
 }
-.profile-features-section h4 {
-  color: var(--text-white) !important;
-}
-.profile-feature-icon-box {
-  background-color: #f1f5f9 !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--color-primary) !important;
-}
 .profile-feature-item span {
-  color: var(--text-white) !important;
+  color: #334155 !important;
 }
 
 /* Deposit Page Overrides */
@@ -11733,9 +11762,9 @@ body {
 
 /* Base SVG icon style */
 .feature-svg-icon {
-  width: 22px;
-  height: 22px;
-  color: #4b5563; /* Slate grey in light mode */
+  width: 26px;
+  height: 26px;
+  color: #1f2937; /* Near-black to match mockup */
   display: block;
   transition: color 0.2s ease, transform 0.1s ease;
 }
@@ -13438,6 +13467,137 @@ body {
 .settings-row-arrow {
   color: #cbd5e1 !important;
   font-size: 0.8rem !important;
+}
+
+/* ===== 设置 (Account Settings) ===== */
+#page-account-settings {
+  background-color: #f1f5f9 !important;
+}
+
+.settings-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  cursor: pointer;
+}
+
+.settings-section-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.settings-section-caret {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.settings-info-list {
+  padding-bottom: 6px;
+}
+
+.settings-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.settings-info-label {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.settings-info-value {
+  font-size: 0.9rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.settings-sports-body {
+  border-top: 1px solid #f1f5f9;
+  padding: 12px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-sub-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.settings-radio-row {
+  display: flex;
+  gap: 32px;
+}
+
+.settings-radio-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.settings-radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.settings-radio-dot.checked {
+  border-color: var(--color-primary);
+}
+
+.settings-radio-dot.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+.settings-odds-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.settings-logout-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-radius: 28px;
+  background: linear-gradient(90deg, #6e96f2, #8aa9f5);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.settings-logout-btn:active {
+  transform: scale(0.98);
 }
 
 /* Top tab pills */
