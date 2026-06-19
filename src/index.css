@@ -1103,6 +1103,12 @@ body {
   transform: translateY(0);
 }
 
+/* Betting drawer fits its content instead of a fixed 70% height */
+.drama-betting-sheet {
+  height: auto;
+  max-height: 85%;
+}
+
 .drama-comments-header {
   height: 50px;
   padding: 0 16px;
@@ -7136,6 +7142,27 @@ input:checked + .slider:before {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+}
+
+/* 对子 / 单骰: 3 columns -> 3+3 over two rows */
+.live-betting-options-grid.grid-pair,
+.live-betting-options-grid.grid-single {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Shorter cards for the multi-row layouts (对子/豹子/总和/单骰) */
+.live-betting-options-grid.grid-pair .live-odds-card,
+.live-betting-options-grid.grid-triple .live-odds-card,
+.live-betting-options-grid.grid-sum .live-odds-card,
+.live-betting-options-grid.grid-single .live-odds-card {
+  height: 58px;
+}
+
+.live-betting-options-grid.grid-pair .live-odds-card .odds-card-name,
+.live-betting-options-grid.grid-triple .live-odds-card .odds-card-name,
+.live-betting-options-grid.grid-sum .live-odds-card .odds-card-name,
+.live-betting-options-grid.grid-single .live-odds-card .odds-card-name {
+  margin-bottom: 3px;
 }
 
 .live-odds-card {

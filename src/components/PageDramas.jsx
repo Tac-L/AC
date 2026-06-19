@@ -531,7 +531,7 @@ export default function PageDramas() {
         />
 
         {/* Betting Bottom Sheet Drawer */}
-        <div className={`drama-comments-sheet ${betPanelOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <div className={`drama-comments-sheet drama-betting-sheet ${betPanelOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
           <div className="live-betting-panel" id="live-betting-panel" style={{ display: 'flex', height: '100%', borderTopLeftRadius: '16px', borderTopRightRadius: '16px', overflow: 'hidden' }}>
             {/* Header */}
             <div className="live-betting-header">
@@ -591,8 +591,8 @@ export default function PageDramas() {
             </div>
 
             {/* Betting Options Grid */}
-            <div className="live-betting-options-container" style={{ flex: 1, overflowY: 'auto' }}>
-              <div className="live-betting-options-grid active">
+            <div className="live-betting-options-container" style={{ flex: 'none', height: '150px', overflowY: 'auto' }}>
+              <div className={`live-betting-options-grid active grid-${selectedPlayCat}`}>
                 {oddsData[selectedPlayCat]?.map(card => {
                   const isSelected = selectedOddsCards.has(card.name);
                   return (
