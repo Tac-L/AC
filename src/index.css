@@ -7343,7 +7343,7 @@ input:checked + .slider:before {
 
 #page-sports .sports-header {
   background-color: #ffffff !important;
-  padding: 35px 14px 10px 14px !important;
+  padding: 10px 14px !important;
   box-sizing: border-box;
 }
 
