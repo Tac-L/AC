@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, openRebatePage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
 
   const handleEditUsername = () => {
     showToast('提示：修改昵称功能暂未开放！');
@@ -21,7 +21,11 @@ export default function PageProfile() {
   };
 
   const handleOnekeyRetrieve = () => {
-    showToast('一键额度回收成功！所有子钱包额度已全部取回至系统主账户。');
+    showToast('一键归集成功！所有子钱包额度已全部归集至系统主账户。');
+  };
+
+  const handleRefreshBalance = () => {
+    showToast('现金余额已刷新！');
   };
 
   const handleFeatureClick = (name) => {
@@ -246,24 +250,30 @@ export default function PageProfile() {
         {/* Wallet / Balance Box */}
         <div className="profile-wallet-section">
           <div className="profile-wallet-top">
-            <div className="profile-wallet-info">
-              <h2 id="profile-balance-val">¥{balance.toFixed(2)}</h2>
-              <span>我的余额</span>
-            </div>
-            <button className="profile-retrieve-btn" id="btn-profile-onekey-retrieve" onClick={handleOnekeyRetrieve}>
-              <i className="fa-solid fa-hand-holding-dollar"></i> 一键取回
-            </button>
+            <span className="profile-wallet-label">现金余额</span>
+            <button className="profile-collect-btn" id="btn-profile-onekey-retrieve" onClick={handleOnekeyRetrieve}>一键归集</button>
+          </div>
+          <div className="profile-balance-row">
+            <h2 id="profile-balance-val">¥ {balance.toFixed(2)}</h2>
+            <i className="fa-solid fa-arrows-rotate profile-balance-refresh" id="btn-profile-balance-refresh" onClick={handleRefreshBalance}></i>
           </div>
           <div className="profile-wallet-actions">
-            <button className="profile-action-btn deposit" id="btn-profile-deposit" onClick={openDepositPage}>
-              <i className="fa-solid fa-wallet"></i> 充值
-            </button>
-            <button className="profile-action-btn withdraw" id="btn-profile-withdraw" onClick={openWithdrawPage}>
-              <i className="fa-solid fa-money-bill-transfer"></i> 提现
-            </button>
-            <button className="profile-action-btn rebate" id="btn-profile-rebate" onClick={openRebatePage}>
-              <i className="fa-solid fa-rotate-left"></i> 返水
-            </button>
+            <div className="profile-action-item" id="btn-profile-deposit" onClick={openDepositPage}>
+              <div className="profile-action-icon deposit"><i className="fa-solid fa-money-bill-wave"></i></div>
+              <span>存款</span>
+            </div>
+            <div className="profile-action-item" id="btn-profile-platform-balance" onClick={openPlatformBalancePage}>
+              <div className="profile-action-icon platform-balance"><i className="fa-solid fa-dollar-sign"></i></div>
+              <span>平台余额</span>
+            </div>
+            <div className="profile-action-item" id="btn-profile-withdraw" onClick={openWithdrawPage}>
+              <div className="profile-action-icon withdraw"><i className="fa-solid fa-wallet"></i></div>
+              <span>取款</span>
+            </div>
+            <div className="profile-action-item" id="btn-profile-rebate" onClick={openRebatePage}>
+              <div className="profile-action-icon rebate"><i className="fa-solid fa-yen-sign"></i></div>
+              <span>返水</span>
+            </div>
           </div>
         </div>
 

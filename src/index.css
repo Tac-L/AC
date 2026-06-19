@@ -3321,13 +3321,13 @@ input:checked + .slider:before {
 
 .profile-wallet-section {
   margin: 0 12px 12px 12px;
-  background-color: #0f0e17;
+  background: linear-gradient(180deg, #eff4ff 0%, #ffffff 38%);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .profile-wallet-top {
@@ -3336,69 +3336,97 @@ input:checked + .slider:before {
   align-items: center;
 }
 
-.profile-wallet-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  text-align: left;
+.profile-wallet-label {
+  font-size: 0.82rem;
+  color: #94a3b8;
 }
 
-.profile-wallet-info h2 {
-  font-size: 1.25rem;
+.profile-collect-btn {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  border: none;
+  color: #fff;
+  font-size: 0.78rem;
   font-weight: bold;
-  color: #ff7675;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.profile-collect-btn:active {
+  transform: scale(0.97);
+}
+
+.profile-balance-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -4px;
+}
+
+.profile-balance-row h2 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #1e293b;
   margin: 0;
 }
 
-.profile-wallet-info span {
-  font-size: 0.65rem;
-  color: var(--text-grey);
-}
-
-.profile-retrieve-btn {
-  background: none;
-  border: none;
-  color: var(--color-gold);
-  font-size: 0.65rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.profile-balance-refresh {
+  color: var(--color-primary);
+  font-size: 0.95rem;
   cursor: pointer;
 }
 
 .profile-wallet-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
 }
 
-.profile-action-btn {
-  padding: 10px 0;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: bold;
+.profile-action-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: none;
+  gap: 8px;
   cursor: pointer;
   transition: transform 0.1s ease;
 }
 
-.profile-action-btn:active {
-  transform: scale(0.98);
+.profile-action-item:active {
+  transform: scale(0.96);
 }
 
-.profile-action-btn.deposit {
-  background: linear-gradient(90deg, #ff7675, #fd79a8);
-  color: #fff;
+.profile-action-item span {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #475569;
 }
 
-.profile-action-btn.withdraw {
-  background-color: #1c1b26;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+.profile-action-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
+  font-size: 1.1rem;
+}
+
+.profile-action-icon.deposit {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+
+.profile-action-icon.platform-balance {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.profile-action-icon.withdraw {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+}
+
+.profile-action-icon.rebate {
+  background: linear-gradient(135deg, #38bdf8, #7dd3fc);
 }
 
 .profile-features-section {
@@ -9209,27 +9237,8 @@ body {
   color: var(--text-grey) !important;
 }
 .profile-wallet-section {
-  background-color: var(--card-bg) !important;
   border: 1px solid var(--border-color) !important;
   box-shadow: var(--shadow-casino) !important;
-}
-.profile-wallet-info h2 {
-  color: var(--color-primary) !important;
-}
-.profile-wallet-info span {
-  color: var(--text-grey) !important;
-}
-.profile-retrieve-btn {
-  color: var(--color-primary) !important;
-}
-.profile-action-btn.deposit {
-  background: linear-gradient(135deg, var(--color-primary), #60a5fa) !important;
-  color: #ffffff !important;
-}
-.profile-action-btn.withdraw {
-  background-color: #f1f5f9 !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-white) !important;
 }
 .profile-features-section {
   background-color: var(--card-bg) !important;
@@ -15041,16 +15050,6 @@ body {
 /* ============================================
    返水 button (Profile wallet actions)
    ============================================ */
-.profile-action-btn.rebate {
-  background-color: #f1f5f9;
-  border: 1px solid var(--border-color);
-  color: var(--text-white);
-}
-/* Tighten wallet action button font so 3 buttons fit nicely */
-.profile-wallet-actions .profile-action-btn {
-  font-size: 0.74rem;
-  gap: 5px;
-}
 
 /* ============================================
    自助返水 (Self-service Rebate) Page
@@ -15256,4 +15255,201 @@ body {
   color: #cbd5e1;
   font-size: 0.8rem;
   flex-shrink: 0;
+}
+
+/* ===== Platform Balance Page (平台余额) ===== */
+#page-platform-balance {
+  background-color: var(--bg-body);
+}
+
+.pbal-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background-color: var(--bg-dark);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pbal-header-bar i.fa-chevron-left {
+  font-size: 1rem;
+  color: #334155;
+  cursor: pointer;
+  width: 20px;
+}
+
+.pbal-header-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.pbal-header-bar > div:last-child {
+  width: 20px;
+}
+
+.pbal-summary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.pbal-summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pbal-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pbal-summary-label {
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.pbal-summary-amount {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.pbal-refresh-icon {
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pbal-summary-hint {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.pbal-collect-btn {
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pbal-collect-btn:active {
+  transform: scale(0.98);
+}
+
+.pbal-body {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.pbal-cat-rail {
+  flex-shrink: 0;
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pbal-cat-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.15s ease;
+}
+
+.pbal-cat-tab.active {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-color: transparent;
+  color: #fff;
+}
+
+.pbal-cat-icon {
+  font-size: 1rem;
+}
+
+.pbal-cat-name {
+  font-size: 0.72rem;
+  font-weight: bold;
+}
+
+.pbal-vendor-grid {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pbal-vendor-card {
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.pbal-vendor-card:active {
+  transform: scale(0.98);
+}
+
+.pbal-vendor-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pbal-vendor-logo {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pbal-vendor-name {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pbal-vendor-amount {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #334155;
 }

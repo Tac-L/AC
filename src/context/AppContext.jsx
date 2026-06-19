@@ -132,6 +132,11 @@ export const AppProvider = ({ children }) => {
     setActiveSubGame(null);
   };
 
+  const openPlatformBalancePage = () => {
+    setActivePage('page-platform-balance');
+    setActiveSubGame(null);
+  };
+
   const openOffersPage = () => {
     setActivePage('page-offers');
     setActiveSubGame(null);
@@ -228,6 +233,7 @@ export const AppProvider = ({ children }) => {
       openDepositPage,
       openWithdrawPage,
       openRebatePage,
+      openPlatformBalancePage,
       openOffersPage,
       openActivityPage,
       activityTab,
