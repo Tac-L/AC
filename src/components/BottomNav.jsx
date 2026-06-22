@@ -15,13 +15,14 @@ export default function BottomNav() {
     setActiveSubGame(null); // Exit sub-games if switching tabs
   };
 
+  // `img` is the base name used for the icon pair: 默认-{img}.png / 点击-{img}.png
   const navItems = [
-    { id: 'page-dramas', icon: 'fa-clapperboard', label: '短剧' },
-    { id: 'page-videos', icon: 'fa-circle-play', label: '视频' },
-    { id: 'page-chats', icon: 'fa-microphone', label: '直播' },
-    { id: 'page-sports', icon: 'fa-football', label: '体育' },
-    { id: 'page-games', icon: 'fa-gamepad', label: '游戏' },
-    { id: 'page-profile', icon: 'fa-user', label: '我的' }
+    { id: 'page-dramas', img: '短剧', label: '短剧' },
+    { id: 'page-videos', img: '视频', label: '视频' },
+    { id: 'page-chats', img: '直播', label: '直播' },
+    { id: 'page-sports', img: '体育', label: '体育' },
+    { id: 'page-games', img: '游戏', label: '游戏' },
+    { id: 'page-profile', img: '我的', label: '我的' }
   ];
 
   return (
@@ -29,16 +30,17 @@ export default function BottomNav() {
       {navItems.map(item => {
         const isActive = activePage === item.id;
         return (
-          <div 
-            key={item.id} 
-            className={`nav-btn ${isActive ? 'active' : ''}`} 
+          <div
+            key={item.id}
+            className={`nav-btn ${isActive ? 'active' : ''}`}
             onClick={() => handleNav(item.id)}
           >
-            {item.isChat ? (
-              <div className="btn-chat-wrapper">
-                <i className={`fa-solid ${item.icon}`}></i>
-                <span className="chat-badge">9+</span>
-              </div>
+            {item.img ? (
+              <img
+                className="nav-btn-img"
+                src={`${isActive ? '点击' : '默认'}-${item.img}.png`}
+                alt={item.label}
+              />
             ) : (
               <i className={`fa-solid ${item.icon}`}></i>
             )}
