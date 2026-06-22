@@ -341,7 +341,19 @@ export default function PageHome() {
   };
 
   const handleMovieRoute = (title, img) => {
-    setActiveVideo({ title, img });
+    let tags = ['#剧情', '#经典'];
+    let description = '影片精彩内容即将呈现，敬请期待更多剧情与高清画质体验。';
+    if (title.includes('诺曼底')) {
+      tags = ['#剧情', '#战争'];
+      description = '影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。';
+    } else if (title.includes('繁花')) {
+      tags = ['#剧情', '#商战'];
+      description = '阿宝在上海黄河路的传奇商战风云与情感抉择。展现上世纪九十年代初沪上弄潮儿女的奋斗与爱恨。';
+    } else if (title.includes('数码好物')) {
+      tags = ['#科技', '#数码'];
+      description = '最新旗舰手机深度测评，从外观设计、屏幕素质、影像系统到处理器性能进行全方位对比，为你带来最客观的购机建议。';
+    }
+    setActiveVideo({ title, img, tags, description });
     setVideoPlayerActive(true);
   };
 
@@ -620,9 +632,9 @@ export default function PageHome() {
           <HomeLiveCard 
             images={['assets/drawing.png', 'assets/origami.png', 'assets/science.png', 'assets/chat_cover.png']}
             badge={<><i className="fa-solid fa-fire"></i> 3.5w</>}
-            title="专属服从房"
+            title="深夜情感电台"
             action="立即观看 »"
-            onClick={() => handleLiveRoute('专属服从房')}
+            onClick={() => handleLiveRoute('深夜情感电台')}
           />
         </div>
 
@@ -632,23 +644,23 @@ export default function PageHome() {
           <HomeMovieCard 
             images={['assets/drama_still1.png', 'assets/drawing.png', 'assets/origami.png', 'assets/science.png']}
             badge={<><i className="fa-solid fa-circle-play"></i> 289w</>}
-            title="迷奸高中女教师"
+            title="诺曼底72小时"
             action="立即观看 »"
-            onClick={() => handleMovieRoute('迷奸高中女教师 (偷拍系列)', 'assets/drama_still1.png')}
+            onClick={() => handleMovieRoute('诺曼底72小时', 'assets/drama_still1.png')}
           />
           <HomeMovieCard 
             images={['assets/origami.png', 'assets/science.png', 'assets/drawing.png', 'assets/chat_cover.png']}
             badge={<><i className="fa-solid fa-circle-play"></i> 123w</>}
-            title="清纯校花私密交易"
+            title="繁花"
             action="立即观看 »"
-            onClick={() => handleMovieRoute('清纯校花私密交易实录', 'assets/origami.png')}
+            onClick={() => handleMovieRoute('繁花 极清珍藏版', 'assets/origami.png')}
           />
           <HomeMovieCard 
             images={['assets/science.png', 'assets/origami.png', 'assets/drawing.png', 'assets/chat_cover.png']}
             badge={<><i className="fa-solid fa-circle-play"></i> 98w</>}
-            title="更衣室隐蔽镜头"
+            title="数码好物开箱评测"
             action="立即观看 »"
-            onClick={() => handleMovieRoute('更衣室隐蔽镜头无码自拍', 'assets/science.png')}
+            onClick={() => handleMovieRoute('数码好物开箱评测', 'assets/science.png')}
           />
         </div>
 

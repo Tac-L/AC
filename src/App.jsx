@@ -111,14 +111,14 @@ function MainApp() {
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
         {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
-      </PhoneContainer>
 
-      {/* 3. Global Overlays / Modals */}
-      <ModalBetDetails />
-      <ModalVideoPlayer />
-      <ModalsConfig />
-      <ModalGameDetail />
-      <ModalPgGame />
+        {/* 3. Global Overlays / Modals */}
+        <ModalBetDetails />
+        <ModalVideoPlayer />
+        <ModalsConfig />
+        <ModalGameDetail />
+        <ModalPgGame />
+      </PhoneContainer>
     </div>
   );
 }

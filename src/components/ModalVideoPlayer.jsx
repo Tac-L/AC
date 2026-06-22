@@ -280,6 +280,7 @@ export default function ModalVideoPlayer() {
   const handleCarouselGameClick = (item) => {
     if (!playableCarouselGames.includes(item.key)) return;
     setActiveCarouselGame(item.key);
+    setMenuOpen(false);
     showToast(`已切换至游戏：${item.label}`);
   };
 
@@ -341,16 +342,37 @@ export default function ModalVideoPlayer() {
 
   // Click handler for Recommended videos
   const recommendedVideosList = [
-    { id: 101, title: '91CM-112 《道士下山》 林雨霞', img: 'assets/video_swimsuit_pool.png', rating: '4.4', views: '1.9万' },
-    { id: 102, title: '清纯校花私密交易实录 (高潮连连)', img: 'assets/science.png', rating: '4.7', views: '6522' },
-    { id: 103, title: '網紅主播深夜戶外野戰 (無碼流出)', img: 'assets/chat_cover.png', rating: '4.1', views: '8771' }
+    { 
+      id: 101, 
+      title: '诺曼底72小时', 
+      img: 'assets/sports_cover.png', 
+      rating: '8.2', 
+      views: '386次播放',
+      tags: ['#剧情', '#战争'],
+      description: '影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。'
+    },
+    { 
+      id: 102, 
+      title: '繁花', 
+      img: 'assets/origami.png', 
+      rating: '9.5', 
+      views: '1.2万次播放',
+      tags: ['#剧情', '#商战'],
+      description: '阿宝在上海黄河路的传奇商战风云与情感抉择。展现上世纪九十年代初沪上弄潮儿女的奋斗与爱恨。'
+    },
+    { 
+      id: 103, 
+      title: '歌手2026', 
+      img: 'assets/chat_cover.png', 
+      rating: '9.2', 
+      views: '8.2万次播放',
+      tags: ['#综艺', '#音乐'],
+      description: '《歌手2026》迎来年度歌王争霸之夜！各路实力唱将齐聚一堂，带来精彩纷呈的现场Live表演。'
+    }
   ];
 
   const handleRecommendedVideoClick = (vid) => {
-    setActiveVideo({
-      title: vid.title,
-      img: vid.img
-    });
+    setActiveVideo(vid);
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -648,7 +670,7 @@ export default function ModalVideoPlayer() {
             <button id="btn-close-player" className="player-close-btn" onClick={() => setVideoPlayerActive(false)}>
               <i className="fa-solid fa-chevron-left"></i>
             </button>
-            <span className="video-watermark-overlay">激情裸聊 1v1</span>
+            <span className="video-watermark-overlay">影院独播 1080P</span>
           </div>
           <div className="player-hud-center">
             <i className="fa-solid fa-circle-play player-btn-main"></i>
@@ -674,31 +696,47 @@ export default function ModalVideoPlayer() {
               {/* Video Info Block */}
               <div className="vp-video-info-block">
                 <h3 className="vp-video-title">
-                  {activeVideo?.title || "91CM-112 《道士下山》 林雨霞"}
+                  {activeVideo?.title || "诺曼底72小时"}
                 </h3>
                 
                 {/* Meta stats row */}
                 <div className="vp-video-meta-row">
                   <div className="vp-meta-item">
                     <i className="fa-regular fa-clock"></i>
-                    <span>昨天 01:00</span>
+                    <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
                   </div>
                   <div className="vp-meta-item">
                     <i className="fa-regular fa-eye"></i>
-                    <span>1.9万</span>
+                    <span>{activeVideo?.views || "1.9万"}</span>
                   </div>
                   <div className="vp-meta-item">
                     <i className="fa-solid fa-star meta-star"></i>
-                    <span>4.4</span>
+                    <span>{activeVideo?.rating || "8.2"}</span>
                   </div>
                 </div>
 
                 {/* Tags row */}
                 <div className="vp-video-tags-row">
-                  <span className="vp-video-tag">#后入</span>
-                  <span className="vp-video-tag">#口交</span>
-                  <span className="vp-video-tag">#美乳</span>
-                  <span className="vp-video-tag">#无码</span>
+                  {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
+                    <span key={idx} className="vp-video-tag">{tag}</span>
+                  ))}
+                </div>
+
+                {/* Description block */}
+                <div className="vp-video-description-box" style={{ 
+                  margin: '8px 12px', 
+                  padding: '10px 0', 
+                  borderTop: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #f1f5f9',
+                  fontSize: '0.78rem', 
+                  color: '#4b5563', 
+                  lineHeight: '1.45',
+                  textAlign: 'justify'
+                }}>
+                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
+                  <span style={{ color: '#3b82f6', cursor: 'pointer', marginLeft: '4px', fontWeight: '500' }} onClick={() => showToast('详情功能暂未开放')}>
+                    详情 &gt;
+                  </span>
                 </div>
 
                 {/* Actions row */}
@@ -991,9 +1029,24 @@ export default function ModalVideoPlayer() {
                           <span className="vp-digit-box">{countdown % 10}</span>
                         </div>
                         <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div 
+                              key={opt} 
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
                         <div className="vp-m6-result-balls">
@@ -1171,9 +1224,24 @@ export default function ModalVideoPlayer() {
                           <span className="vp-digit-box">{countdown % 10}</span>
                         </div>
                         <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div 
+                              key={opt} 
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
                         <div className="vp-sr-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
@@ -1491,7 +1559,7 @@ export default function ModalVideoPlayer() {
           <button className="landscape-exit-btn" onClick={() => setLandscape(false)}>
             <i className="fa-solid fa-chevron-left"></i>
           </button>
-          <span className="video-watermark-overlay">激情裸聊 1v1</span>
+          <span className="video-watermark-overlay">影院独播 1080P</span>
           <div className="landscape-hud-bottom">
             <i className="fa-solid fa-pause"></i>
             <div className="player-progress-track">

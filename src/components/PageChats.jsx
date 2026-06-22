@@ -97,8 +97,8 @@ export default function PageChats() {
     { id: 5, title: 'VIP房', creator: 'XCM-九月', avatar: 'assets/drama_author.png', img: 'assets/game_mahjong.png', reserved: false, typeBadge: 'VIP房', gameBadge: '六合彩' },
     { id: 4, title: '门票房', creator: 'XCM-甜馨', avatar: 'assets/drama_author.png', img: 'assets/ticket_room.png', reserved: false, typeBadge: '门票房', gameBadge: '六合彩' },
     { id: 3, title: '快三', creator: 'XCM-阿英', avatar: 'assets/drama_author.png', img: 'assets/fast_three.png', reserved: false, typeBadge: '快三游戏', gameBadge: '快三游戏' },
-    { id: 6, title: '密码大秀房', creator: 'XCM-雨熙', avatar: 'assets/drama_author.png', img: 'assets/chat_cover.png', reserved: false, typeBadge: '密码房', gameBadge: '大秀' },
-    { id: 7, title: '户外直播大秀', creator: 'XCM-小艾', avatar: 'assets/drama_author.png', img: 'assets/sports_cover.png', reserved: false, typeBadge: '户外直播', gameBadge: '大秀' },
+    { id: 6, title: '密码娱乐房', creator: 'XCM-雨熙', avatar: 'assets/drama_author.png', img: 'assets/chat_cover.png', reserved: false, typeBadge: '密码房', gameBadge: '娱乐' },
+    { id: 7, title: '户外野营生活', creator: 'XCM-小艾', avatar: 'assets/drama_author.png', img: 'assets/sports_cover.png', reserved: false, typeBadge: '户外直播', gameBadge: '生活' },
     { id: 8, title: '百家乐官方直播', creator: '百家乐官方', avatar: 'assets/black_panther_logo.png', img: 'assets/video_swimsuit_pool.png', reserved: false, typeBadge: '百家乐', gameBadge: '百家乐' }
   ]);
 
@@ -152,12 +152,12 @@ export default function PageChats() {
     { id: 4, name: '炮总快三王', category: 'chatroom', sub: ['game'], img: 'assets/game_fast3.png', viewer: 191883, label: 'BL 一分快三', badge: '24' },
     { id: 5, name: '体育红单基地', category: 'chatroom', sub: ['recommend', 'worldcup'], img: 'assets/sports_cover.png', viewer: 197130, label: 'BL 体育赛事', badge: '58' },
     { id: 6, name: '美加墨爆庄房', category: 'chatroom', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 190262, label: 'BL 体育赛事', badge: '24' },
-    { id: 7, name: '骚男淫女房', category: 'chatroom', sub: ['voice'], img: 'assets/science.png', viewer: 19911, label: 'BL 语音厅', badge: '24' },
-    { id: 8, name: '专属服从房', category: 'chatroom', sub: ['recommend', 'voice'], img: 'assets/drawing.png', viewer: 32748, label: 'BL 语音厅', badge: '31' },
+    { id: 7, name: '潮流电音派对', category: 'chatroom', sub: ['voice'], img: 'assets/science.png', viewer: 19911, label: 'BL 语音厅', badge: '24' },
+    { id: 8, name: '深夜情感电台', category: 'chatroom', sub: ['recommend', 'voice'], img: 'assets/drawing.png', viewer: 32748, label: 'BL 语音厅', badge: '31' },
     { id: 9, name: 'VIP专属至尊快三', category: 'vip', sub: ['recommend', 'game'], img: 'assets/game_fast3.png', viewer: 250109, label: 'BL 一分快三', badge: '88' },
     { id: 10, name: 'VIP美女一对一', category: 'vip', sub: ['voice'], img: 'assets/chat_cover.png', viewer: 48201, label: 'BL 语音厅', badge: '99' },
-    { id: 11, name: '午夜激情诱惑', category: 'naked', sub: ['recommend', 'voice'], img: 'assets/science.png', viewer: 398104, label: 'BL 语音厅', badge: '99' },
-    { id: 12, name: '户外直播大秀', category: 'naked', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 148202, label: 'BL 体育赛事', badge: '72' }
+    { id: 11, name: '深夜暖心歌会', category: 'naked', sub: ['recommend', 'voice'], img: 'assets/science.png', viewer: 398104, label: 'BL 语音厅', badge: '99' },
+    { id: 12, name: '户外野营生活', category: 'naked', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 148202, label: 'BL 体育赛事', badge: '72' }
   ];
 
   const chatTemplates = [

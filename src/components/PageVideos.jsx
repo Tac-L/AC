@@ -3,31 +3,310 @@ import { useApp } from '../context/AppContext';
 
 // Rich database of 25 detailed items covering all categories
 const allVideos = [
-  { id: 1, category: 'domestic', title: '91CM-124 三胎计划 林妙可', fullTitle: '91CM-124 三胎计划 林妙可：与绝美尤物开启生三胎挑战', views: '5,062', rating: '99%', duration: '48分钟', img: 'assets/video_swimsuit_pool.png', isFree: true, adBadge: "开通特权送钱" },
-  { id: 2, category: 'selfie', title: '迷奸高中女教师 (偷拍系列)', fullTitle: '迷奸高中女教师：女教师被下药迷奸内射 (震撼流出)', views: '2,891,854', rating: '98%', duration: '98分钟', img: 'assets/drama_still1.png', isFree: true },
-  { id: 3, category: 'domestic', title: '清纯校花私密交易实录', fullTitle: '【精品传媒】清纯校花与豪门大少爷的私密恋情交易实拍', views: '1,234,812', rating: '95%', duration: '115分钟', img: 'assets/origami.png' },
-  { id: 4, category: 'selfie', title: '更衣室隐蔽镜头无码自拍', fullTitle: '【自拍流出】更衣室隐蔽角度无码自拍泄露 (日本无码)', views: '3,921,085', rating: '97%', duration: '85分钟', img: 'assets/science.png', isFree: true },
-  { id: 5, category: 'gossip', title: '网红主播深夜户外野战流出', fullTitle: '【瓜田速递】某平台百万粉丝女网红反差深夜户外露天野战流出', views: '829,310', rating: '92%', duration: '22分钟', img: 'assets/chat_cover.png' },
-  { id: 6, category: 'gossip', title: '知名女星KTV包厢奢华私密派对', fullTitle: '【独家猛料】知名女星与多名富商KTV包厢奢华私密派对实拍', views: '1,432,019', rating: '94%', duration: '45分钟', img: 'assets/sports_cover.png' },
-  { id: 7, category: 'japanese', title: '东京热：超人气女优水原沙耶香', fullTitle: '【东京热】超人气专属女优水原沙耶香极致私密挑逗巨制', views: '5,123,040', rating: '99%', duration: '120分钟', img: 'assets/lego.png' },
-  { id: 8, category: 'japanese', title: '一本道：熟女教师家庭访问', fullTitle: '【一本道】人妻熟女教师家庭访问：课后私人专属一对一辅导', views: '3,204,500', rating: '96%', duration: '135分钟', img: 'assets/drawing.png' },
-  { id: 9, category: 'western', title: '欧美精品：金发尤物激情碰撞', fullTitle: '【Vixen】金发豪乳尤物海边度假豪宅极致双人激情碰撞大作', views: '980,450', rating: '91%', duration: '110分钟', img: 'assets/science.png' },
-  { id: 10, category: 'selfie', title: '黑丝空姐酒店密会富二代', fullTitle: '【自拍偷拍】性感黑丝空姐酒店房间密会富二代激情偷拍流出', views: '2,510,480', rating: '95%', duration: '64分钟', img: 'assets/drama_still1.png' },
-  { id: 11, category: 'domestic', title: '麻豆传媒之初夏的诱惑', fullTitle: '【麻豆精品】初夏的诱惑：邻家小姐姐借宿发生的不可思议事件', views: '1,902,481', rating: '97%', duration: '92分钟', img: 'assets/origami.png' },
-  { id: 12, category: 'selfie', title: '探花流出：高颜值白领高端约会', fullTitle: '【精品探花】高颜值白领高端私人订制约会实录 (超清泄露)', views: '3,110,482', rating: '94%', duration: '75分钟', img: 'assets/sports_cover.png' },
-  { id: 13, category: 'gossip', title: '百万粉丝女网红反差曝光', fullTitle: '【大瓜落地】某平台百万粉丝纯欲风女网红反差视频流出曝光', views: '2,450,128', rating: '93%', duration: '18分钟', img: 'assets/chat_cover.png' },
-  { id: 14, category: 'japanese', title: 'S1专属新人首秀极致体贴', fullTitle: '【S1精品】专属新人首秀：极致温柔体贴的感官盛宴 (无码)', views: '4,218,903', rating: '98%', duration: '140分钟', img: 'assets/drawing.png' },
-  { id: 15, category: 'western', title: '欧美狂野：维纳斯女神双重冲击', fullTitle: '【Tushy】维纳斯双重冲击：欧美顶级名模联袂奉献感官挑战', views: '870,412', rating: '90%', duration: '95分钟', img: 'assets/lego.png' },
-  { id: 16, category: 'gossip', title: '某高校校花与体育生露天实拍', fullTitle: '【校园爆料】某知名高校校花与体育部社长操场露天私密实拍', views: '3,180,450', rating: '94%', duration: '28分钟', img: 'assets/drawing.png' },
-  { id: 17, category: 'selfie', title: '海归名媛高档住宅私人派对', fullTitle: '【夜色探秘】海归名媛高档住宅深夜聚会狂欢自拍流出 (超清)', views: '2,940,185', rating: '96%', duration: '50分钟', img: 'assets/science.png' },
-  { id: 18, category: 'domestic', title: '天美传媒：职场女强人的双面人生', fullTitle: '【天美精品】职场女强人的双面人生：白领主管深夜的秘密邂逅', views: '1,670,480', rating: '95%', duration: '108分钟', img: 'assets/sports_cover.png' },
-  { id: 19, category: 'japanese', title: 'SOD魔镜号街头突袭企划', fullTitle: '【SOD】魔镜号街头突袭企划：寻找愿意配合的素人小姐姐', views: '5,890,321', rating: '99%', duration: '150分钟', img: 'assets/lego.png' },
-  { id: 20, category: 'western', title: '欧美精品：超模巨星海滩邂逅', fullTitle: '【Vixen】超模巨星海滩浪漫邂逅：阳光沙滩下的感官碰撞', views: '1,120,490', rating: '92%', duration: '100分钟', img: 'assets/origami.png' },
-  { id: 21, category: 'domestic', title: '天美传媒：女仆咖啡厅的特别服务', fullTitle: '【天美精品】女仆咖啡厅的特别服务：专属包厢一对一私密体验', views: '2,310,490', rating: '96%', duration: '88分钟', img: 'assets/chat_cover.png' },
-  { id: 22, category: 'selfie', title: '自拍偷拍：情侣酒店镜面自拍', fullTitle: '【情侣自拍】情侣主题酒店浴室大镜子面前的甜蜜互动过程记录', views: '1,890,340', rating: '95%', duration: '72分钟', img: 'assets/drama_still1.png' },
-  { id: 23, category: 'gossip', title: '某金融女高管与下属关系曝光', fullTitle: '【金融圈大瓜】某知名投行金融女高管与新入职下属私密聊天曝光', views: '3,450,120', rating: '94%', duration: '32分钟', img: 'assets/science.png' },
-  { id: 24, category: 'japanese', title: 'Prestige经典护士系列重温', fullTitle: '【P-Group】经典重温：白衣天使包厢里的贴心护理与服侍', views: '3,670,120', rating: '97%', duration: '118分钟', img: 'assets/drawing.png' },
-  { id: 25, category: 'western', title: '欧美重磅：Vixen全景超清大作', fullTitle: '【Vixen】全景超清重磅大作：金发名模奢华寝室性感交融', views: '1,560,980', rating: '93%', duration: '125分钟', img: 'assets/sports_cover.png' }
+  { 
+    id: 1, 
+    category: 'domestic', 
+    title: '流浪地球2', 
+    fullTitle: '【科幻神作】流浪地球2：人类面临太阳危机，携手拯救地球家园', 
+    views: '5,062', 
+    rating: '99%', 
+    duration: '173分钟', 
+    img: 'assets/video_swimsuit_pool.png', 
+    isFree: true, 
+    adBadge: "开通特权送钱",
+    tags: ['#科幻', '#灾难', '#冒险'],
+    description: '太阳即将毁灭，人类为了自救开启“移山计划”，在地球表面建造巨型行星发动机，将地球推离太阳系，寻找新的家园。在旅途中，面临重重危机与挑战，人类不得不做出艰难抉择。'
+  },
+  { 
+    id: 2, 
+    category: 'selfie', 
+    title: '川西秘境自驾游Vlog', 
+    fullTitle: '【旅行日记】川西秘境自驾游：探索雪山与海子的绝美自然风光', 
+    views: '2,891,854', 
+    rating: '98%', 
+    duration: '28分钟', 
+    img: 'assets/drama_still1.png', 
+    isFree: true,
+    tags: ['#旅行', '#自驾', '#Vlog'],
+    description: '自驾川西环线，沿途经过折多山、新都桥、理塘等地。用镜头记录下巍峨的雪山、碧绿的海子以及纯朴的藏区风情，带你足不出户感受大自然的鬼斧神工与心灵洗礼。'
+  },
+  { 
+    id: 3, 
+    category: 'domestic', 
+    title: '繁花 极清珍藏版', 
+    fullTitle: '【热播大剧】繁花：阿宝在上海黄河路的传奇商战风云与情感抉择', 
+    views: '1,234,812', 
+    rating: '95%', 
+    duration: '45分钟', 
+    img: 'assets/origami.png',
+    tags: ['#剧情', '#商战', '#年代'],
+    description: '上世纪九十年代初，风起云涌的上海。阿宝从一个普通青年，在爷叔的指点下，抓住机遇跻身商界新宠，改名宝总。故事围绕他与黄河路商贾、几位红颜知己之间的商业角逐与情感纠葛展开。'
+  },
+  { 
+    id: 4, 
+    category: 'selfie', 
+    title: '数码好物开箱评测', 
+    fullTitle: '【极客分享】最新旗舰手机深度测评：影像与性能的终极对决', 
+    views: '3,921,085', 
+    rating: '97%', 
+    duration: '15分钟', 
+    img: 'assets/science.png', 
+    isFree: true,
+    tags: ['#科技', '#数码', '#测评'],
+    description: '本期带来最新发布的高端旗舰手机深度拆解与上手评测。从屏幕素质、镜头解析度、处理器极限跑分到续航表现进行全面对比，客观指出优缺点，帮助你选择最合适自己的数码装备。'
+  },
+  { 
+    id: 5, 
+    category: 'gossip', 
+    title: '歌手2026巅峰对决', 
+    fullTitle: '【王牌综艺】歌手2026：全球顶尖唱将同台竞技，现场Live震撼听觉', 
+    views: '829,310', 
+    rating: '92%', 
+    duration: '120分钟', 
+    img: 'assets/chat_cover.png',
+    tags: ['#综艺', '#音乐', '#现场'],
+    description: '《歌手2026》迎来年度歌王争霸之夜！各路实力唱将齐聚一堂，带来精彩纷呈的现场Live表演。华丽的舞美设计与震撼的音响效果，为观众呈现一场无与伦比的音乐饕餮盛宴。'
+  },
+  { 
+    id: 6, 
+    category: 'gossip', 
+    title: '脱口秀大会爆笑名场面', 
+    fullTitle: '【喜剧综艺】脱口秀大会：演员金句频出，吐槽职场与生活的辛酸', 
+    views: '1,432,019', 
+    rating: '94%', 
+    duration: '90分钟', 
+    img: 'assets/sports_cover.png',
+    tags: ['#综艺', '#搞笑', '#脱口秀'],
+    description: '汇集本季脱口秀大会最搞笑的高能名场面！选手们针对职场内卷、买房压力、恋爱矛盾等社会热点进行犀利吐槽，用幽默消解焦虑，金句频出，让你一次性笑个够。'
+  },
+  { 
+    id: 7, 
+    category: 'japanese', 
+    title: '铃芽之旅', 
+    fullTitle: '【新海诚力作】铃芽之旅：少女与闭门师的拯救世界奇幻之旅', 
+    views: '5,123,040', 
+    rating: '99%', 
+    duration: '122分钟', 
+    img: 'assets/lego.png',
+    tags: ['#动画', '#奇幻', '#冒险'],
+    description: '生活在九州小镇的17岁少女铃芽，遇到了寻找“门”的年轻闭门师草太。为了阻止灾难在全国蔓延，铃芽踏上了关闭废墟中一扇扇“灾难之门”的旅程，并在途中获得爱与成长。'
+  },
+  { 
+    id: 8, 
+    category: 'japanese', 
+    title: '小偷家族', 
+    fullTitle: '【戛纳金棕榈】小偷家族：边缘群体的无血缘温情，感人至深', 
+    views: '3,204,500', 
+    rating: '96%', 
+    duration: '121分钟', 
+    img: 'assets/drawing.png',
+    tags: ['#剧情', '#家庭', '#文艺'],
+    description: '在东京的破旧平房里，住着依靠偷窃和微薄收入勉强糊口的一家人。虽然他们没有血缘关系，但在寒冷的都市角落里，他们彼此取暖，用畸形却真挚的爱对抗世界的残酷与冷漠。'
+  },
+  { 
+    id: 9, 
+    category: 'western', 
+    title: '欧美大片：沙丘2 震撼巨制', 
+    fullTitle: '【科幻史诗】沙丘2：保罗·厄崔迪的复仇之路与沙丘帝国的崛起', 
+    views: '980,450', 
+    rating: '91%', 
+    duration: '166分钟', 
+    img: 'assets/science.png',
+    tags: ['#科幻', '#动作', '#史诗'],
+    description: '保罗·厄崔迪携手契妮和弗雷曼人，向毁灭他家族的阴谋家发起复仇。面对关于宇宙命运的抉择，他必须在他所爱的女人与已知宇宙的命运之间做出选择，努力阻止只有他能预见的惨烈未来。'
+  },
+  { 
+    id: 10, 
+    category: 'selfie', 
+    title: '萌宠猫咪的温馨日常', 
+    fullTitle: '【治愈时光】布偶猫的可爱一天：和铲屎官的趣味互动瞬间', 
+    views: '2,510,480', 
+    rating: '95%', 
+    duration: '12分钟', 
+    img: 'assets/drama_still1.png',
+    tags: ['#萌宠', '#治愈', '#猫咪'],
+    description: '记录超萌布偶猫的悠闲生活日常：清晨的伸懒腰叫醒服务、午后的疯狂跑酷追逐红点，以及晚上依偎在主人怀里呼噜呼噜的解压时刻。画面超级治愈，拯救所有不开心。'
+  },
+  { 
+    id: 11, 
+    category: 'domestic', 
+    title: '长安三万里', 
+    fullTitle: '【国漫巨制】长安三万里：高适与李白的一生情谊与盛唐诗卷', 
+    views: '1,902,481', 
+    rating: '97%', 
+    duration: '168分钟', 
+    img: 'assets/origami.png',
+    tags: ['#动画', '#历史', '#传记'],
+    description: '安史之乱爆发后数年，吐蕃大军攻打西南。高适困守孤城，向监军太监回忆起自己与李白的一生往事。从鲜衣怒马的江南相识，到暮年的世事沧桑，铺展开一幅波澜壮阔的盛唐诗歌画卷。'
+  },
+  { 
+    id: 12, 
+    category: 'selfie', 
+    title: '户外徒步露营挑战', 
+    fullTitle: '【荒野求生】挑战独自在森林露营：搭建帐篷与自制野炊晚餐', 
+    views: '3,110,482', 
+    rating: '94%', 
+    duration: '45分钟', 
+    img: 'assets/sports_cover.png',
+    tags: ['#户外', '#露营', '#探险'],
+    description: '独自深入原始森林，开启两天一夜的无电野外露营挑战。从寻找水源、搭建防风帐篷、用柴火烹饪热腾腾的野外晚餐，到深夜聆听虫鸣鸟叫，体验真正回归自然的极简生活方式。'
+  },
+  { 
+    id: 13, 
+    category: 'gossip', 
+    title: '大侦探第十季案情解析', 
+    fullTitle: '【悬疑烧脑】大侦探：明星嘉宾高能推理，揭秘古宅连环悬案', 
+    views: '2,450,128', 
+    rating: '93%', 
+    duration: '110分钟', 
+    img: 'assets/chat_cover.png',
+    tags: ['#综艺', '#推理', '#悬疑'],
+    description: '大侦探第十季强势回归！本期嘉宾来到一座百年古宅，遭遇离奇的连环案件。高能的剧本设定、错综复杂的人物关系，明星侦探们抽丝剥茧，现场还原作案手法，找出隐藏的真凶。'
+  },
+  { 
+    id: 14, 
+    category: 'japanese', 
+    title: '千与千寻 经典重温', 
+    fullTitle: '【宫崎骏神作】千与千寻：少女千寻的神隐冒险与成长蜕变', 
+    views: '4,218,903', 
+    rating: '98%', 
+    duration: '125分钟', 
+    img: 'assets/drawing.png',
+    tags: ['#动画', '#奇幻', '#经典'],
+    description: '10岁少女千寻在与父母搬家的途中，误入了一个神灵歇脚的神秘小镇。父母因贪吃变成猪，千寻在少年哈尔的帮助下，在汤婆婆的神奇浴场里辛勤工作，最终救出父母，找回自我。'
+  },
+  { 
+    id: 15, 
+    category: 'western', 
+    title: '欧美大片：奥本海默', 
+    fullTitle: '【诺兰执导】奥本海默：原子弹之父的荣耀与争议，震撼人心的历史篇章', 
+    views: '870,412', 
+    rating: '90%', 
+    duration: '180分钟', 
+    img: 'assets/lego.png',
+    tags: ['#剧情', '#传记', '#历史'],
+    description: '影片聚焦美国“原子弹之父”罗伯特·奥本海默主导研制世界上第一颗原子弹的历程。展现了曼哈顿计划的紧张筹备、三位一体核试验的震撼成功，以及战后他在冷战政治风暴中所遭受的迫害与内心挣扎。'
+  },
+  { 
+    id: 16, 
+    category: 'gossip', 
+    title: '乘风破浪的姐姐精彩舞台', 
+    fullTitle: '【音综盛典】姐姐们的高光时刻：燃炸全场的合作秀与个人solo', 
+    views: '3,180,450', 
+    rating: '94%', 
+    duration: '85分钟', 
+    img: 'assets/drawing.png',
+    tags: ['#综艺', '#歌舞', '#励志'],
+    description: '精选本季《乘风破浪的姐姐》最精彩的舞台对决！姐姐们突破自我，挑战高难度唱跳、古典国风以及激情摇滚，展现成熟女性的独特魅力与拼搏精神，舞台视听效果堪称顶级大秀。'
+  },
+  { 
+    id: 17, 
+    category: 'selfie', 
+    title: '极简主义房间改造指南', 
+    fullTitle: '【空间设计】用低预算打造极简温馨卧室：收纳与软装分享', 
+    views: '2,940,185', 
+    rating: '96%', 
+    duration: '22分钟', 
+    img: 'assets/science.png',
+    tags: ['#家居', '#改造', '#极简'],
+    description: '手把手教你如何用超低预算将杂乱 of 卧室改造成日式极简温馨风。包含去繁从简的断舍离收纳技巧、高性价比软装好物推荐，以及利用柔和灯光营造卧室温馨氛围的实用小妙招。'
+  },
+  { 
+    id: 18, 
+    category: 'domestic', 
+    title: '诺曼底72小时', 
+    fullTitle: '【战争剧情】诺曼底72小时：盟军登陆前夕的极度紧张对决', 
+    views: '1,670,480', 
+    rating: '95%', 
+    duration: '95分钟', 
+    img: 'assets/sports_cover.png',
+    tags: ['#剧情', '#战争'],
+    description: '影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。'
+  },
+  { 
+    id: 19, 
+    category: 'japanese', 
+    title: '寄生虫', 
+    fullTitle: '【奥斯卡最佳】寄生虫：贫富差距的辛辣讽刺，反转不断的惊悚之作', 
+    views: '5,890,321', 
+    rating: '99%', 
+    duration: '132分钟', 
+    img: 'assets/lego.png',
+    tags: ['#剧情', '#悬疑', '#黑色幽默'],
+    description: '住在廉价半地下室的穷困一家人，通过伪造学历和精湛演技，一步步“寄生”进富裕的朴社长家中工作。然而，一个隐藏在豪宅地底的惊人秘密被无意中撞破，导致局面走向不可控制的深渊。'
+  },
+  { 
+    id: 20, 
+    category: 'western', 
+    title: '欧美大片：星际穿越 4K极清', 
+    fullTitle: '【科幻神作】星际穿越：穿越虫洞拯救人类，超越时空的父女深情', 
+    views: '1,120,490', 
+    rating: '92%', 
+    duration: '169分钟', 
+    img: 'assets/origami.png',
+    tags: ['#科幻', '#冒险', '#温情'],
+    description: '未来的地球面临黄沙肆虐与作物枯萎的绝境。前宇航员库珀告别年幼的女儿，与其他科学家一起踏上穿越虫洞的星际航行，在浩瀚宇宙中为人类寻找一线生机，谱写了一段跨越时空的宏大史诗。'
+  },
+  { 
+    id: 21, 
+    category: 'domestic', 
+    title: '封神第一部：朝歌风云', 
+    fullTitle: '【神话史诗】封神第一部：昆仑仙人携封神榜下山，商王殷寿无道', 
+    views: '2,310,490', 
+    rating: '96%', 
+    duration: '148分钟', 
+    img: 'assets/chat_cover.png',
+    tags: ['#奇幻', '#动作', '#史诗'],
+    description: '商王殷寿暴虐无道，引发天谴。昆仑仙人姜子牙携封神榜下山寻找天下共主。西伯侯之子姬发在发现殷寿的残暴真面目后，觉醒反抗，逃出朝歌，踏上了反商的英雄崛起之路。'
+  },
+  { 
+    id: 22, 
+    category: 'selfie', 
+    title: '周末探店：首尔美食打卡', 
+    fullTitle: '【美食地图】首尔街头必吃传统小吃与网红咖啡厅深度体验', 
+    views: '1,890,340', 
+    rating: '95%', 
+    duration: '18分钟', 
+    img: 'assets/drama_still1.png',
+    tags: ['#美食', '#探店', '#旅行'],
+    description: '带你打卡首尔本地人超爱的街头美食：辣炒年糕、参鸡汤、明洞烤肉，还有藏身在韩屋村里的高颜值复古咖啡厅。一整天吃吃喝喝不停歇，奉上最真实的美食红黑榜。'
+  },
+  { 
+    id: 23, 
+    category: 'gossip', 
+    title: '经典老歌金曲串烧', 
+    fullTitle: '【怀旧时光】那些陪伴我们长大的华语乐坛黄金时代经典金曲', 
+    views: '3,450,120', 
+    rating: '94%', 
+    duration: '60分钟', 
+    img: 'assets/science.png',
+    tags: ['#音乐', '#怀旧', '#歌单'],
+    description: '精选上世纪八九十年代至千禧之初的华语乐坛黄金金曲，包括张国荣、周杰伦、陈奕迅等巨星的经典之作。旋律响起，瞬间勾起青春的回忆，适合深夜静静聆听的经典歌单。'
+  },
+  { 
+    id: 24, 
+    category: 'japanese', 
+    title: '情书', 
+    fullTitle: '【经典纯爱】情书：岩井俊二经典美学，关于暗恋的极致浪漫', 
+    views: '3,670,120', 
+    rating: '97%', 
+    duration: '117分钟', 
+    img: 'assets/drawing.png',
+    tags: ['#爱情', '#文艺', '#经典'],
+    description: '渡边博子因思念未婚夫藤井树，寄往他天国旧址的一封信，竟然收到了同名同姓女孩的回信。随着两人信件的往来，一段尘封在中学时代的、关于同名藤井树的青涩暗恋往事被渐渐揭开。'
+  },
+  { 
+    id: 25, 
+    category: 'western', 
+    title: '欧美重磅：阿凡达：水之道', 
+    fullTitle: '【3D视觉盛宴】阿凡达：水之道：重返潘多拉星球，开启海洋部落全新冒险', 
+    views: '1,560,980', 
+    rating: '93%', 
+    duration: '192分钟', 
+    img: 'assets/sports_cover.png',
+    tags: ['#科幻', '#动作', '#冒险'],
+    description: '杰克·萨利与奈蒂莉在潘多拉星球育有子女，过着平静生活。然而，人类的威胁再度降临。为了保护家人，他们被迫离开森林家园，前往偏远的海洋部落寻求庇护，并学习与海洋生物和谐共处。'
+  }
 ];
 
 // Helper to select random videos
@@ -96,11 +375,11 @@ export default function PageVideos() {
 
   const categories = [
     { id: 'recommend', label: '推荐' },
-    { id: 'gossip', label: '网暴吃瓜' },
-    { id: 'domestic', label: '国产传媒' },
-    { id: 'selfie', label: '自拍偷拍' },
-    { id: 'japanese', label: '日本无码' },
-    { id: 'western', label: '欧美精品' }
+    { id: 'gossip', label: '综艺娱乐' },
+    { id: 'domestic', label: '华语电影' },
+    { id: 'selfie', label: '生活Vlog' },
+    { id: 'japanese', label: '日韩电影' },
+    { id: 'western', label: '欧美大片' }
   ];
 
   // Initialize state synchronously with helper function
@@ -146,7 +425,7 @@ export default function PageVideos() {
   };
 
   const handleVideoClick = (vid) => {
-    setActiveVideo({ title: vid.title, img: vid.img });
+    setActiveVideo(vid);
     setVideoPlayerActive(true);
   };
 

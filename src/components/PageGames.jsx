@@ -100,7 +100,7 @@ export default function PageGames() {
   const walletActions = [
     { id: 'recharge', label: '充值', icon: 'fa-solid fa-sack-dollar', cls: 'recharge', onClick: openDepositPage },
     { id: 'vip', label: 'Vip钱包', icon: 'fa-brands fa-bitcoin', cls: 'vip', onClick: () => openActivityPage('vip') },
-    { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', badge: '送1.5%', onClick: openOffersPage },
+    { id: 'promo', label: '优惠', icon: 'fa-solid fa-gift', cls: 'promo', onClick: openOffersPage },
     { id: 'withdraw', label: '提款', icon: 'fa-solid fa-credit-card', cls: 'withdraw', onClick: openWithdrawPage }
   ];
 
