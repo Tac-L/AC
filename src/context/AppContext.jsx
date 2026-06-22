@@ -124,7 +124,7 @@ export const AppProvider = ({ children }) => {
     setIsGuest(false);
     setPageHistory([]);
     setActiveSubGame(null);
-    setActivePageState('page-dramas'); // back to drama page after logout
+    setActivePageState('page-login'); // back to login page after logout
   };
 
   const login = () => {
