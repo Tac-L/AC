@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageWithdraw() {
-  const { balance, updateBalance, goBack, showToast, isGuest } = useApp();
+  const { balance, updateBalance, goBack, showToast, isGuest, setActivePage } = useApp();
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [pwdDigits, setPwdDigits] = useState(['', '', '', '']);
   const [showPwd, setShowPwd] = useState(false);
+  // Show the "bind phone" prompt on entry when the user has no phone bound (guest)
+  const [showBindModal, setShowBindModal] = useState(isGuest);
 
   // Set the initial balance to match the mockup image on component mount
   useEffect(() => {
@@ -238,6 +240,20 @@ export default function PageWithdraw() {
         {/* Submit Button */}
         <button className="withdraw-submit-btn" id="btn-withdraw-submit" onClick={handleConfirmWithdraw}>确认提交</button>
       </div>
+
+      {/* Bind-phone prompt modal (shown on entry when no phone bound) */}
+      {showBindModal && (
+        <div className="bind-phone-modal-overlay active">
+          <div className="bind-phone-modal">
+            <div className="bind-phone-modal-title">温馨提示</div>
+            <div className="bind-phone-modal-text">您尚未绑定手机号，请先绑定手机号</div>
+            <div className="bind-phone-modal-actions">
+              <button className="bind-phone-modal-btn cancel" onClick={() => setShowBindModal(false)}>稍候绑定</button>
+              <button className="bind-phone-modal-btn confirm" onClick={() => { setShowBindModal(false); setActivePage('page-bind-phone'); }}>立即绑定</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

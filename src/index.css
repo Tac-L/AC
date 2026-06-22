@@ -13683,6 +13683,84 @@ body {
   transform: scale(0.985);
 }
 
+/* Withdraw page hides the bottom nav, so it should fill the full phone height
+   (otherwise a 68px white strip shows below the page / modal overlay) */
+#page-withdraw.app-page {
+  height: 100% !important;
+}
+
+/* Bind-phone prompt modal (withdraw page) */
+.bind-phone-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.bind-phone-modal-overlay.active {
+  display: flex;
+}
+
+.bind-phone-modal {
+  width: 78%;
+  max-width: 300px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 20px 16px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.bind-phone-modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.bind-phone-modal-text {
+  font-size: 0.92rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.bind-phone-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.bind-phone-modal-btn {
+  flex: 1;
+  height: 42px;
+  border: none;
+  border-radius: 22px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.bind-phone-modal-btn:active {
+  transform: scale(0.97);
+}
+
+.bind-phone-modal-btn.cancel {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.bind-phone-modal-btn.confirm {
+  background: linear-gradient(90deg, #5d86f0, #8aa9f5);
+  color: #fff;
+}
+
 .settings-sub-label {
   font-size: 0.85rem;
   color: #64748b;
