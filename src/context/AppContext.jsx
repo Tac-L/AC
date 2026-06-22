@@ -9,7 +9,7 @@ export const AppProvider = ({ children }) => {
   const [balance, setBalance] = useState(1000.00);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // auth state (default: logged out)
   const [isGuest, setIsGuest] = useState(false); // guest (访客) session: logged in but no phone bound
-  const [activePage, setActivePageState] = useState('page-dramas'); // default page is dramas
+  const [activePage, setActivePageState] = useState('page-login'); // first screen on open is the login page
   const [pageHistory, setPageHistory] = useState([]); // navigation history stack
   const [activeSubGame, setActiveSubGame] = useState(null); // 'mark_six' or 'fast_three'
   const [phoneSkin, setPhoneSkin] = useState('phone-dark'); // phone-dark, phone-gold, phone-purple, phone-coral
@@ -134,12 +134,12 @@ export const AppProvider = ({ children }) => {
     setActivePageState('page-profile');
   };
 
-  // 访客登录: logged in as guest → 我的 page, but no phone bound yet
+  // 访客登录: logged in as guest → 短剧 page, but no phone bound yet
   const guestLogin = () => {
     setIsLoggedIn(true);
     setIsGuest(true);
     setPageHistory([]);
-    setActivePageState('page-profile');
+    setActivePageState('page-dramas');
   };
 
   // Navigation helpers
