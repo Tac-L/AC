@@ -2,9 +2,13 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageSettings() {
-  const { goBack, showToast } = useApp();
+  const { goBack, showToast, setActivePage } = useApp();
 
   const handleRow = (name) => {
+    if (name === '手机') {
+      setActivePage('page-bind-phone');
+      return;
+    }
     showToast(`提示：【${name}】功能正在开发中，敬请期待！`);
   };
 

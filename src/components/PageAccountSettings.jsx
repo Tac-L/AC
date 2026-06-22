@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageAccountSettings() {
-  const { goBack, showToast, logout } = useApp();
+  const { goBack, showToast, logout, setActivePage } = useApp();
 
-  const [openAccount, setOpenAccount] = useState(true);
-  const [openSports, setOpenSports] = useState(true);
+  const [openAccount, setOpenAccount] = useState(false);
+  const [openSports, setOpenSports] = useState(false);
   const [handicap, setHandicap] = useState('euro');      // euro | hk
   const [oddsAccept, setOddsAccept] = useState('better'); // better | any | none
   const [oddsColor, setOddsColor] = useState('redup');    // redup | greenup
@@ -25,6 +25,7 @@ export default function PageAccountSettings() {
     showToast('您已成功退出登录！');
   };
 
+
   const Radio = ({ active }) => (
     <span className={`settings-radio-dot ${active ? 'checked' : ''}`}></span>
   );
@@ -39,6 +40,14 @@ export default function PageAccountSettings() {
       </div>
 
       <div className="scroll-content settings-content">
+        {/* Personal settings entry → opens 个人设置 sub-page */}
+        <div className="settings-card">
+          <div className="settings-section-head" onClick={() => setActivePage('page-settings')}>
+            <span className="settings-section-title">个人设置</span>
+            <i className="fa-solid fa-chevron-right settings-section-caret"></i>
+          </div>
+        </div>
+
         {/* Account status */}
         <div className="settings-card">
           <div className="settings-section-head" onClick={() => setOpenAccount((v) => !v)}>

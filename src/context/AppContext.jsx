@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
   // 1. Core State
   const [balance, setBalance] = useState(1000.00);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // auth state (default: logged out)
+  const [isGuest, setIsGuest] = useState(false); // guest (访客) session: logged in but no phone bound
   const [activePage, setActivePageState] = useState('page-dramas'); // default page is dramas
   const [pageHistory, setPageHistory] = useState([]); // navigation history stack
   const [activeSubGame, setActiveSubGame] = useState(null); // 'mark_six' or 'fast_three'
@@ -120,6 +121,7 @@ export const AppProvider = ({ children }) => {
   // Auth helpers
   const logout = () => {
     setIsLoggedIn(false);
+    setIsGuest(false);
     setPageHistory([]);
     setActiveSubGame(null);
     setActivePageState('page-dramas'); // back to drama page after logout
@@ -127,6 +129,15 @@ export const AppProvider = ({ children }) => {
 
   const login = () => {
     setIsLoggedIn(true);
+    setIsGuest(false);
+    setPageHistory([]);
+    setActivePageState('page-profile');
+  };
+
+  // 访客登录: logged in as guest → 我的 page, but no phone bound yet
+  const guestLogin = () => {
+    setIsLoggedIn(true);
+    setIsGuest(true);
     setPageHistory([]);
     setActivePageState('page-profile');
   };
@@ -199,7 +210,9 @@ export const AppProvider = ({ children }) => {
       updateBalance,
 
       isLoggedIn,
+      isGuest,
       login,
+      guestLogin,
       logout,
 
       activePage,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageWithdraw() {
-  const { balance, updateBalance, goBack, showToast } = useApp();
+  const { balance, updateBalance, goBack, showToast, isGuest } = useApp();
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [pwdDigits, setPwdDigits] = useState(['', '', '', '']);
@@ -74,6 +74,12 @@ export default function PageWithdraw() {
   };
 
   const handleConfirmWithdraw = () => {
+    // Guest sessions have no phone bound yet — block withdrawal
+    if (isGuest) {
+      showToast('您尚未绑定手机号，请先绑定手机号');
+      return;
+    }
+
     const val = parseFloat(withdrawAmount) || 0;
     if (val <= 0) {
       showToast('请输入有效的取款金额！');

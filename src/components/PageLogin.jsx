@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageLogin() {
-  const { login, setActivePage, showToast } = useApp();
+  const { login, guestLogin, setActivePage, showToast } = useApp();
 
   const [method, setMethod] = useState('phone'); // 'phone' | 'account'
   const [phoneMode, setPhoneMode] = useState('code'); // 'code' | 'password'
@@ -29,10 +29,6 @@ export default function PageLogin() {
   const handleLogin = () => {
     login();
     showToast('登录成功，欢迎回来！');
-  };
-
-  const browseAround = () => {
-    setActivePage('page-dramas'); // 随便逛逛 → 回到短剧页面
   };
 
   return (
@@ -168,17 +164,15 @@ export default function PageLogin() {
         )}
 
         {/* Login button */}
-        <button className="auth-submit-btn" onClick={handleLogin}>登录</button>
+        <button className="auth-submit-btn" onClick={handleLogin}>立即登录</button>
+
+        {/* Guest login button */}
+        <button className="auth-guest-btn" onClick={guestLogin}>访客登录</button>
 
         {/* Register link */}
         <div className="auth-switch-row">
           没有账号？
           <span className="auth-switch-link" onClick={() => setActivePage('page-register')}>立即注册 &gt;</span>
-        </div>
-
-        {/* Browse around */}
-        <div className="auth-browse" onClick={browseAround}>
-          <i className="fa-solid fa-compass"></i> 随便逛逛
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageRegister() {
-  const { login, setActivePage, showToast } = useApp();
+  const { login, guestLogin, setActivePage, showToast } = useApp();
 
   const [method, setMethod] = useState('phone'); // 'phone' | 'account'
 
@@ -46,10 +46,6 @@ export default function PageRegister() {
     }
     login();
     showToast('注册成功，欢迎加入！');
-  };
-
-  const browseAround = () => {
-    setActivePage('page-dramas'); // 随便逛逛 → 回到短剧页面
   };
 
   return (
@@ -179,15 +175,13 @@ export default function PageRegister() {
           </>
         )}
 
-        <button className="auth-submit-btn" onClick={handleRegister}>注册</button>
+        <button className="auth-submit-btn" onClick={handleRegister}>立即注册</button>
+
+        <button className="auth-guest-btn" onClick={guestLogin}>访客登录</button>
 
         <div className="auth-switch-row">
           已有账号？
           <span className="auth-switch-link" onClick={() => setActivePage('page-login')}>立即登录 &gt;</span>
-        </div>
-
-        <div className="auth-browse" onClick={browseAround}>
-          <i className="fa-solid fa-compass"></i> 随便逛逛
         </div>
       </div>
     </div>
