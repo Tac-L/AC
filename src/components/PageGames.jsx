@@ -114,8 +114,7 @@ export default function PageGames() {
       {/* Header Bar with logo pill */}
       <div className="lobby-header-bar">
         <div className="lobby-logo-pill">
-          <img src="assets/black_panther_logo.png" className="lobby-pill-avatar" alt="LOGO" />
-          <span>黑豹娱乐城</span>
+          <img src="assets/logo.png" className="lobby-brand-logo" alt="LOGO" />
         </div>
       </div>
 

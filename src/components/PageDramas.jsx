@@ -44,6 +44,22 @@ export default function PageDramas() {
     'assets/science.png'
   ];
 
+  // Frame sequences used for scrubbing: each drama maps to several similar
+  // "frames" (progressive zoom of the same scene) so dragging the progress
+  // bar changes the on-screen picture like seeking through a video.
+  const dramaFrameBases = ['drama_still1', 'origami', 'banner', 'science'];
+  const FRAMES_PER_DRAMA = 6;
+  const DRAMA_TOTAL_SECONDS = 24 * 60; // simulated total duration (24:00)
+  const frameSrc = (idx, f) => `assets/frames/${dramaFrameBases[idx]}_f${f}.png`;
+  const frameForPct = (p) =>
+    Math.max(0, Math.min(FRAMES_PER_DRAMA - 1, Math.floor(p * FRAMES_PER_DRAMA)));
+  const fmtTime = (secs) => {
+    const s = Math.max(0, Math.round(secs));
+    const m = Math.floor(s / 60);
+    const ss = s % 60;
+    return `${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+  };
+
   const dramaTitles = [
     '秘密日记',
     '《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽',
@@ -64,6 +80,15 @@ export default function PageDramas() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [muted, setMuted] = useState(true);
   const [promoVisible, setPromoVisible] = useState(true);
+
+  // Progress bar / scrubbing state
+  const [seekPct, setSeekPct] = useState(0.45); // playback progress 0..1
+  const [scrubbing, setScrubbing] = useState(false);
+  // Once the user scrubs, keep showing the frame at the released position
+  // (don't snap back to the original still) until the drama is switched.
+  const [seekFrameActive, setSeekFrameActive] = useState(false);
+  const scrubbingRef = useRef(false);
+  const seekTrackRef = useRef(null);
 
   // Long-press fast-forward (2x) state
   const [fastForward, setFastForward] = useState(false);
@@ -100,6 +125,8 @@ export default function PageDramas() {
     setOpacity(0);
     setTimeout(() => {
       setActiveIdx(nextIdx);
+      setSeekPct(0.08); // restart progress for the new drama
+      setSeekFrameActive(false);
       setOpacity(1);
       setTimeout(() => {
         isTransitioning.current = false;
@@ -116,6 +143,46 @@ export default function PageDramas() {
     const nextIdx = (activeIdx + 1) % dramaStills.length;
     switchDrama(nextIdx);
   };
+
+  // --- Progress bar scrubbing ---
+  const pctFromClientX = (clientX) => {
+    const el = seekTrackRef.current;
+    if (!el) return seekPct;
+    const rect = el.getBoundingClientRect();
+    const p = (clientX - rect.left) / rect.width;
+    return Math.max(0, Math.min(1, p));
+  };
+
+  const handleSeekDown = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch { /* ignore */ }
+    scrubbingRef.current = true;
+    setScrubbing(true);
+    setSeekFrameActive(true);
+    setSeekPct(pctFromClientX(e.clientX));
+  };
+
+  const handleSeekMove = (e) => {
+    if (!scrubbingRef.current) return;
+    e.stopPropagation();
+    setSeekPct(pctFromClientX(e.clientX));
+  };
+
+  const handleSeekUp = (e) => {
+    if (!scrubbingRef.current) return;
+    e.stopPropagation();
+    scrubbingRef.current = false;
+    setScrubbing(false);
+  };
+
+  // Preload the current drama's frames so scrubbing is flicker-free
+  useEffect(() => {
+    for (let f = 0; f < FRAMES_PER_DRAMA; f++) {
+      const img = new Image();
+      img.src = frameSrc(activeIdx, f);
+    }
+  }, [activeIdx]);
 
   // Wheel scroll handler (throttled)
   const handleWheel = (e) => {
@@ -344,11 +411,11 @@ export default function PageDramas() {
     <div className="app-page active" id="page-dramas" onWheel={handleWheel}>
       <div className="short-drama-container" id="drama-player-area">
         {/* Vertical still background */}
-        <img 
-          id="drama-bg-img" 
-          src={dramaStills[activeIdx]} 
-          alt="短剧画面" 
-          className="drama-still-bg" 
+        <img
+          id="drama-bg-img"
+          src={(scrubbing || seekFrameActive) ? frameSrc(activeIdx, frameForPct(seekPct)) : dramaStills[activeIdx]}
+          alt="短剧画面"
+          className="drama-still-bg"
           style={{ opacity, transition: 'opacity 0.2s ease-in-out' }}
         />
         
@@ -423,7 +490,9 @@ export default function PageDramas() {
           </div>
           
           {/* Time code */}
-          <div className="drama-timecode">00:10:09</div>
+          <div className="drama-timecode">
+            {fmtTime(seekPct * DRAMA_TOTAL_SECONDS)} / {fmtTime(DRAMA_TOTAL_SECONDS)}
+          </div>
 
           {/* Creator name */}
           <h3 id="drama-creator">{dramaCreators[activeIdx]}</h3>
@@ -443,9 +512,24 @@ export default function PageDramas() {
             升级会员观看完整版 00:10:12
           </button>
 
-          {/* Progress Bar */}
-          <div className="progress-bar-drama">
-            <div className="progress-fill" style={{ width: '45%' }}></div>
+          {/* Progress Bar (draggable seek) */}
+          <div
+            className={`progress-bar-drama ${scrubbing ? 'scrubbing' : ''}`}
+            ref={seekTrackRef}
+            onPointerDown={handleSeekDown}
+            onPointerMove={handleSeekMove}
+            onPointerUp={handleSeekUp}
+            onPointerCancel={handleSeekUp}
+          >
+            {scrubbing && (
+              <div className="progress-seek-bubble" style={{ left: `${seekPct * 100}%` }}>
+                {fmtTime(seekPct * DRAMA_TOTAL_SECONDS)}
+              </div>
+            )}
+            <div className="progress-track">
+              <div className="progress-fill" style={{ width: `${seekPct * 100}%` }}></div>
+              <div className="progress-thumb" style={{ left: `${seekPct * 100}%` }}></div>
+            </div>
           </div>
         </div>
 

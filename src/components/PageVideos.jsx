@@ -217,10 +217,7 @@ export default function PageVideos() {
       {/* Video Header Bar */}
       <div className="video-header-bar">
         <div className="lobby-logo-title">
-          <img src="assets/black_panther_logo.png" className="lobby-logo-avatar" alt="LOGO" />
-          <div>
-            <h4>黑豹视频</h4>
-          </div>
+          <img src="assets/logo.png" className="lobby-brand-logo" alt="LOGO" />
         </div>
         <div className="search-bar-middle" onClick={handleSearch}>
           <i className="fa-solid fa-magnifying-glass"></i>
