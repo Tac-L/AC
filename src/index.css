@@ -6006,16 +6006,18 @@ input:checked + .slider:before {
     overflow: hidden !important;
     background: #0b0a11 !important;
     height: 100vh !important;
-    height: 100dvh !important;
+    height: 100svh !important;
   }
-  
-  .container {
+
+  /* Real app root (React) — fill the actual visible viewport */
+  .container,
+  .simulator-desktop-container {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    height: 100dvh !important;
+    height: 100svh !important;
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
@@ -6023,40 +6025,50 @@ input:checked + .slider:before {
     overflow: hidden !important;
     z-index: 9999 !important;
   }
-  
+
   .phone-wrapper {
     width: 100vw !important;
     height: 100vh !important;
-    height: 100dvh !important;
+    height: 100svh !important;
   }
-  
+
   .phone {
     width: 100vw !important;
     height: 100vh !important;
-    height: 100dvh !important;
+    height: 100svh !important;
     border: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     background: var(--bg-body) !important;
   }
-  
+
   .phone-notch,
   .phone-btn {
     display: none !important;
   }
-  
+
   .phone-screen {
     border-radius: 0 !important;
     height: 100% !important;
   }
-  
+
   .status-bar {
     display: none !important;
   }
 
   .app-body {
     height: 100% !important;
+  }
+
+  /* Keep the bottom nav clear of the iOS home indicator / browser chrome */
+  .bottom-nav {
+    height: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .app-page {
+    height: calc(100% - 68px - env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
