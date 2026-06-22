@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageAccountSettings() {
-  const { goBack, showToast } = useApp();
+  const { goBack, showToast, logout } = useApp();
 
   const [openAccount, setOpenAccount] = useState(true);
   const [openSports, setOpenSports] = useState(true);
@@ -21,7 +21,8 @@ export default function PageAccountSettings() {
   ];
 
   const handleLogout = () => {
-    showToast('提示：退出登录功能正在开发中，敬请期待！');
+    logout();
+    showToast('您已成功退出登录！');
   };
 
   const Radio = ({ active }) => (

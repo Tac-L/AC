@@ -7,6 +7,7 @@ export const useApp = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
   // 1. Core State
   const [balance, setBalance] = useState(1000.00);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // auth state (default: logged out)
   const [activePage, setActivePageState] = useState('page-dramas'); // default page is dramas
   const [pageHistory, setPageHistory] = useState([]); // navigation history stack
   const [activeSubGame, setActiveSubGame] = useState(null); // 'mark_six' or 'fast_three'
@@ -116,6 +117,20 @@ export const AppProvider = ({ children }) => {
     setActiveSubGame(null);
   };
 
+  // Auth helpers
+  const logout = () => {
+    setIsLoggedIn(false);
+    setPageHistory([]);
+    setActiveSubGame(null);
+    setActivePageState('page-dramas'); // back to drama page after logout
+  };
+
+  const login = () => {
+    setIsLoggedIn(true);
+    setPageHistory([]);
+    setActivePageState('page-profile');
+  };
+
   // Navigation helpers
   const openDepositPage = () => {
     setActivePage('page-deposit');
@@ -182,7 +197,11 @@ export const AppProvider = ({ children }) => {
       balance,
       setBalance,
       updateBalance,
-      
+
+      isLoggedIn,
+      login,
+      logout,
+
       activePage,
       setActivePage,
       goBack,

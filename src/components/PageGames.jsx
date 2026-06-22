@@ -192,15 +192,8 @@ export default function PageGames() {
             ))}
           </div>
 
-          {/* Right column: sub-promo banner + game grid */}
+          {/* Right column: game grid */}
           <div className="lobby-right-col">
-            <div
-              className="lobby-sub-promo"
-              onClick={() => showToast('点击进入：疯狂台球 斯诺克 中式黑八 正在对接中！')}
-            >
-              <img src="assets/sports_cover.png" alt="疯狂台球" />
-            </div>
-
             <div className="lobby-right-grid" id="lobby-games-list">
               {filteredGames.map(game => (
                 <div
