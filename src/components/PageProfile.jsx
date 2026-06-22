@@ -231,7 +231,7 @@ export default function PageProfile() {
         </div>
 
         {/* Promotional Slider/Banner */}
-        <div className="profile-banner-slider" onClick={() => showToast('精品活动：充值返点！')}>
+        <div className="profile-banner-slider" onClick={() => setActivePage('page-games')}>
           <img src="assets/banner.png" alt="新会员专享" />
           <div className="profile-slider-dots">
             <span className="dot active"></span>

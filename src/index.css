@@ -493,6 +493,7 @@ body {
   display: flex;
   gap: 10px;
   width: max-content;
+  align-items: center;
 }
 
 .category-pill {
@@ -9231,12 +9232,25 @@ body {
   border-bottom: 1px solid var(--border-color) !important;
 }
 .category-pill {
-  background-color: #f1f5f9 !important;
-  color: var(--text-grey) !important;
+  background-color: transparent !important;
+  color: #000000 !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 30px !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
 }
 .category-pill.active {
-  background-color: var(--color-primary) !important;
-  color: #ffffff !important;
+  background-color: transparent !important;
+  color: var(--color-primary) !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 .video-card-item {
   background-color: #ffffff !important;
