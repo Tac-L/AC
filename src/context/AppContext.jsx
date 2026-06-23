@@ -15,6 +15,11 @@ export const AppProvider = ({ children }) => {
   const [phoneSkin, setPhoneSkin] = useState('phone-dark'); // phone-dark, phone-gold, phone-purple, phone-coral
   const [systemTime, setSystemTime] = useState('22:03');
 
+  // Account credential set via 设置帐号密码 page.
+  // null = not yet set (shows the "set" flow); otherwise { account, password }.
+  // Kept only in memory so a full page reload clears it and the demo flow can replay.
+  const [accountCredential, setAccountCredential] = useState(null);
+
   // Cross-component Triggers
   const [activeChatroom, setActiveChatroom] = useState(null);
   const [activeGameCategory, setActiveGameCategory] = useState('hot');
@@ -226,7 +231,10 @@ export const AppProvider = ({ children }) => {
       setPhoneSkin,
       
       systemTime,
-      
+
+      accountCredential,
+      setAccountCredential,
+
       quickAmounts,
       setQuickAmounts,
       

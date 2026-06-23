@@ -46,6 +46,10 @@ export default function PageAccountSettings() {
             <span className="settings-section-title">个人设置</span>
             <i className="fa-solid fa-chevron-right settings-section-caret"></i>
           </div>
+          <div className="settings-section-head settings-section-divider" onClick={() => setActivePage('page-set-account-password')}>
+            <span className="settings-section-title">设置帐号密码</span>
+            <i className="fa-solid fa-chevron-right settings-section-caret"></i>
+          </div>
         </div>
 
         {/* Account status */}

@@ -24,6 +24,7 @@ import PageActivity from './components/PageActivity';
 import PageOffers from './components/PageOffers';
 import PageSettings from './components/PageSettings';
 import PageAccountSettings from './components/PageAccountSettings';
+import PageSetAccountPassword from './components/PageSetAccountPassword';
 import PageBindPhone from './components/PageBindPhone';
 
 // Sub games
@@ -96,6 +97,8 @@ function MainApp() {
         return <PageSettings />;
       case 'page-account-settings':
         return <PageAccountSettings />;
+      case 'page-set-account-password':
+        return <PageSetAccountPassword />;
       case 'page-bind-phone':
         return <PageBindPhone />;
       default:
@@ -113,7 +116,7 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-bind-phone' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
 
         {/* 3. Global Overlays / Modals */}
         <ModalBetDetails />

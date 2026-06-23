@@ -13602,10 +13602,59 @@ body {
   cursor: pointer;
 }
 
+.settings-section-divider {
+  border-top: 1px solid #f1f5f9;
+}
+
 .settings-section-title {
   font-size: 1rem;
   font-weight: bold;
   color: #1e293b;
+}
+
+/* 设置帐号密码 — change-password (already set) label/value rows */
+.setpw-form {
+  border-top: 1px solid #f1f5f9;
+  padding: 4px 0 16px;
+}
+
+.setpw-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 2px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.setpw-label {
+  width: 76px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.setpw-value {
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.setpw-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.setpw-input::placeholder {
+  color: #cbd5e1;
+}
+
+.setpw-form .settings-phone-submit {
+  margin-top: 18px;
 }
 
 .settings-section-caret {
