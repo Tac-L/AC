@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageLogin() {
-  const { login, guestLogin, setActivePage, showToast } = useApp();
+  const { login, oneClickRegister, setActivePage, showToast } = useApp();
 
   const [method, setMethod] = useState('phone'); // 'phone' | 'account'
   const [phoneMode, setPhoneMode] = useState('code'); // 'code' | 'password'
@@ -166,8 +166,8 @@ export default function PageLogin() {
         {/* Login button */}
         <button className="auth-submit-btn" onClick={handleLogin}>立即登录</button>
 
-        {/* Guest login button */}
-        <button className="auth-guest-btn" onClick={guestLogin}>访客登录</button>
+        {/* One-click register button */}
+        <button className="auth-guest-btn" onClick={oneClickRegister}>一键注册</button>
 
         {/* Register link */}
         <div className="auth-switch-row">

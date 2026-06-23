@@ -44,6 +44,7 @@ import ModalVideoPlayer from './components/ModalVideoPlayer';
 import ModalsConfig from './components/ModalsConfig';
 import ModalGameDetail from './components/ModalGameDetail';
 import ModalPgGame from './components/ModalPgGame';
+import ModalRegisterSuccess from './components/ModalRegisterSuccess';
 
 function MainApp() {
   const { activePage, activeSubGame } = useApp();
@@ -139,6 +140,7 @@ function MainApp() {
         <ModalsConfig />
         <ModalGameDetail />
         <ModalPgGame />
+        <ModalRegisterSuccess />
       </PhoneContainer>
     </div>
   );

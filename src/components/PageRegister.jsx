@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageRegister() {
-  const { login, guestLogin, setActivePage, showToast } = useApp();
+  const { login, oneClickRegister, setActivePage, showToast } = useApp();
 
   const [method, setMethod] = useState('phone'); // 'phone' | 'account'
 
@@ -177,7 +177,7 @@ export default function PageRegister() {
 
         <button className="auth-submit-btn" onClick={handleRegister}>立即注册</button>
 
-        <button className="auth-guest-btn" onClick={guestLogin}>访客登录</button>
+        <button className="auth-guest-btn" onClick={oneClickRegister}>一键注册</button>
 
         <div className="auth-switch-row">
           已有账号？

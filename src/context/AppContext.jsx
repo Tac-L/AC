@@ -60,6 +60,9 @@ export const AppProvider = ({ children }) => {
   const [editMultipliersActive, setEditMultipliersActive] = useState(false);
   const [editQuickAmountsActive, setEditQuickAmountsActive] = useState(false);
 
+  // 8. 一键注册 success modal — holds the auto-generated { account, password } or null
+  const [registerSuccessData, setRegisterSuccessData] = useState(null);
+
   // 7. PG Game Detail modal + nested game embed
   const [gameDetailModalActive, setGameDetailModalActive] = useState(false);
   const [gameDetailData, setGameDetailData] = useState(null); // { name, img }
@@ -155,6 +158,25 @@ export const AppProvider = ({ children }) => {
     setActivePageState('page-dramas');
   };
 
+  // 一键注册: auto-generate an account + password, then show the success modal.
+  // The user is not logged in until they dismiss the modal (closeRegisterSuccess).
+  const oneClickRegister = () => {
+    const account = String(Math.floor(1000000000 + Math.random() * 9000000000)); // 10-digit username
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let password = '';
+    for (let i = 0; i < 10; i++) {
+      password += chars[Math.floor(Math.random() * chars.length)];
+    }
+    setAccountCredential({ account, password });
+    setRegisterSuccessData({ account, password });
+  };
+
+  // Dismiss the 一键注册 success modal and finish logging the new member in.
+  const closeRegisterSuccess = () => {
+    setRegisterSuccessData(null);
+    login();
+  };
+
   // Navigation helpers
   const openDepositPage = () => {
     setActivePage('page-deposit');
@@ -226,6 +248,9 @@ export const AppProvider = ({ children }) => {
       isGuest,
       login,
       guestLogin,
+      oneClickRegister,
+      registerSuccessData,
+      closeRegisterSuccess,
       logout,
 
       activePage,
