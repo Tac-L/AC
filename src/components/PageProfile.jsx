@@ -2,10 +2,16 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage, isGuest, accountCredential } = useApp();
 
-  const handleCopyId = () => {
-    showToast('复制成功：用户ID已复制到剪贴板！');
+  const memberAccount = accountCredential
+    ? accountCredential.account
+    : isGuest
+      ? '未设置'
+      : 'ht0326';
+
+  const handleCopyAccount = () => {
+    showToast(`复制成功：账号 ${memberAccount} 已复制到剪贴板！`);
   };
 
   const handleNotifications = () => {
@@ -141,12 +147,15 @@ export default function PageProfile() {
               <span className="profile-avatar-camera"><i className="fa-solid fa-camera"></i></span>
             </div>
             <div className="profile-meta">
-              <div className="profile-username-row">
-                <h3 id="profile-username-lbl">伯人心贤oyo</h3>
-              </div>
-              <div className="profile-id-row">
-                <span>ID:301636280</span>
-                <i className="fa-regular fa-copy" id="btn-copy-id" onClick={handleCopyId}></i>
+              <div className="member-id-block">
+                <div className="member-level-row">
+                  <span className="member-level-label">当前等级：</span>
+                  <span className="member-vip-badge"><i className="fa-solid fa-chevron-up"></i>VIP0</span>
+                </div>
+                <div className="member-account-row">
+                  <span>账号：{memberAccount}</span>
+                  <i className="fa-regular fa-copy member-account-copy" id="btn-copy-account" onClick={handleCopyAccount}></i>
+                </div>
               </div>
             </div>
           </div>

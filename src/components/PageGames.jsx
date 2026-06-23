@@ -148,7 +148,7 @@ export default function PageGames() {
         {/* Wallet Panel: balance + round icon actions */}
         <div className="lobby-wallet-panel">
           <div className="wallet-info">
-            <span className="wallet-username">伯人心贤oyo</span>
+            <span className="wallet-balance-title">账户余额</span>
             <div className="wallet-balance-row">
               <strong className="wallet-balance-val" id="app-balance-display">¥{balance.toFixed(2)}</strong>
               <i

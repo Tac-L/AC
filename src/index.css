@@ -2773,7 +2773,8 @@ input:checked + .slider:before {
   flex-shrink: 0;
 }
 
-.wallet-username {
+.wallet-username,
+.wallet-balance-title {
   font-size: 0.74rem;
   color: var(--text-grey);
 }
@@ -2787,7 +2788,7 @@ input:checked + .slider:before {
 .wallet-balance-val {
   color: var(--color-primary);
   font-size: 1.02rem;
-  font-weight: 700;
+  font-weight: 400;
   font-family: var(--font-display);
 }
 
@@ -2795,6 +2796,56 @@ input:checked + .slider:before {
   font-size: 0.75rem;
   color: var(--text-muted);
   cursor: pointer;
+}
+
+/* Member identity: 当前等级 (VIP badge) + 账号 — replaces nickname display */
+.member-id-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.member-level-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.member-level-label,
+.member-account-row {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.member-vip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, #8b95a5 0%, #5b6677 55%, #3f4859 100%);
+  color: #f1f3f7;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  padding: 3px 12px 3px 9px;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%, 7px 50%);
+}
+
+.member-vip-badge i {
+  font-size: 0.58rem;
+  color: #e4c97a;
+}
+
+.member-account-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.member-account-copy {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 0.78rem;
 }
 
 .wallet-actions-row {

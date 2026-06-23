@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageDeposit() {
-  const { balance, updateBalance, goBack, showToast, openActivityPage } = useApp();
+  const { balance, updateBalance, goBack, showToast, openActivityPage, isGuest, accountCredential } = useApp();
+
+  const memberAccount = accountCredential
+    ? accountCredential.account
+    : isGuest
+      ? '未设置'
+      : 'ht0326';
 
   const [activeTab, setActiveTab] = useState('online'); // online, wallet
   const [activeChannel, setActiveChannel] = useState('alipay_scan'); // channel key
@@ -158,19 +164,16 @@ export default function PageDeposit() {
                   <span className="profile-avatar-camera" onClick={() => showToast('提示：修改头像功能暂开放！')}><i className="fa-solid fa-camera"></i></span>
                 </div>
                 <div className="profile-meta">
-                  <div className="profile-username-row">
-                    <h3>伯人心贤oyo</h3>
+                  <div className="member-id-block">
+                    <div className="member-level-row">
+                      <span className="member-level-label">当前等级：</span>
+                      <span className="member-vip-badge"><i className="fa-solid fa-chevron-up"></i>VIP0</span>
+                    </div>
+                    <div className="member-account-row" onClick={() => showToast(`复制成功：账号 ${memberAccount} 已复制到剪贴板！`)}>
+                      <span>账号：{memberAccount}</span>
+                      <i className="fa-regular fa-copy member-account-copy" id="btn-deposit-copy-account"></i>
+                    </div>
                   </div>
-                  <div className="profile-id-row" onClick={() => showToast('ID复制成功！ID: 301636280')}>
-                    <span>ID:301636280</span>
-                    <i className="fa-regular fa-copy" id="btn-deposit-copy-id"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="profile-header-right-box">
-                <div className="profile-header-balance-box">
-                  <span className="balance-lbl">余额</span>
-                  <strong className="balance-amount" id="deposit-card-balance-display">¥{balance.toFixed(2)}</strong>
                 </div>
               </div>
             </div>
