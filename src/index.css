@@ -16270,6 +16270,7 @@ body {
   gap: 16px;
   cursor: pointer;
   transition: transform 0.1s ease;
+  min-width: 0;
 }
 
 .pbal-vendor-card:active {
