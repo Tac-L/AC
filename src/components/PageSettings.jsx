@@ -2,7 +2,14 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageSettings() {
-  const { goBack, showToast, setActivePage } = useApp();
+  const { goBack, showToast, setActivePage, isGuest, accountCredential } = useApp();
+
+  // Guest without a set credential has no member account yet.
+  const memberAccount = accountCredential
+    ? accountCredential.account
+    : isGuest
+      ? '尚未设置'
+      : 'ht0326';
 
   const handleRow = (name) => {
     if (name === '手机') {
@@ -16,7 +23,7 @@ export default function PageSettings() {
     {
       name: '会员账号',
       icon: <i className="fa-solid fa-user" style={{ color: '#94a3b8' }}></i>,
-      value: 'ht0326',
+      value: memberAccount,
       arrow: false
     },
     {
