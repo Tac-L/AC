@@ -26,6 +26,11 @@ import PageSettings from './components/PageSettings';
 import PageAccountSettings from './components/PageAccountSettings';
 import PageSetAccountPassword from './components/PageSetAccountPassword';
 import PageBindPhone from './components/PageBindPhone';
+import PageRealName from './components/PageRealName';
+import PageQQ from './components/PageQQ';
+import PageLoginPassword from './components/PageLoginPassword';
+import PageWithdrawPassword from './components/PageWithdrawPassword';
+import PageTwoFactor from './components/PageTwoFactor';
 
 // Sub games
 import SubGameMarkSix from './components/SubGameMarkSix';
@@ -101,6 +106,16 @@ function MainApp() {
         return <PageSetAccountPassword />;
       case 'page-bind-phone':
         return <PageBindPhone />;
+      case 'page-real-name':
+        return <PageRealName />;
+      case 'page-qq':
+        return <PageQQ />;
+      case 'page-login-password':
+        return <PageLoginPassword />;
+      case 'page-withdraw-password':
+        return <PageWithdrawPassword />;
+      case 'page-two-factor':
+        return <PageTwoFactor />;
       default:
         return <PageDramas />;
     }
@@ -116,7 +131,7 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-real-name' && activePage !== 'page-qq' && activePage !== 'page-login-password' && activePage !== 'page-withdraw-password' && activePage !== 'page-two-factor' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
 
         {/* 3. Global Overlays / Modals */}
         <ModalBetDetails />

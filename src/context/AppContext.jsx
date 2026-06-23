@@ -20,6 +20,14 @@ export const AppProvider = ({ children }) => {
   // Kept only in memory so a full page reload clears it and the demo flow can replay.
   const [accountCredential, setAccountCredential] = useState(null);
 
+  // Withdraw password (取款密码) set via 取款密码 page.
+  // null = not yet set (shows 未设置 + the "set" flow); otherwise the 4-digit string.
+  // Kept only in memory so a full page reload clears it and the demo flow can replay.
+  const [withdrawPassword, setWithdrawPassword] = useState(null);
+
+  // Random 8-digit member ID, generated once per session (stable across navigation).
+  const [memberId] = useState(() => String(Math.floor(10000000 + Math.random() * 90000000)));
+
   // Cross-component Triggers
   const [activeChatroom, setActiveChatroom] = useState(null);
   const [activeGameCategory, setActiveGameCategory] = useState('hot');
@@ -234,6 +242,9 @@ export const AppProvider = ({ children }) => {
 
       accountCredential,
       setAccountCredential,
+      withdrawPassword,
+      setWithdrawPassword,
+      memberId,
 
       quickAmounts,
       setQuickAmounts,

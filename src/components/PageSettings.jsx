@@ -2,18 +2,43 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageSettings() {
-  const { goBack, showToast, setActivePage, isGuest, accountCredential } = useApp();
+  const { goBack, showToast, setActivePage, isGuest, accountCredential, withdrawPassword, memberId } = useApp();
 
-  // Guest without a set credential has no member account yet.
+  // Guest without a set credential has no member account yet → prompt to set one.
+  const needsAccountSetup = isGuest && !accountCredential;
   const memberAccount = accountCredential
     ? accountCredential.account
-    : isGuest
-      ? '尚未设置'
+    : needsAccountSetup
+      ? '未设置'
       : 'ht0326';
 
   const handleRow = (name) => {
+    if (name === '会员账号') {
+      if (needsAccountSetup) setActivePage('page-set-account-password');
+      return;
+    }
+    if (name === '真实姓名') {
+      setActivePage('page-real-name');
+      return;
+    }
     if (name === '手机') {
       setActivePage('page-bind-phone');
+      return;
+    }
+    if (name === 'QQ') {
+      setActivePage('page-qq');
+      return;
+    }
+    if (name === '登录密码') {
+      setActivePage('page-login-password');
+      return;
+    }
+    if (name === '取款密码') {
+      setActivePage('page-withdraw-password');
+      return;
+    }
+    if (name === '两步验证') {
+      setActivePage('page-two-factor');
       return;
     }
     showToast(`提示：【${name}】功能正在开发中，敬请期待！`);
@@ -21,10 +46,16 @@ export default function PageSettings() {
 
   const group1 = [
     {
+      name: '会员ID',
+      icon: <i className="fa-solid fa-id-card" style={{ color: '#3b82f6' }}></i>,
+      value: memberId,
+      arrow: false
+    },
+    {
       name: '会员账号',
       icon: <i className="fa-solid fa-user" style={{ color: '#94a3b8' }}></i>,
       value: memberAccount,
-      arrow: false
+      arrow: needsAccountSetup
     },
     {
       name: '真实姓名',
@@ -56,7 +87,7 @@ export default function PageSettings() {
     {
       name: '取款密码',
       icon: <i className="fa-solid fa-credit-card" style={{ color: '#ef4444' }}></i>,
-      value: '未设置',
+      value: withdrawPassword ? '已设置' : '未设置',
       arrow: true
     },
     {
