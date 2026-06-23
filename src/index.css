@@ -16783,6 +16783,9 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.reg-success-pwd {
+  flex: 1;
+}
 .reg-success-pwd.masked {
   color: #94a3b8;
   letter-spacing: 1px;
