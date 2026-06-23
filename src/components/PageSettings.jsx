@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageSettings() {
-  const { goBack, showToast, setActivePage, isGuest, accountCredential, withdrawPassword, memberId } = useApp();
+  const { goBack, showToast, setActivePage, isGuest, accountCredential, withdrawPassword } = useApp();
 
   // Guest without a set credential has no member account yet → prompt to set one.
   const needsAccountSetup = isGuest && !accountCredential;
@@ -45,12 +45,6 @@ export default function PageSettings() {
   };
 
   const group1 = [
-    {
-      name: '会员ID',
-      icon: <i className="fa-solid fa-id-card" style={{ color: '#3b82f6' }}></i>,
-      value: memberId,
-      arrow: false
-    },
     {
       name: '会员账号',
       icon: <i className="fa-solid fa-user" style={{ color: '#94a3b8' }}></i>,
