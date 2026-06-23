@@ -3496,20 +3496,10 @@ input:checked + .slider:before {
   font-size: 1.1rem;
 }
 
-.profile-action-icon.deposit {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-}
-
-.profile-action-icon.platform-balance {
-  background: linear-gradient(135deg, #16a34a, #22c55e);
-}
-
-.profile-action-icon.withdraw {
-  background: linear-gradient(135deg, #f97316, #fb923c);
-}
-
-.profile-action-icon.rebate {
-  background: linear-gradient(135deg, #38bdf8, #7dd3fc);
+.profile-action-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .profile-features-section {

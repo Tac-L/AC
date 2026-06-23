@@ -219,14 +219,14 @@ export default function PageProfile() {
               <h4>每日任务</h4>
               <p>7天连续签到 轻松赚大奖</p>
             </div>
-            <img src="assets/game_fast3.png" alt="每日任务" className="profile-perk-icon-img" />
+            <img src="assets/entry-img3.png" alt="每日任务" className="profile-perk-icon-img" />
           </div>
           <div className="profile-perk-card" id="btn-premium-vip" onClick={() => openActivityPage('vip')}>
             <div className="profile-perk-info">
               <h4>尊享VIP</h4>
               <p>晋级礼金+周俸禄<br />+月俸禄 终身收益</p>
             </div>
-            <img src="assets/game_mahjong.png" alt="尊享VIP" className="profile-perk-icon-img" />
+            <img src="assets/level-icon.png" alt="尊享VIP" className="profile-perk-icon-img" />
           </div>
         </div>
 
@@ -253,19 +253,19 @@ export default function PageProfile() {
           </div>
           <div className="profile-wallet-actions">
             <div className="profile-action-item" id="btn-profile-deposit" onClick={openDepositPage}>
-              <div className="profile-action-icon deposit"><i className="fa-solid fa-money-bill-wave"></i></div>
+              <div className="profile-action-icon deposit"><img src="assets/存款.png" alt="存款" /></div>
               <span>存款</span>
             </div>
             <div className="profile-action-item" id="btn-profile-platform-balance" onClick={openPlatformBalancePage}>
-              <div className="profile-action-icon platform-balance"><i className="fa-solid fa-dollar-sign"></i></div>
+              <div className="profile-action-icon platform-balance"><img src="assets/平台余额.png" alt="平台余额" /></div>
               <span>平台余额</span>
             </div>
             <div className="profile-action-item" id="btn-profile-withdraw" onClick={openWithdrawPage}>
-              <div className="profile-action-icon withdraw"><i className="fa-solid fa-wallet"></i></div>
+              <div className="profile-action-icon withdraw"><img src="assets/取款.png" alt="取款" /></div>
               <span>取款</span>
             </div>
             <div className="profile-action-item" id="btn-profile-rebate" onClick={openRebatePage}>
-              <div className="profile-action-icon rebate"><i className="fa-solid fa-yen-sign"></i></div>
+              <div className="profile-action-icon rebate"><img src="assets/返水.png" alt="返水" /></div>
               <span>返水</span>
             </div>
           </div>
