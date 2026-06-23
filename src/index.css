@@ -8523,6 +8523,8 @@ input:checked + .slider:before {
 
 .deposit-details-section {
   margin: 14px 14px;
+  padding: 14px 12px;
+  border-radius: 10px;
 }
 
 .deposit-details-title {
@@ -8539,8 +8541,7 @@ input:checked + .slider:before {
   grid-template-columns: repeat(2, 1fr);
   column-gap: 12px;
   row-gap: 18px;
-  padding-top: 10px;
-  margin-bottom: 20px;
+  padding-top: 8px;
 }
 
 .subchannel-card {
@@ -14121,7 +14122,10 @@ body {
 
 /* Withdraw page hides the bottom nav, so it should fill the full phone height
    (otherwise a 68px white strip shows below the page / modal overlay) */
-#page-withdraw.app-page {
+#page-withdraw.app-page,
+#page-deposit.app-page,
+#page-platform-balance.app-page,
+#page-rebate.app-page {
   height: 100% !important;
 }
 
