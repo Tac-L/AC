@@ -15,7 +15,8 @@ export default function PageGames() {
     openWithdrawPage,
     openOffersPage,
     openActivityPage,
-    openGameDetailModal
+    openGameDetailModal,
+    setActivePage
   } = useApp();
 
   const [rotate, setRotate] = useState(false);
@@ -143,6 +144,7 @@ export default function PageGames() {
           <div className="marquee-text-container">
             <div className="marquee-text">【BG】视讯将于北京时间 2025/11/04 凌晨04:00-凌晨05:00进行维护，给您带来不便敬请谅解！</div>
           </div>
+          <i className="fa-regular fa-envelope marquee-mail-icon" onClick={() => setActivePage('page-mail')} title="站内信"></i>
         </div>
 
         {/* Wallet Panel: balance + round icon actions */}

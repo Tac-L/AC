@@ -202,6 +202,7 @@ export default function PageProfile() {
           <div className="marquee-text-container">
             <div className="marquee-text">全部免费。新会员首充送300%，一倍流水提款！充值1元即送体验VIP，快来体验吧！</div>
           </div>
+          <i className="fa-regular fa-envelope marquee-mail-icon" onClick={() => setActivePage('page-mail')} title="站内信"></i>
         </div>
 
         {/* VIP Card */}
