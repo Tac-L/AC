@@ -52,7 +52,7 @@ export default function PageRegister() {
     <div className="app-page active auth-page" id="page-register">
       {/* Brand logo */}
       <div className="auth-logo-row">
-        <img src="assets/logo-b.png" alt="logo" className="auth-logo" />
+        <img src="assets/logo-b.svg" alt="logo" className="auth-logo" />
       </div>
 
       {/* Promo banner image */}

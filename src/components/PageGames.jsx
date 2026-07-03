@@ -115,7 +115,7 @@ export default function PageGames() {
       {/* Header Bar with logo pill */}
       <div className="lobby-header-bar">
         <div className="lobby-logo-pill">
-          <img src="assets/logo.png" className="lobby-brand-logo" alt="LOGO" />
+          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
         </div>
       </div>
 
