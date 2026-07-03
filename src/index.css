@@ -9195,11 +9195,13 @@ body {
 
 /* Bottom Nav Bar */
 .bottom-nav {
-  background-color: #ffffff !important;
-  border-top: 1px solid var(--border-color) !important;
+  background: #0e081c !important;
+  border-top: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4), 0 -2px 4px rgba(255, 226, 89, 0.2) !important;
 }
 .nav-btn {
-  color: var(--text-grey) !important;
+  color: #8b99b0 !important;
 }
 .nav-btn.active {
   color: var(--color-primary) !important;
