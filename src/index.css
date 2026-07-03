@@ -17080,3 +17080,26 @@ body {
 .drawer-restore-btn:hover {
   color: #3b82f6;
 }
+
+/* AC娛樂 Streamer Card Styled Banner */
+.ac-logo-card-styled {
+  background: linear-gradient(135deg, #242d3c 0%, #0e121a 100%) !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.ac-card-logo-img {
+  height: 38px !important;
+  width: auto !important;
+}
+.ac-card-logo-sub {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffa751;
+  margin-top: 5px;
+  text-transform: uppercase;
+}

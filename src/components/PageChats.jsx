@@ -691,20 +691,20 @@ export default function PageChats() {
                             </div>
                           </div>
 
-                          {/* Streamer Card 2: 弹珠官方直播 */}
+                          {/* Streamer Card 2: AC官方直播 */}
                           <div className="streamer-card">
-                            <div className="streamer-thumb xcm-logo-card-styled">
-                              <div className="xcm-logo-text">黑<span>豹</span></div>
-                              <div className="xcm-logo-sub">黑豹娱乐</div>
+                            <div className="streamer-thumb ac-logo-card-styled">
+                              <img src="assets/logo.svg" className="ac-card-logo-img" alt="AC娛樂" />
+                              <div className="ac-card-logo-sub">AC娛樂</div>
                             </div>
                             <div className="streamer-info">
-                              <h4 className="streamer-title">弹珠官方直播</h4>
+                              <h4 className="streamer-title">AC官方直播</h4>
                               <div className="streamer-meta-row">
                                 <div className="streamer-meta-left">
-                                  <img src="assets/black_panther_logo.png" alt="弹珠官方直播" className="streamer-avatar" />
-                                  <span className="streamer-name">弹珠官方直播</span>
+                                  <img src="assets/logo-b.svg" alt="AC官方直播" className="streamer-avatar" style={{ backgroundColor: '#242d3c', padding: '2px' }} />
+                                  <span className="streamer-name">AC官方直播</span>
                                 </div>
-                                <button className="streamer-detail-btn" onClick={() => showToast('已进入 弹珠官方直播 详情页')}>查看详情</button>
+                                <button className="streamer-detail-btn" onClick={() => showToast('已进入 AC官方直播 详情页')}>查看详情</button>
                               </div>
                             </div>
                           </div>
