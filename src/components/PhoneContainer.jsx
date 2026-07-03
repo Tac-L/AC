@@ -129,10 +129,10 @@ function ImmersiveWidget() {
       let newX = posStart.current.x + dx;
       let newY = posStart.current.y + dy;
 
-      if (newX < 10) newX = 10;
-      if (newX > 290) newX = 290;
-      if (newY < 40) newY = 40;
-      if (newY > 600) newY = 600;
+      if (newX < 0) newX = 0;
+      if (newX > 325) newX = 325;
+      if (newY < 0) newY = 0;
+      if (newY > 760) newY = 760;
 
       setPos({ x: newX, y: newY });
     };
@@ -209,7 +209,10 @@ function ImmersiveWidget() {
 
       {/* Vertical Portal Drawer Menu */}
       {drawerOpen && (
-        <div className="immersive-portal-drawer">
+        <div 
+          className="immersive-portal-drawer"
+          style={pos.y > 380 ? { bottom: '58px', top: 'auto' } : { top: '58px', bottom: 'auto' }}
+        >
           <div className="drawer-portals-list">
             {portals.map(p => {
               const isActive = activePage === p.id;
