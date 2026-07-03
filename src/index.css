@@ -17161,3 +17161,216 @@ body {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
+
+/* ==========================================================================
+   Skin 3 (Midnight Blue / 午夜藍) Theme Overrides
+   ========================================================================== */
+.skin-3 {
+  background-color: #0b132b !important;
+  color: #f8fafc !important;
+}
+
+.skin-3 .app-page,
+.skin-3 .scroll-content,
+.skin-3 .lobby-scroll-area {
+  background-color: #0b132b !important;
+  color: #f8fafc !important;
+}
+
+/* 1. Games Lobby Page Styling */
+.skin-3 .lobby-header-bar {
+  background: #111d4a !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.skin-3 .marquee-announcement {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+  color: #e2e8f0 !important;
+}
+.skin-3 .announcement-icon,
+.skin-3 .marquee-mail-icon {
+  color: #ffa751 !important;
+}
+
+.skin-3 .lobby-wallet-panel {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  box-shadow: 0 4px 12px rgba(11, 19, 43, 0.4) !important;
+}
+.skin-3 .wallet-balance-title,
+.skin-3 .wallet-action-item > span,
+.skin-3 .wallet-refresh-icon {
+  color: #94a3b8 !important;
+}
+.skin-3 .wallet-balance-val {
+  color: #ffa751 !important;
+}
+
+.skin-3 .menu-tab-item {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #94a3b8 !important;
+}
+.skin-3 .menu-tab-item span {
+  color: #94a3b8 !important;
+}
+.skin-3 .menu-tab-item.active {
+  background: linear-gradient(135deg, #1d2c6c, #232f7a) !important;
+  border-color: #ffa751 !important;
+  color: #ffffff !important;
+}
+.skin-3 .menu-tab-item.active span {
+  color: #ffffff !important;
+}
+
+.skin-3 .lobby-game-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  box-shadow: 0 4px 12px rgba(11, 19, 43, 0.4) !important;
+}
+.skin-3 .lobby-game-card span {
+  color: #ffffff !important;
+}
+
+/* 2. User Profile Page Styling */
+.skin-3 .profile-header-container {
+  background: linear-gradient(135deg, #111d4a 0%, #152259 100%) !important;
+  border-bottom: 1px solid #233785 !important;
+  color: #ffffff !important;
+}
+.skin-3 .profile-username-row h3,
+.skin-3 .profile-header-balance-box .balance-amount {
+  color: #ffffff !important;
+}
+.skin-3 .profile-id-row,
+.skin-3 .profile-id-row i,
+.skin-3 .profile-username-row i,
+.skin-3 .profile-header-balance-box .balance-lbl {
+  color: #94a3b8 !important;
+}
+.skin-3 .profile-vip-progress-row {
+  background: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+}
+.skin-3 .profile-vip-progress-row .vip-label {
+  color: #ffffff !important;
+  background: #233785 !important;
+}
+.skin-3 .profile-vip-progress-row .vip-upgrade-hint {
+  color: #94a3b8 !important;
+}
+.skin-3 .profile-vip-progress-row .vip-progress-container {
+  background: #1c2b66 !important;
+}
+
+.skin-3 .profile-perk-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .profile-perk-info h4 {
+  color: #ffffff !important;
+}
+.skin-3 .profile-perk-info p {
+  color: #94a3b8 !important;
+}
+
+.skin-3 .profile-wallet-section {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .profile-wallet-label,
+.skin-3 .wallet-quick-action span {
+  color: #94a3b8 !important;
+}
+.skin-3 .profile-balance-row h2 {
+  color: #ffa751 !important;
+}
+
+.skin-3 .profile-features-section {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .profile-feature-item span {
+  color: #ffffff !important;
+}
+.skin-3 .profile-features-header {
+  background: linear-gradient(90deg, #111d4a 0%, #152259 100%) !important;
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
+}
+
+/* 3. Generic Subpages (Deposit, Withdraw, Settings, etc.) */
+.skin-3 .deposit-header-bar,
+.skin-3 .withdraw-header-bar,
+.skin-3 .settings-header-bar,
+.skin-3 .sub-page-header {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+  color: #ffffff !important;
+}
+.skin-3 .deposit-header-bar h3,
+.skin-3 .withdraw-header-bar h3,
+.skin-3 .settings-header-bar h3,
+.skin-3 .sub-page-header h3 {
+  color: #ffffff !important;
+}
+.skin-3 .deposit-header-bar i,
+.skin-3 .withdraw-header-bar i,
+.skin-3 .settings-header-bar i,
+.skin-3 .sub-page-header i {
+  color: #ffa751 !important;
+}
+
+.skin-3 .payment-card,
+.skin-3 .amount-input-box,
+.skin-3 .quick-amount-btn,
+.skin-3 .setting-item-row,
+.skin-3 .settings-section-title,
+.skin-3 .offer-card,
+.skin-3 .rebate-card,
+.skin-3 .record-card,
+.skin-3 .mail-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  color: #ffffff !important;
+}
+.skin-3 .quick-amount-btn.active {
+  background: linear-gradient(135deg, #1d2c6c, #232f7a) !important;
+  border-color: #ffa751 !important;
+  color: #ffffff !important;
+}
+.skin-3 .deposit-tips-card {
+  background-color: rgba(26, 36, 74, 0.8) !important;
+  border: 1px solid #1c2b66 !important;
+  color: #94a3b8 !important;
+}
+.skin-3 .deposit-tips-card h4 {
+  color: #ffffff !important;
+}
+
+.skin-3 .setting-item-row span {
+  color: #ffffff !important;
+}
+.skin-3 .setting-item-row i {
+  color: #94a3b8 !important;
+}
+.skin-3 .logout-btn-container button {
+  background: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #ef4444 !important;
+}
+
+.skin-3 .skin-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  color: #ffffff !important;
+}
+.skin-3 .skin-card.active {
+  border-color: #ffa751 !important;
+}
+.skin-3 .skin-name {
+  color: #ffffff !important;
+}

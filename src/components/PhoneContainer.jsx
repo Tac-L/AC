@@ -11,7 +11,8 @@ export default function PhoneContainer({ children }) {
     setImmersiveMode, 
     activePage, 
     setActivePage,
-    activeSubGame
+    activeSubGame,
+    selectedSkin
   } = useApp();
 
   const handleHardwareBtn = (btnName) => {
@@ -48,7 +49,7 @@ export default function PhoneContainer({ children }) {
           </div>
           
           {/* Web App Body Inside Phone */}
-          <div className={`app-body ${immersiveMode ? 'immersive' : ''}`} id="app-root">
+          <div className={`app-body skin-${selectedSkin} ${immersiveMode ? 'immersive' : ''}`} id="app-root">
             {children}
           </div>
 
