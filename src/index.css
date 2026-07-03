@@ -9281,8 +9281,8 @@ body {
 
 /* Video Page Overrides */
 .video-header-bar {
-  background: #547CFD !important;
-  border-bottom: 1px solid #547CFD !important;
+  background: #0e081c !important;
+  border-bottom: 1px solid rgba(255, 226, 89, 0.15) !important;
 }
 .video-header-bar h4 {
   color: var(--text-white) !important;
@@ -9357,8 +9357,8 @@ body {
 
 /* Lobby Page Overrides */
 .lobby-header-bar {
-  background: #547CFD !important;
-  border-bottom: 1px solid #547CFD !important;
+  background: #0e081c !important;
+  border-bottom: 1px solid rgba(255, 226, 89, 0.15) !important;
 }
 .marquee-announcement {
   background-color: rgba(59, 130, 246, 0.05) !important;
