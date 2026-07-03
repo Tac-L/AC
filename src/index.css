@@ -17398,3 +17398,216 @@ body {
 .skin-3 .activity-header-bar i {
   color: #ffa751 !important;
 }
+
+/* Activity Center skin-3 adaptation */
+.skin-3 #page-activity {
+  background-color: #0b132b !important;
+}
+
+.skin-3 .activity-tabs {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+}
+.skin-3 .activity-tabs-inner {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-tab {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-tab.active {
+  background-color: #232f7a !important;
+  background: #232f7a !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(11, 19, 43, 0.4) !important;
+}
+
+/* Tasks Tab */
+.skin-3 .activity-task-sidebar {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-task-cat {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-task-cat.active {
+  background: linear-gradient(135deg, #1d2c6c, #232f7a) !important;
+  border-color: #ffa751 !important;
+  color: #ffffff !important;
+}
+.skin-3 .activity-task-list {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-task-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-task-title {
+  color: #ffffff !important;
+}
+.skin-3 .activity-task-reward {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-task-progress {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-task-progress strong {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-task-status {
+  background-color: #111d4a !important;
+  border-left: 1px dashed #1c2b66 !important;
+}
+.skin-3 .activity-task-circle {
+  border-color: #1c2b66 !important;
+  color: #ffa751 !important;
+}
+.skin-3 .activity-task-btn {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  color: #94a3b8 !important;
+}
+
+/* Rebate Tab */
+.skin-3 .activity-rebate-wrap {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-rebate-topbar {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-rebate-amount {
+  color: #ffffff !important;
+}
+.skin-3 .activity-rebate-amount strong {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-rebate-amount i {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-rebate-claim-btn {
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%) !important;
+  color: #1e293b !important;
+}
+.skin-3 .activity-rebate-sidebar {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-rebate-cat {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-rebate-cat.active {
+  background: linear-gradient(135deg, #1d2c6c, #232f7a) !important;
+  border-color: #ffa751 !important;
+  color: #ffffff !important;
+}
+.skin-3 .activity-rebate-list {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-rebate-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-rebate-name {
+  color: #ffffff !important;
+}
+.skin-3 .activity-rebate-ratio {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-rebate-stats span {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-rebate-arrow {
+  color: #94a3b8 !important;
+}
+
+/* VIP Tab */
+.skin-3 .activity-vip-wrap {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-vip-current-card {
+  background: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-vip-current-label {
+  background-color: #ffa751 !important;
+  color: #1e293b !important;
+}
+.skin-3 .activity-vip-current-level {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-vip-progress-row {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-vip-next {
+  color: #ffffff !important;
+}
+.skin-3 .activity-vip-progress-bar {
+  background-color: #1c2b66 !important;
+}
+.skin-3 .activity-vip-progress-fill {
+  background-color: #ffa751 !important;
+}
+.skin-3 .activity-vip-level-tabs {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-vip-level-tab {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-vip-level-tab.active {
+  background: linear-gradient(135deg, #1d2c6c, #232f7a) !important;
+  border-color: #ffa751 !important;
+  color: #ffffff !important;
+}
+.skin-3 .activity-vip-perks-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-vip-perks-title {
+  color: #ffffff !important;
+}
+.skin-3 .activity-vip-perk-item {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+}
+.skin-3 .activity-vip-perk-item strong {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-vip-perk-item span {
+  color: #94a3b8 !important;
+}
+
+/* Tournament Tab */
+.skin-3 .activity-tournament-wrap {
+  background-color: #0b132b !important;
+}
+.skin-3 .activity-tournament-title {
+  color: #ffffff !important;
+}
+.skin-3 .activity-tournament-past {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-tournament-card {
+  background: linear-gradient(135deg, #111d4a 0%, #152259 70%) !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .activity-tournament-card-title {
+  color: #ffffff !important;
+}
+.skin-3 .activity-tournament-card-arrow {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-tournament-prize {
+  color: #ffa751 !important;
+}
+.skin-3 .activity-tournament-countdown {
+  color: #94a3b8 !important;
+}
+.skin-3 .activity-tournament-countdown .cd-num {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+  color: #ffffff !important;
+}
