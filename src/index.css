@@ -17132,3 +17132,14 @@ body {
   justify-content: center !important;
   width: 100% !important;
 }
+
+/* Fix lobby bottom white space by stretching main split content */
+.phone .lobby-scroll-area {
+  display: flex !important;
+  flex-direction: column !important;
+}
+.phone .lobby-scroll-area .lobby-main-split {
+  flex: 1 !important;
+  height: auto !important;
+  min-height: 440px !important;
+}
