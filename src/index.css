@@ -3612,7 +3612,9 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: space-between;
   padding: 12px 14px;
-  background: linear-gradient(90deg, #7c6cf0 0%, #c3b2f5 100%);
+  background: linear-gradient(90deg, #242d3c 0%, #1e2533 100%) !important;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1;
 }
 
 .profile-features-title {
@@ -3624,23 +3626,25 @@ input:checked + .slider:before {
 
 .profile-features-title em {
   font-style: normal;
-  font-weight: 500;
-  opacity: 0.92;
+  font-weight: bold;
+  color: #ffa751 !important;
+  margin-left: 4px;
 }
 
 .profile-features-claim-btn {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%) !important;
   border: none;
   border-radius: 16px;
   padding: 6px 14px;
   font-size: 0.78rem;
   font-weight: bold;
-  color: #6d28d9;
+  color: #1e293b !important;
   cursor: pointer;
   transition: transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(255, 167, 81, 0.3);
 }
 
 .profile-features-claim-btn:active {
