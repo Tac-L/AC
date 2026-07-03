@@ -17685,3 +17685,10 @@ body {
 .skin-3 .video-thumb-small {
   background-color: #111d4a !important;
 }
+.skin-3 .video-group-block {
+  background-color: #0b132b !important;
+  border-bottom: 8px solid #080e20 !important;
+}
+.skin-3 .video-section-title-row .title-left .red-bar {
+  color: #3b82f6 !important;
+}
