@@ -10,7 +10,8 @@ export default function PhoneContainer({ children }) {
     immersiveMode, 
     setImmersiveMode, 
     activePage, 
-    setActivePage 
+    setActivePage,
+    activeSubGame
   } = useApp();
 
   const handleHardwareBtn = (btnName) => {
@@ -52,7 +53,7 @@ export default function PhoneContainer({ children }) {
           </div>
 
           {/* Floating Immersive Widget */}
-          {immersiveMode && (
+          {immersiveMode && !activeSubGame && (
             <ImmersiveWidget />
           )}
 

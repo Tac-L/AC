@@ -57,7 +57,7 @@ export default function SubGameSpeedRace() {
               padding: '6px'
             }}
           >
-            <i className="fa-solid fa-right-from-bracket"></i>
+            <i className="fa-solid fa-chevron-left"></i>
           </button>
 
           {/* Middle: Empty (嵌套框不要顯示文字) */}
@@ -108,7 +108,7 @@ export default function SubGameSpeedRace() {
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)'
           }}
         >
-          <i className="fa-solid fa-compress"></i>
+          <i className="fa-solid fa-chevron-left"></i>
         </button>
       )}
 
