@@ -37,17 +37,54 @@ export default function PageDramas() {
     setEditQuickAmountsActive
   } = useApp();
 
-  const dramaStills = [
-    'assets/drama_still1.png',
-    'assets/origami.png',
-    'assets/banner.png',
-    'assets/science.png'
-  ];
+  // Top-left content category tabs. Both tabs share the exact same layout /
+  // functionality — only the content list differs ("内容分类").
+  const TAB_CONTENT = {
+    douyin: {
+      bases: ['drama_still1', 'origami', 'science', 'banner'],
+      stills: [
+        'assets/drama_still1.png',
+        'assets/origami.png',
+        'assets/science.png',
+        'assets/banner.png'
+      ],
+      titles: [
+        '东京夜の散步｜霓虹街头治愈漫步 #旅行 #vlog #日本',
+        '三分钟折出一朵玫瑰🌹新手也能学会 #手工 #折纸 #DIY',
+        '涨知识了！3个你不知道的科学冷知识 #科普 #知识 #涨姿势',
+        '周末好去处推荐｜city walk 打卡日常 #生活 #分享 #日常'
+      ],
+      creators: ['@旅行的意义', '@巧手日记', '@科学怪谈', '@城市漫游者'],
+      likes: [0, 89000, 152000, 67000]
+    },
+    duanju: {
+      bases: ['drama_still1', 'origami', 'banner', 'science'],
+      stills: [
+        'assets/drama_still1.png',
+        'assets/origami.png',
+        'assets/banner.png',
+        'assets/science.png'
+      ],
+      titles: [
+        '秘密日记',
+        '《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽',
+        '《真假千金的豪门较量》第十集：身份拆穿 #虐恋 #豪门 #高能',
+        '《战神重生成奶爸》第二集：我的萌宝是天才 #都市 #热血 #打脸'
+      ],
+      creators: ['@陈名豪,谭盐盐,李一沐,伍雅露', '@小美剧场', '@经典剧场栏目', '@奶爸战神'],
+      likes: [0, 125000, 348000, 521000]
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState('douyin'); // 'douyin' | 'duanju'
+  const activeContent = TAB_CONTENT[activeTab];
+
+  const dramaStills = activeContent.stills;
 
   // Frame sequences used for scrubbing: each drama maps to several similar
   // "frames" (progressive zoom of the same scene) so dragging the progress
   // bar changes the on-screen picture like seeking through a video.
-  const dramaFrameBases = ['drama_still1', 'origami', 'banner', 'science'];
+  const dramaFrameBases = activeContent.bases;
   const FRAMES_PER_DRAMA = 6;
   const DRAMA_TOTAL_SECONDS = 24 * 60; // simulated total duration (24:00)
   const frameSrc = (idx, f) => `assets/frames/${dramaFrameBases[idx]}_f${f}.png`;
@@ -60,22 +97,11 @@ export default function PageDramas() {
     return `${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
   };
 
-  const dramaTitles = [
-    '秘密日记',
-    '《霸道总裁爱上我》第一集：命运的偶遇 #短剧 #反转 #高爽',
-    '《真假千金的豪门较量》第十集：身份拆穿 #虐恋 #豪门 #高能',
-    '《战神重生成奶爸》第二集：我的萌宝是天才 #都市 #热血 #打脸'
-  ];
-
-  const dramaCreators = [
-    '@陈名豪,谭盐盐,李一沐,伍雅露',
-    '@小美剧场',
-    '@经典剧场栏目',
-    '@奶爸战神'
-  ];
+  const dramaTitles = activeContent.titles;
+  const dramaCreators = activeContent.creators;
 
   // Store numerical representation of likes to handle local increments
-  const [likesData, setLikesData] = useState([0, 125000, 348000, 521000]);
+  const [likesData, setLikesData] = useState(TAB_CONTENT.douyin.likes);
   const [likedList, setLikedList] = useState([false, false, false, false]);
   const [activeIdx, setActiveIdx] = useState(0);
   const [muted, setMuted] = useState(true);
@@ -126,6 +152,26 @@ export default function PageDramas() {
     setTimeout(() => {
       setActiveIdx(nextIdx);
       setSeekPct(0.08); // restart progress for the new drama
+      setSeekFrameActive(false);
+      setOpacity(1);
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, 200);
+    }, 200);
+  };
+
+  // Switch top-left content category tab. Resets to the first item of the new
+  // tab and reinitialises like state for that content list.
+  const handleTabSwitch = (tab) => {
+    if (tab === activeTab || isTransitioning.current) return;
+    isTransitioning.current = true;
+    setOpacity(0);
+    setTimeout(() => {
+      setActiveTab(tab);
+      setActiveIdx(0);
+      setLikesData(TAB_CONTENT[tab].likes);
+      setLikedList([false, false, false, false]);
+      setSeekPct(0.08);
       setSeekFrameActive(false);
       setOpacity(1);
       setTimeout(() => {
@@ -419,6 +465,22 @@ export default function PageDramas() {
           style={{ opacity, transition: 'opacity 0.2s ease-in-out' }}
         />
         
+        {/* Top-left content category tabs (抖音 / 短剧). Same layout, different content. */}
+        <div className="drama-top-tabs">
+          <button
+            className={`drama-top-tab ${activeTab === 'douyin' ? 'active' : ''}`}
+            onClick={(e) => { e.stopPropagation(); handleTabSwitch('douyin'); }}
+          >
+            抖音
+          </button>
+          <button
+            className={`drama-top-tab ${activeTab === 'duanju' ? 'active' : ''}`}
+            onClick={(e) => { e.stopPropagation(); handleTabSwitch('duanju'); }}
+          >
+            短剧
+          </button>
+        </div>
+
         {/* Long-press fast-forward zone (right side). Sits below the HUD buttons
             (z-index) so taps on like/comment/share still work. */}
         <div
