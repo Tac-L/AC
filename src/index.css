@@ -9195,7 +9195,7 @@ body {
 
 /* Bottom Nav Bar */
 .bottom-nav {
-  background: #0e081c !important;
+  background: #242d3c !important;
   border-top: 3px solid transparent !important;
   border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4), 0 -2px 4px rgba(255, 226, 89, 0.2) !important;
@@ -9283,7 +9283,7 @@ body {
 
 /* Video Page Overrides */
 .video-header-bar {
-  background: #0e081c !important;
+  background: #242d3c !important;
   border-bottom: 3px solid transparent !important;
   border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2) !important;
@@ -9362,7 +9362,7 @@ body {
 
 /* Lobby Page Overrides */
 .lobby-header-bar {
-  background: #0e081c !important;
+  background: #242d3c !important;
   border-bottom: 3px solid transparent !important;
   border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2) !important;
