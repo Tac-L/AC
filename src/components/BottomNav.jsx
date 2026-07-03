@@ -38,7 +38,7 @@ export default function BottomNav() {
             {item.img ? (
               <img
                 className="nav-btn-img"
-                src={`${isActive ? '点击' : '默认'}-${item.img}.${item.img === '短剧' ? 'svg' : 'png'}`}
+                src={`${isActive ? '点击' : '默认'}-${item.img}.svg`}
                 alt={item.label}
               />
             ) : (
