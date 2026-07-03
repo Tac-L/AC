@@ -3,14 +3,11 @@ import { useApp } from '../context/AppContext';
 
 export default function SubGameSpeedRace() {
   const { setActiveSubGame, selectedSkin } = useApp();
-  const [iframeKey, setIframeKey] = useState(0);
+  const [iframeKey] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Dynamic nested URL carrying the selected skin parameter
   const targetUrl = `https://tac-l.github.io/F-2/?embed=1&skin=${selectedSkin}`;
-
-  const handleRefresh = () => {
-    setIframeKey(prev => prev + 1);
-  };
 
   return (
     <div 
@@ -21,29 +18,97 @@ export default function SubGameSpeedRace() {
         flexDirection: 'column',
         height: '100%',
         backgroundColor: '#0b0f19',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        position: 'relative'
       }}
     >
-      {/* Simulated Webview Browser Header */}
-      <div className="f3new-webview-header">
-        <div className="f3new-webview-controls-left">
-          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="退出游戏">
-            <i className="fa-solid fa-chevron-left" style={{ fontSize: '1rem' }}></i>
+      {/* 1. Header Bar (嵌套框) - Shown only when not in fullscreen mode */}
+      {!isFullscreen && (
+        <div 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: '#ffffff',
+            padding: '0 16px',
+            height: '46px',
+            borderBottom: '1px solid #e2e8f0',
+            flexShrink: 0,
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* Left: Exit/Back button (matching the right button icon in user reference image) */}
+          <button 
+            onClick={() => setActiveSubGame(null)} 
+            title="返回"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#334155',
+              fontSize: '1.25rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '6px'
+            }}
+          >
+            <i className="fa-solid fa-right-from-bracket"></i>
+          </button>
+
+          {/* Middle: Empty (嵌套框不要顯示文字) */}
+          <div></div>
+
+          {/* Right: Fullscreen button (matching the left button icon in user reference image) */}
+          <button 
+            onClick={() => setIsFullscreen(true)} 
+            title="全屏"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#334155',
+              fontSize: '1.15rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '6px'
+            }}
+          >
+            <i className="fa-solid fa-expand"></i>
           </button>
         </div>
+      )}
 
-        <div style={{ color: '#f1f5f9', fontSize: '0.95rem', fontWeight: '600' }}>
-          一分极速赛车
-        </div>
+      {/* 2. Floating minimize button - Shown only in fullscreen mode */}
+      {isFullscreen && (
+        <button
+          onClick={() => setIsFullscreen(false)}
+          title="恢复窗口"
+          style={{
+            position: 'absolute',
+            top: '12px',
+            left: '12px',
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            border: '1.5px solid rgba(255, 255, 255, 0.25)',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.05rem',
+            cursor: 'pointer',
+            zIndex: 9999,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.35)'
+          }}
+        >
+          <i className="fa-solid fa-compress"></i>
+        </button>
+      )}
 
-        <div className="f3new-webview-controls-right">
-          <button className="f3new-webview-btn" onClick={() => setActiveSubGame(null)} title="关闭">
-            <i className="fa-solid fa-xmark" style={{ fontSize: '1.1rem' }}></i>
-          </button>
-        </div>
-      </div>
-
-      {/* Embedded nested page iframe */}
+      {/* 3. Embedded game iframe */}
       <div style={{ flex: 1, position: 'relative', width: '100%', height: '100%' }}>
         <iframe
           key={iframeKey}
