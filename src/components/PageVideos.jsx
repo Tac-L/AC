@@ -535,7 +535,7 @@ export default function PageVideos() {
       {/* Scrollable Content Container */}
       <div className="scroll-content" style={{ padding: '0 0 80px 0' }}>
         {/* Marquee Announcement */}
-        <div className="video-marquee-announcement" style={{ margin: '0 12px' }}>
+        <div className="video-marquee-announcement">
           <i className="fa-solid fa-bullhorn text-orange announcement-icon"></i>
           <div className="marquee-text-container">
             <div className="marquee-text">欢迎光临AC娛樂视频！全球顶级观影app，无限看片，全部免费！首充即送300%红利...</div>

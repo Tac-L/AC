@@ -5035,7 +5035,7 @@ input:checked + .slider:before {
 .video-marquee-announcement {
   height: 30px;
   box-sizing: border-box;
-  margin: 0 12px 10px 12px;
+  margin: 10px 12px !important;
   padding: 0 10px;
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -9360,6 +9360,7 @@ body {
 .video-categories-bar {
   background-color: #ffffff !important;
   border-bottom: 1px solid var(--border-color) !important;
+  padding: 8px 12px !important;
 }
 .category-pill {
   background-color: transparent !important;
@@ -17652,6 +17653,7 @@ body {
 .skin-3 .video-categories-bar {
   background-color: #111d4a !important;
   border-bottom: 1px solid #1c2b66 !important;
+  padding: 8px 12px !important;
 }
 .skin-3 .category-pill {
   color: #94a3b8 !important;
