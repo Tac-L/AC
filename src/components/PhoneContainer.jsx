@@ -196,7 +196,15 @@ function ImmersiveWidget() {
         onMouseDown={handleStart}
         onClick={handleWidgetClick}
       >
-        <span className="floating-text">{getPageName(activePage)}</span>
+        <div className="floating-content-wrapper">
+          <svg className="floating-spade-svg" viewBox="0 0 512 512">
+            <path 
+              d="M 256, 95 C 256, 95, 140, 195, 140, 275 C 140, 355, 205, 375, 256, 325 C 307, 375, 372, 355, 372, 275 C 372, 195, 256, 95, 256, 95 Z M 256, 325 C 256, 325, 225, 365, 195, 395 L 317, 395 C 287, 365, 256, 325, 256, 325 Z" 
+              fill="#0e081c" 
+            />
+          </svg>
+          <span className="floating-text">{getPageName(activePage)}</span>
+        </div>
       </div>
 
       {/* Vertical Portal Drawer Menu */}
