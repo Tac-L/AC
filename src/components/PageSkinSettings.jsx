@@ -26,7 +26,7 @@ export default function PageSkinSettings() {
       </div>
 
       <div className="scroll-content settings-content">
-        <div style={{ padding: '16px 16px 8px 16px', fontSize: '0.75rem', color: '#94a3b8' }}>
+        <div style={{ padding: '16px 16px 8px 16px', fontSize: '0.75rem', color: '#475569', fontWeight: '500' }}>
           请选择皮肤，后续开启嵌套页面时将自动带入参数：
         </div>
 
@@ -53,8 +53,8 @@ export default function PageSkinSettings() {
                     }}
                   />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#f1f5f9', fontWeight: '500' }}>{opt.label}</span>
-                    <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px' }}>{opt.desc}</span>
+                    <span style={{ fontSize: '0.88rem', color: '#1e293b', fontWeight: '600' }}>{opt.label}</span>
+                    <span style={{ fontSize: '0.72rem', color: '#475569', marginTop: '2px' }}>{opt.desc}</span>
                   </div>
                 </div>
                 <div className="settings-row-right">
@@ -63,25 +63,6 @@ export default function PageSkinSettings() {
               </div>
             );
           })}
-        </div>
-
-        {/* Tip text */}
-        <div 
-          style={{
-            margin: '24px 16px',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            backgroundColor: 'rgba(30, 41, 59, 0.5)',
-            border: '1px solid rgba(148, 163, 184, 0.1)',
-            fontSize: '0.7rem',
-            color: '#64748b',
-            lineHeight: '1.5'
-          }}
-        >
-          <div style={{ fontWeight: 'bold', color: '#94a3b8', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <i className="fa-solid fa-circle-info" style={{ color: '#3b82f6' }}></i> 温馨提示
-          </div>
-          当前项目暂不应用所选皮肤。当后续开启嵌套的外部三方页面时，系统会自动在请求参数中携带此皮肤值（例如 <code>?skin={selectedSkin}</code>）进行传参展示。
         </div>
       </div>
     </div>
