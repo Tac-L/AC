@@ -17137,6 +17137,7 @@ body {
 .phone .lobby-scroll-area {
   display: flex !important;
   flex-direction: column !important;
+  padding-bottom: 0 !important;
 }
 .phone .lobby-scroll-area .lobby-main-split {
   flex: 1 !important;
