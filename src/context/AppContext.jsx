@@ -18,6 +18,8 @@ export const AppProvider = ({ children }) => {
     const saved = localStorage.getItem('selectedSkin');
     return saved ? parseInt(saved, 10) : 2; // 1: 浅蓝, 2: 深蓝 (默认), 3: 午夜蓝, 4: 午夜紫
   });
+  const [activeRoomId, setActiveRoomId] = useState(null);
+  const [activeGameName, setActiveGameName] = useState('');
 
   const changeSelectedSkin = (skinValue) => {
     setSelectedSkin(skinValue);
@@ -356,7 +358,11 @@ export const AppProvider = ({ children }) => {
       openPgGame,
       closePgGame,
       immersiveMode,
-      setImmersiveMode
+      setImmersiveMode,
+      activeRoomId,
+      setActiveRoomId,
+      activeGameName,
+      setActiveGameName
     }}>
       {children}
     </AppContext.Provider>

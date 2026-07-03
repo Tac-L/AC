@@ -18,7 +18,9 @@ export default function PageGames() {
     openGameDetailModal,
     setActivePage,
     immersiveMode,
-    setImmersiveMode
+    setImmersiveMode,
+    setActiveRoomId,
+    setActiveGameName
   } = useApp();
 
   const [rotate, setRotate] = useState(false);
@@ -44,9 +46,21 @@ export default function PageGames() {
   ];
 
   const gamesData = [
-    { id: 'mark_six', name: '一分六合彩', category: ['hot', 'lottery'], img: 'assets/mo_mark_six.png', isLive: true },
-    { id: 'fast_three', name: '一分快三', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true },
-    { id: 'speed_race', name: '一分极速赛车', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true },
+    { id: 'speed_race', name: '一分极速赛车', category: ['hot', 'lottery'], img: 'assets/speed_race.png', isLive: true, roomid: '1062010' },
+    { id: 'speed_race_5', name: '五分极速赛车', category: ['lottery'], img: 'assets/speed_race.png', isLive: true, roomid: '1062020' },
+    { id: 'speed_race_10', name: '十分极速赛车', category: ['lottery'], img: 'assets/speed_race.png', isLive: true, roomid: '1062030' },
+    { id: 'macau_mark_six_1', name: '一分澳门六合彩', category: ['hot', 'lottery'], img: 'assets/mo_mark_six.png', isLive: true, roomid: '1070110' },
+    { id: 'macau_mark_six_5', name: '五分澳门六合彩', category: ['lottery'], img: 'assets/mo_mark_six.png', isLive: true, roomid: '1070120' },
+    { id: 'macau_mark_six_10', name: '十分澳门六合彩', category: ['lottery'], img: 'assets/mo_mark_six.png', isLive: true, roomid: '1070130' },
+    { id: 'ffc_1', name: '一分分分彩', category: ['hot', 'lottery'], img: 'assets/game_fast3.png', isLive: true, roomid: '601010' },
+    { id: 'ffc_5', name: '五分分分彩', category: ['lottery'], img: 'assets/game_fast3.png', isLive: true, roomid: '601020' },
+    { id: 'ffc_10', name: '十分分分彩', category: ['lottery'], img: 'assets/game_fast3.png', isLive: true, roomid: '601030' },
+    { id: 'fast_three', name: '一分快三', category: ['hot', 'lottery'], img: 'assets/fast_three.png', isLive: true, roomid: '701010' },
+    { id: 'fast_three_5', name: '五分快三', category: ['lottery'], img: 'assets/fast_three.png', isLive: true, roomid: '701020' },
+    { id: 'fast_three_10', name: '十分快三', category: ['lottery'], img: 'assets/fast_three.png', isLive: true, roomid: '701030' },
+    { id: 'lucky_28_1', name: '一分幸运28', category: ['hot', 'lottery'], img: 'assets/hk_mark_six.png', isLive: true, roomid: '1069010' },
+    { id: 'lucky_28_5', name: '五分幸运28', category: ['lottery'], img: 'assets/hk_mark_six.png', isLive: true, roomid: '1069020' },
+    { id: 'lucky_28_10', name: '十分幸运28', category: ['lottery'], img: 'assets/hk_mark_six.png', isLive: true, roomid: '1069030' },
     { id: 'mahjong', name: '麻将胡了', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
     { id: 'mahjong2', name: '麻将胡了2', category: ['hot', 'egame'], img: 'assets/game_mahjong.png', isLive: false },
     { id: 'gold_city', name: '寻宝黄金城', category: ['hot', 'egame'], img: 'assets/gold_dragon_bg.png', isLive: false },
@@ -66,13 +80,14 @@ export default function PageGames() {
     return () => clearInterval(timer);
   }, []);
 
-  // Run auto open checks on mount/updates
   useEffect(() => {
     if (autoOpenGameId) {
-      if (autoOpenGameId === 'fast_three' || autoOpenGameId === 'mark_six' || autoOpenGameId === 'speed_race') {
-        setActiveSubGame(autoOpenGameId);
+      const targetId = autoOpenGameId === 'mark_six' ? 'macau_mark_six_1' : autoOpenGameId;
+      const gameObj = gamesData.find(g => g.id === targetId);
+      if (gameObj) {
+        handleGameCardClick(gameObj);
       } else {
-        showToast('加拿大28 正在对接中，请先体验一分快三和一分六合彩哦！');
+        showToast('游戏正在对接中，敬请期待！');
       }
       setAutoOpenGameId(null); // clear trigger
     }
@@ -84,7 +99,13 @@ export default function PageGames() {
 
   const handleGameCardClick = (game) => {
     if (game.isLive) {
-      setActiveSubGame(game.id);
+      if (game.roomid) {
+        setActiveRoomId(game.roomid);
+        setActiveGameName(game.name);
+        setActiveSubGame('speed_race');
+      } else {
+        setActiveSubGame(game.id);
+      }
     } else {
       openGameDetailModal({ name: game.name, img: game.img });
     }

@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function SubGameSpeedRace() {
-  const { setActiveSubGame, selectedSkin } = useApp();
+  const { setActiveSubGame, selectedSkin, activeRoomId, activeGameName } = useApp();
   const [iframeKey] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Dynamic nested URL carrying the selected skin parameter
-  const targetUrl = `https://tac-l.github.io/F-2/?embed=1&skin=${selectedSkin}`;
+  // Fallback defaults if opened directly without setting context values
+  const roomId = activeRoomId || '1062010';
+  const gameName = activeGameName || '一分极速赛车';
+
+  // Dynamic nested URL carrying the selected skin and roomid parameters
+  const targetUrl = `https://tac-l.github.io/F-2/?embed=1&skin=${selectedSkin}&roomid=${roomId}`;
 
   return (
     <div 
@@ -113,7 +117,7 @@ export default function SubGameSpeedRace() {
         <iframe
           key={iframeKey}
           src={targetUrl}
-          title="一分极速赛车"
+          title={gameName}
           style={{
             width: '100%',
             height: '100%',
