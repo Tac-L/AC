@@ -17611,3 +17611,77 @@ body {
   border: 1px solid #1c2b66 !important;
   color: #ffffff !important;
 }
+
+/* Videos Page skin-3 adaptation */
+.skin-3 #page-videos {
+  background-color: #0b132b !important;
+}
+.skin-3 .video-categories-bar {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+}
+.skin-3 .category-pill {
+  color: #94a3b8 !important;
+}
+.skin-3 .category-pill.active {
+  color: #ffa751 !important;
+}
+.skin-3 .search-bar-middle {
+  background-color: #111d4a !important;
+  border: 1px solid #1c2b66 !important;
+}
+.skin-3 .search-bar-middle input {
+  color: #ffffff !important;
+}
+.skin-3 .search-bar-middle i {
+  color: #94a3b8 !important;
+}
+.skin-3 .video-marquee-announcement {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+  color: #e2e8f0 !important;
+}
+.skin-3 .video-marquee-announcement .announcement-icon,
+.skin-3 .video-marquee-announcement .marquee-mail-icon {
+  color: #ffa751 !important;
+}
+.skin-3 .video-group-portals-grid {
+  background-color: #0b132b !important;
+  border-bottom: 1px solid #1c2b66 !important;
+}
+.skin-3 .video-game-slot span {
+  color: #ffffff !important;
+}
+.skin-3 .video-game-slot .game-icon-box {
+  border: 1px solid #233785 !important;
+}
+.skin-3 .video-section-title-row .title-left h3 {
+  color: #ffffff !important;
+}
+.skin-3 .video-section-title-row .title-right {
+  color: #ffa751 !important;
+}
+.skin-3 .video-big-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .video-desc-large h4 {
+  color: #ffffff !important;
+}
+.skin-3 .video-desc-large p {
+  color: #94a3b8 !important;
+}
+.skin-3 .video-small-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+}
+.skin-3 .video-desc-small h4 {
+  color: #ffffff !important;
+}
+.skin-3 .video-desc-small p {
+  color: #94a3b8 !important;
+}
+.skin-3 .video-thumb-large,
+.skin-3 .video-thumb-small {
+  background-color: #111d4a !important;
+}
