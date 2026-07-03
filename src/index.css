@@ -17103,3 +17103,11 @@ body {
   margin-top: 5px;
   text-transform: uppercase;
 }
+
+/* Fix fullscreen/immersive mode white mask at bottom */
+.phone #app-root.immersive .app-page {
+  height: 100% !important;
+}
+.phone #app-root.immersive .short-drama-container {
+  height: 100% !important;
+}
