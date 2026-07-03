@@ -17144,3 +17144,16 @@ body {
   height: auto !important;
   min-height: 440px !important;
 }
+
+/* Hide scrollbars on the game page */
+.phone .lobby-left-menu::-webkit-scrollbar,
+.phone .lobby-right-col::-webkit-scrollbar,
+.phone .lobby-scroll-area::-webkit-scrollbar {
+  display: none !important;
+}
+.phone .lobby-left-menu,
+.phone .lobby-right-col,
+.phone .lobby-scroll-area {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
