@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageProfile() {
-  const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage, isGuest, accountCredential } = useApp();
+  const { balance, openDepositPage, openWithdrawPage, openRebatePage, openPlatformBalancePage, showToast, setActivePage, openActivityPage, openBetRecordsPage, isGuest, accountCredential, immersiveMode, setImmersiveMode } = useApp();
 
   const memberAccount = accountCredential
     ? accountCredential.account
@@ -139,11 +139,16 @@ export default function PageProfile() {
   return (
     <div className="app-page active" id="page-profile">
       {/* Header Bar */}
-      <div className="lobby-header-bar">
-        <div className="lobby-logo-pill">
-          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+      {!immersiveMode && (
+        <div className="lobby-header-bar">
+          <div className="lobby-logo-pill">
+            <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+          <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} title="进入沉浸模式">
+            <i className="fa-solid fa-expand"></i>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Top Header Section */}
       <div className="profile-header-container">

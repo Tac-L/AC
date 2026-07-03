@@ -14,7 +14,9 @@ export default function PageSports() {
     sportsDrawerActive,
     setSportsDrawerActive,
     setActiveSubGame,
-    showToast 
+    showToast,
+    immersiveMode,
+    setImmersiveMode
   } = useApp();
 
   const [activeCategory, setActiveCategory] = useState('soccer'); // soccer, basketball, tennis, volleyball, pingpong
@@ -411,11 +413,16 @@ export default function PageSports() {
   return (
     <div className="app-page active" id="page-sports">
       {/* Header Bar */}
-      <div className="lobby-header-bar">
-        <div className="lobby-logo-pill">
-          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+      {!immersiveMode && (
+        <div className="lobby-header-bar">
+          <div className="lobby-logo-pill">
+            <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+          <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} title="进入沉浸模式">
+            <i className="fa-solid fa-expand"></i>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="sports-header">
         {/* Row 1: Category Pills */}

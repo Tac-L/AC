@@ -16952,3 +16952,118 @@ body {
   margin-top: 6px;
   box-shadow: 0 6px 16px rgba(93, 134, 240, 0.35);
 }
+
+/* ==========================================================================
+   Immersive Fullscreen Feature Styles
+   ========================================================================== */
+.header-immersive-btn {
+  cursor: pointer;
+  color: #ffa751;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+.header-immersive-btn:hover {
+  background-color: rgba(255, 167, 81, 0.1);
+}
+.header-immersive-btn i {
+  font-size: 1.1rem;
+}
+
+.app-body.immersive .app-page {
+  height: 100% !important;
+}
+.app-body.immersive .short-drama-container {
+  height: 100% !important;
+}
+
+.immersive-widget-wrapper {
+  pointer-events: none;
+}
+.immersive-floating-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 167, 81, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  pointer-events: auto;
+  transition: transform 0.1s ease;
+}
+.immersive-floating-button:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+.floating-text {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #0e081c;
+}
+.immersive-portal-drawer {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.96);
+  border-radius: 20px;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+  border: 1.5px solid rgba(255, 167, 81, 0.3);
+  width: 50px;
+}
+.drawer-portals-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.drawer-portal-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 167, 81, 0.25);
+  background-color: #fffaf0;
+  color: #c97a1d;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+.drawer-portal-circle.active {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+}
+.drawer-restore-btn {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #242d3c;
+  cursor: pointer;
+  margin-top: 6px;
+  text-align: center;
+  padding-top: 6px;
+  width: 32px;
+  border-top: 1px dashed rgba(36, 45, 60, 0.2);
+  transition: color 0.2s;
+}
+.drawer-restore-btn:hover {
+  color: #3b82f6;
+}

@@ -34,7 +34,9 @@ export default function PageDramas() {
     updateBalance,
     quickAmounts,
     openBetDetailsModal,
-    setEditQuickAmountsActive
+    setEditQuickAmountsActive,
+    immersiveMode,
+    setImmersiveMode
   } = useApp();
 
   // Top-left content category tabs. Both tabs share the exact same layout /
@@ -456,11 +458,16 @@ export default function PageDramas() {
   return (
     <div className="app-page active" id="page-dramas" onWheel={handleWheel}>
       {/* Header Bar */}
-      <div className="lobby-header-bar">
-        <div className="lobby-logo-pill">
-          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+      {!immersiveMode && (
+        <div className="lobby-header-bar">
+          <div className="lobby-logo-pill">
+            <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+          <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} title="进入沉浸模式">
+            <i className="fa-solid fa-expand"></i>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="short-drama-container" id="drama-player-area">
         {/* Vertical still background */}

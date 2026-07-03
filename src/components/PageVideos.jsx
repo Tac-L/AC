@@ -368,7 +368,9 @@ export default function PageVideos() {
     setVideoPlayerActive,
     showToast,
     openActivityPage,
-    openGameDetailModal
+    openGameDetailModal,
+    immersiveMode,
+    setImmersiveMode
   } = useApp();
 
   const [activeCat, setActiveCat] = useState('recommend');
@@ -494,15 +496,20 @@ export default function PageVideos() {
   return (
     <div className="app-page active" id="page-videos">
       {/* Video Header Bar */}
-      <div className="video-header-bar">
-        <div className="lobby-logo-title">
-          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+      {!immersiveMode && (
+        <div className="video-header-bar">
+          <div className="lobby-logo-title">
+            <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+          <div className="search-bar-middle" onClick={handleSearch}>
+            <i className="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="极品专区" readOnly />
+          </div>
+          <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} style={{ marginLeft: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', height: '100%', color: '#ffa751' }} title="进入沉浸模式">
+            <i className="fa-solid fa-expand" style={{ fontSize: '1rem' }}></i>
+          </div>
         </div>
-        <div className="search-bar-middle" onClick={handleSearch}>
-          <i className="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="极品专区" readOnly />
-        </div>
-      </div>
+      )}
 
       {/* Categories scroll bar */}
       <div className="video-categories-bar">

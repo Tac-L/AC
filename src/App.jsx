@@ -47,7 +47,7 @@ import ModalPgGame from './components/ModalPgGame';
 import ModalRegisterSuccess from './components/ModalRegisterSuccess';
 
 function MainApp() {
-  const { activePage, activeSubGame } = useApp();
+  const { activePage, activeSubGame, immersiveMode } = useApp();
 
   // Determine active view inside Phone container
   const renderActivePage = () => {
@@ -132,7 +132,7 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-real-name' && activePage !== 'page-qq' && activePage !== 'page-login-password' && activePage !== 'page-withdraw-password' && activePage !== 'page-two-factor' && activePage !== 'page-login' && activePage !== 'page-register' && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-real-name' && activePage !== 'page-qq' && activePage !== 'page-login-password' && activePage !== 'page-withdraw-password' && activePage !== 'page-two-factor' && activePage !== 'page-login' && activePage !== 'page-register' && !immersiveMode && <BottomNav />}
 
         {/* 3. Global Overlays / Modals */}
         <ModalBetDetails />

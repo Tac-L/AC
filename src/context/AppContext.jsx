@@ -68,6 +68,7 @@ export const AppProvider = ({ children }) => {
   const [gameDetailData, setGameDetailData] = useState(null); // { name, img }
   const [pgGameActive, setPgGameActive] = useState(false);
   const [pgGameData, setPgGameData] = useState(null); // { name, img }
+  const [immersiveMode, setImmersiveMode] = useState(false);
 
   // Clock Update Effect
   useEffect(() => {
@@ -341,7 +342,9 @@ export const AppProvider = ({ children }) => {
       setPgGameActive,
       pgGameData,
       openPgGame,
-      closePgGame
+      closePgGame,
+      immersiveMode,
+      setImmersiveMode
     }}>
       {children}
     </AppContext.Provider>

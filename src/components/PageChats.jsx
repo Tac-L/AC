@@ -33,7 +33,9 @@ export default function PageChats() {
     quickAmounts, 
     openBetDetailsModal, 
     setEditQuickAmountsActive,
-    showToast 
+    showToast,
+    immersiveMode,
+    setImmersiveMode
   } = useApp();
 
   // Redesigned Custom Top Nav states
@@ -486,10 +488,13 @@ export default function PageChats() {
 
   return (
     <div className="app-page active" id="page-chats">
-      {!currentRoom && (
+      {!currentRoom && !immersiveMode && (
         <div className="lobby-header-bar">
           <div className="lobby-logo-pill">
             <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+          <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} title="进入沉浸模式">
+            <i className="fa-solid fa-expand"></i>
           </div>
         </div>
       )}
