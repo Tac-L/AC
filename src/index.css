@@ -17111,3 +17111,24 @@ body {
 .phone #app-root.immersive .short-drama-container {
   height: 100% !important;
 }
+
+/* Fix lobby lottery games grid overflow on narrow mobile screens */
+.phone .lobby-right-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 5px !important;
+}
+.phone .lobby-game-card {
+  padding: 6px 2px !important;
+  min-width: 0 !important;
+}
+.phone .lobby-game-card span {
+  font-size: 0.54rem !important;
+  white-space: normal !important;
+  line-height: 1.15 !important;
+  word-break: break-all !important;
+  height: 2.3em !important; /* Fixed height for 2 lines to align items vertically */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
