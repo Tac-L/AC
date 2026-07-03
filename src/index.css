@@ -17178,12 +17178,6 @@ body {
 }
 
 /* 1. Games Lobby Page Styling */
-.skin-3 .lobby-header-bar {
-  background: #111d4a !important;
-  border-bottom: 2px solid transparent !important;
-  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
-}
 
 .skin-3 .marquee-announcement {
   background-color: #111d4a !important;
