@@ -61,7 +61,7 @@ export default function PhoneContainer({ children }) {
           {toasts.map(toast => (
             <div key={toast.id} className="toast-notification" style={{
               position: 'absolute',
-              bottom: '120px',
+              top: '75px',
               left: '50%',
               transform: 'translateX(-50%)',
               backgroundColor: 'rgba(0, 0, 0, 0.95)',
