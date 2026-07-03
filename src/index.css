@@ -17692,3 +17692,13 @@ body {
 .skin-3 .video-section-title-row .title-left .red-bar {
   color: #3b82f6 !important;
 }
+.skin-3 .video-action-btn-pill {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  color: #ffffff !important;
+}
+.skin-3 .video-action-btn-pill:hover {
+  background-color: #1d2c6c !important;
+  border-color: #ffa751 !important;
+  color: #ffa751 !important;
+}
