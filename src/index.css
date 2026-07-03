@@ -883,24 +883,27 @@ body {
 
 .drama-left-promo {
   position: absolute;
-  top: 70px;
+  top: 80px;
   left: 12px;
-  width: 90px;
+  width: 86px;
+  height: 86px;
   background: linear-gradient(135deg, #ff4757, #ff6b81);
   border: 1.5px solid #ffe066;
-  border-radius: 8px;
-  padding: 8px 6px;
+  border-radius: 50%;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 3px;
   z-index: 25;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 224, 102, 0.3);
 }
 
 .drama-promo-close {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -2px;
+  right: -2px;
   width: 14px;
   height: 14px;
   background-color: rgba(0, 0, 0, 0.6);
@@ -914,21 +917,18 @@ body {
   border: 1px solid rgba(255,255,255,0.4);
 }
 
-.drama-promo-title {
-  font-size: 0.55rem;
-  color: #ffe066;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
+.drama-promo-item {
+  font-size: 0.6rem;
+  color: #ffffff;
+  font-weight: 700;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  text-align: center;
+  white-space: nowrap;
 }
 
-.drama-promo-sub {
+.drama-promo-item.highlight {
+  color: #ffe066;
   font-size: 0.65rem;
-  color: #ffffff;
-  font-weight: bold;
-  margin-bottom: 6px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .withdraw-tag {

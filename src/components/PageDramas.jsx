@@ -504,12 +504,9 @@ export default function PageDramas() {
         {promoVisible && (
           <div className="drama-left-promo" id="drama-promo-badge">
             <div className="drama-promo-close" onClick={(e) => { e.stopPropagation(); setPromoVisible(false); }}>×</div>
-            <div className="drama-promo-title">开通特权</div>
-            <div className="drama-promo-sub">送钱 <span className="withdraw-tag">可提现</span></div>
-            <div className="drama-promo-footer">
-              <span className="promo-tag">可约炮</span>
-              <span className="promo-tag">可游戏</span>
-            </div>
+            <div className="drama-promo-item highlight">開通特權</div>
+            <div className="drama-promo-item">邀請好友</div>
+            <div className="drama-promo-item">打卡賺錢</div>
           </div>
         )}
 
