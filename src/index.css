@@ -17368,3 +17368,33 @@ body {
 .skin-3 .skin-name {
   color: #ffffff !important;
 }
+
+/* Settings and Activity headers adaptation for Skin 3 */
+.skin-3 .settings-card {
+  background-color: #152259 !important;
+  border: 1px solid #233785 !important;
+  box-shadow: 0 4px 12px rgba(11, 19, 43, 0.4) !important;
+}
+.skin-3 .settings-row {
+  border-bottom: 1px solid #1c2b66 !important;
+}
+.skin-3 .settings-row span,
+.skin-3 .settings-row div,
+.skin-3 .settings-row h4 {
+  color: #ffffff !important;
+}
+.skin-3 .settings-row p,
+.skin-3 .settings-row .desc {
+  color: #94a3b8 !important;
+}
+
+.skin-3 .activity-header-bar {
+  background-color: #111d4a !important;
+  border-bottom: 1px solid #1c2b66 !important;
+}
+.skin-3 .activity-header-title {
+  color: #ffffff !important;
+}
+.skin-3 .activity-header-bar i {
+  color: #ffa751 !important;
+}

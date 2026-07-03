@@ -26,9 +26,7 @@ export default function PageSkinSettings() {
       </div>
 
       <div className="scroll-content settings-content">
-        <div style={{ padding: '16px 16px 8px 16px', fontSize: '0.75rem', color: '#475569', fontWeight: '500' }}>
-          请选择皮肤，后续开启嵌套页面时将自动带入参数：
-        </div>
+
 
         <div className="settings-card">
           {skinOptions.map((opt) => {
