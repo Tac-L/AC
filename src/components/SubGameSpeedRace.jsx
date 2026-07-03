@@ -33,22 +33,24 @@ export default function SubGameSpeedRace() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#ffffff',
+            background: '#242d3c',
             padding: '0 16px',
-            height: '46px',
-            borderBottom: '1px solid #e2e8f0',
+            height: '44px',
+            borderBottom: '3px solid transparent',
+            borderImage: 'linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1',
+            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2)',
             flexShrink: 0,
             boxSizing: 'border-box'
           }}
         >
-          {/* Left: Exit/Back button (matching the right button icon in user reference image) */}
+          {/* Left: Exit/Back button */}
           <button 
             onClick={() => setActiveSubGame(null)} 
             title="返回"
             style={{
               background: 'none',
               border: 'none',
-              color: '#334155',
+              color: '#ffa751',
               fontSize: '1.25rem',
               cursor: 'pointer',
               display: 'flex',
@@ -63,14 +65,14 @@ export default function SubGameSpeedRace() {
           {/* Middle: Empty (嵌套框不要顯示文字) */}
           <div></div>
 
-          {/* Right: Fullscreen button (matching the left button icon in user reference image) */}
+          {/* Right: Fullscreen button */}
           <button 
             onClick={() => setIsFullscreen(true)} 
             title="全屏"
             style={{
               background: 'none',
               border: 'none',
-              color: '#334155',
+              color: '#ffa751',
               fontSize: '1.15rem',
               cursor: 'pointer',
               display: 'flex',
