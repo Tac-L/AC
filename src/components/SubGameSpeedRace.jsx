@@ -32,16 +32,8 @@ export default function SubGameSpeedRace() {
           </button>
         </div>
 
-        <div className="f3new-webview-url-bar" style={{ maxWidth: '220px' }}>
-          <i className="fa-solid fa-lock f3new-webview-secure-icon"></i>
-          <span className="f3new-webview-url-text" title={targetUrl}>
-            tac-l.github.io/F-2/?embed=1&skin={selectedSkin}
-          </span>
-          <i 
-            className="fa-solid fa-arrows-rotate f3new-webview-refresh-icon" 
-            onClick={handleRefresh}
-            title="刷新"
-          ></i>
+        <div style={{ color: '#f1f5f9', fontSize: '0.95rem', fontWeight: '600' }}>
+          一分极速赛车
         </div>
 
         <div className="f3new-webview-controls-right">
