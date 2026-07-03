@@ -9282,7 +9282,9 @@ body {
 /* Video Page Overrides */
 .video-header-bar {
   background: #0e081c !important;
-  border-bottom: 1px solid rgba(255, 226, 89, 0.15) !important;
+  border-bottom: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2) !important;
 }
 .video-header-bar h4 {
   color: var(--text-white) !important;
@@ -9358,7 +9360,9 @@ body {
 /* Lobby Page Overrides */
 .lobby-header-bar {
   background: #0e081c !important;
-  border-bottom: 1px solid rgba(255, 226, 89, 0.15) !important;
+  border-bottom: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2) !important;
 }
 .marquee-announcement {
   background-color: rgba(59, 130, 246, 0.05) !important;
