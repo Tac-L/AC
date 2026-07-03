@@ -9205,6 +9205,9 @@ body {
   color: var(--color-primary) !important;
   text-shadow: none !important;
 }
+.nav-btn.active.brand-active {
+  color: #ffa751 !important;
+}
 .chat-badge {
   border: 1.5px solid #ffffff !important;
   background-color: var(--color-primary) !important;

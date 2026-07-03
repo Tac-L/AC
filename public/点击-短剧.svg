@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
+  <defs>
+    <!-- Gold Gradient for the Spade -->
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe259" />
+      <stop offset="50%" stop-color="#ffa751" />
+      <stop offset="100%" stop-color="#b37d14" />
+    </linearGradient>
+  </defs>
+
+  <!-- Solid Gold Spade Icon -->
+  <g fill="url(#gold-grad)">
+    <!-- Spade Body -->
+    <path d="M 12,3 
+             C 12,3, 6.5,7.5, 6.5,12 
+             C 6.5,15.5, 9.5,16.5, 12,14.5 
+             C 14.5,16.5, 17.5,15.5, 17.5,12 
+             C 17.5,7.5, 12,3, 12,3 Z" />
+    <!-- Spade Stem -->
+    <path d="M 12,14.5 
+             C 12,14.5, 10.5,17, 8.5,19.5 
+             L 15.5,19.5 
+             C 13.5,17, 12,14.5, 12,14.5 Z" />
+  </g>
+</svg>

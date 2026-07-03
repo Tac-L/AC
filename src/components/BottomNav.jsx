@@ -32,13 +32,13 @@ export default function BottomNav() {
         return (
           <div
             key={item.id}
-            className={`nav-btn ${isActive ? 'active' : ''}`}
+            className={`nav-btn ${isActive ? 'active' : ''} ${isActive && item.id === 'page-dramas' ? 'brand-active' : ''}`}
             onClick={() => handleNav(item.id)}
           >
             {item.img ? (
               <img
                 className="nav-btn-img"
-                src={`${isActive ? '点击' : '默认'}-${item.img}.png`}
+                src={`${isActive ? '点击' : '默认'}-${item.img}.${item.img === '短剧' ? 'svg' : 'png'}`}
                 alt={item.label}
               />
             ) : (
