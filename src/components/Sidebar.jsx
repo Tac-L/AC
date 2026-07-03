@@ -21,8 +21,8 @@ export default function Sidebar() {
     <div className="control-panel">
       <div className="logo">
         <i className="fa-solid fa-gem icon-logo"></i>
-        <h1>黑豹娱乐城</h1>
-        <p>BLACK PANTHER CASINO 1068TV</p>
+        <h1>AC娛樂城</h1>
+        <p>AC CASINO & ENTERTAINMENT</p>
       </div>
       
       <div className="desc-card">

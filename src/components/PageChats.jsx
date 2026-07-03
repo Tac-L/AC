@@ -282,7 +282,7 @@ export default function PageChats() {
 
     // Reset messages and append announcements
     const initialMsgs = [
-      { id: 'ann', name: '平台公告', text: '欢迎来到黑豹娱乐交流社区！本群仅供技术探讨，禁止恶意灌水。绿色投资，理智博弈。', isSystem: true }
+      { id: 'ann', name: '平台公告', text: '欢迎来到AC娛樂交流社区！本群仅供技术探讨，禁止恶意灌水。绿色投资，理智博弈。', isSystem: true }
     ];
 
     let activeTemplates = chatTemplates;

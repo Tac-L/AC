@@ -505,7 +505,7 @@ export default function PageHome() {
                 </div>
               </div>
               <div className="hero-right" style={{ justifyContent: 'center', gap: '8px' }}>
-                <span className="hero-history-label" style={{ opacity: 0.8, marginBottom: '2px' }}>黑豹俱乐部</span>
+                <span className="hero-history-label" style={{ opacity: 0.8, marginBottom: '2px' }}>AC俱乐部</span>
                 <div style={{ fontSize: '0.76rem', fontWeight: 'bold', color: '#ffeaa7', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
                   <i className="fa-solid fa-gem"></i> VIP专享特权
                 </div>

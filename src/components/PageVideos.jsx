@@ -532,7 +532,7 @@ export default function PageVideos() {
         <div className="video-marquee-announcement" style={{ margin: '0 12px' }}>
           <i className="fa-solid fa-bullhorn text-orange announcement-icon"></i>
           <div className="marquee-text-container">
-            <div className="marquee-text">欢迎光临黑豹视频！全球顶级观影app，无限看片，全部免费！首充即送300%红利...</div>
+            <div className="marquee-text">欢迎光临AC娛樂视频！全球顶级观影app，无限看片，全部免费！首充即送300%红利...</div>
           </div>
           <i className="fa-regular fa-envelope marquee-mail-icon" onClick={() => setActivePage('page-mail')} title="站内信"></i>
         </div>
