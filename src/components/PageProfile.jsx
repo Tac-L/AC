@@ -109,6 +109,20 @@ export default function PageProfile() {
         </svg>
       )
     },
+    {
+      name: '皮肤',
+      action: () => setActivePage('page-skin-settings'),
+      icon: (
+        <svg viewBox="0 0 24 24" className="feature-svg-icon" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 11.5 21.5 11 21 11H18.5C17.6716 11 17 10.3284 17 9.5C17 9.17157 17.1343 8.85786 17.3536 8.64645L18.8536 7.14645C19.1661 6.83388 19.1661 6.32735 18.8536 6.01478C16.892 4.05315 14.1843 3 11.4 3C6.20812 3 2 7.20812 2 12.4C2 17.7019 6.29807 22 11.6 22H12Z" />
+          <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor" />
+          <circle cx="11.5" cy="7.5" r="1.5" fill="currentColor" />
+          <circle cx="16.5" cy="9.5" r="1" fill="currentColor" />
+          <circle cx="9.5" cy="15.5" r="1.5" fill="currentColor" />
+          <circle cx="14.5" cy="16.5" r="1.5" fill="currentColor" />
+        </svg>
+      )
+    },
     /*
     {
       name: '我的背包',

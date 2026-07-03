@@ -31,6 +31,7 @@ import PageQQ from './components/PageQQ';
 import PageLoginPassword from './components/PageLoginPassword';
 import PageWithdrawPassword from './components/PageWithdrawPassword';
 import PageTwoFactor from './components/PageTwoFactor';
+import PageSkinSettings from './components/PageSkinSettings';
 
 // Sub games
 import SubGameMarkSix from './components/SubGameMarkSix';
@@ -117,6 +118,8 @@ function MainApp() {
         return <PageWithdrawPassword />;
       case 'page-two-factor':
         return <PageTwoFactor />;
+      case 'page-skin-settings':
+        return <PageSkinSettings />;
       default:
         return <PageDramas />;
     }
@@ -132,7 +135,7 @@ function MainApp() {
         {renderActivePage()}
         
         {/* Bottom Navigation is hidden when playing a sub-game or visiting deposit/withdraw */}
-        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-real-name' && activePage !== 'page-qq' && activePage !== 'page-login-password' && activePage !== 'page-withdraw-password' && activePage !== 'page-two-factor' && activePage !== 'page-login' && activePage !== 'page-register' && !immersiveMode && <BottomNav />}
+        {!activeSubGame && activePage !== 'page-deposit' && activePage !== 'page-withdraw' && activePage !== 'page-rebate' && activePage !== 'page-platform-balance' && activePage !== 'page-bet-records' && activePage !== 'page-activity' && activePage !== 'page-offers' && activePage !== 'page-settings' && activePage !== 'page-account-settings' && activePage !== 'page-set-account-password' && activePage !== 'page-bind-phone' && activePage !== 'page-real-name' && activePage !== 'page-qq' && activePage !== 'page-login-password' && activePage !== 'page-withdraw-password' && activePage !== 'page-two-factor' && activePage !== 'page-skin-settings' && activePage !== 'page-login' && activePage !== 'page-register' && !immersiveMode && <BottomNav />}
 
         {/* 3. Global Overlays / Modals */}
         <ModalBetDetails />

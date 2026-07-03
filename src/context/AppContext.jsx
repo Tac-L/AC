@@ -14,6 +14,15 @@ export const AppProvider = ({ children }) => {
   const [activeSubGame, setActiveSubGame] = useState(null); // 'mark_six' or 'fast_three'
   const [phoneSkin, setPhoneSkin] = useState('phone-dark'); // phone-dark, phone-gold, phone-purple, phone-coral
   const [systemTime, setSystemTime] = useState('22:03');
+  const [selectedSkin, setSelectedSkin] = useState(() => {
+    const saved = localStorage.getItem('selectedSkin');
+    return saved ? parseInt(saved, 10) : 2; // 1: 浅蓝, 2: 深蓝 (默认), 3: 午夜蓝, 4: 午夜紫
+  });
+
+  const changeSelectedSkin = (skinValue) => {
+    setSelectedSkin(skinValue);
+    localStorage.setItem('selectedSkin', skinValue);
+  };
 
   // Account credential set via 设置帐号密码 page.
   // null = not yet set (shows the "set" flow); otherwise { account, password }.
@@ -263,6 +272,9 @@ export const AppProvider = ({ children }) => {
       
       phoneSkin,
       setPhoneSkin,
+      
+      selectedSkin,
+      setSelectedSkin: changeSelectedSkin,
       
       systemTime,
 
