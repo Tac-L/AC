@@ -37,11 +37,11 @@ export default function PageGames() {
   // Left vertical category menu (icon + label)
   const categories = [
     { id: 'hot', label: '热门游戏', icon: 'fa-solid fa-fire' },
+    { id: 'lottery', label: '彩票游戏', icon: 'fa-solid fa-ticket' },
     { id: 'egame', label: '电子游艺', icon: 'fa-solid fa-gamepad' },
     { id: 'chess', label: '棋牌对战', icon: 'fa-solid fa-chess' },
     { id: 'fish', label: '捕鱼达人', icon: 'fa-solid fa-fish' },
     { id: 'live', label: '真人视讯', icon: 'fa-solid fa-video' },
-    { id: 'lottery', label: '彩票游戏', icon: 'fa-solid fa-ticket' },
     { id: 'sport', label: '体育竞技', icon: 'fa-solid fa-futbol' }
   ];
 
