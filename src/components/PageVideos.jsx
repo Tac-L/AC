@@ -501,12 +501,18 @@ export default function PageVideos() {
           <div className="lobby-logo-title">
             <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
           </div>
-          <div className="search-bar-middle" onClick={handleSearch}>
-            <i className="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="极品专区" readOnly />
-          </div>
           <div className="header-immersive-btn" onClick={() => setImmersiveMode(true)} style={{ marginLeft: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', height: '100%', color: '#ffa751' }} title="进入沉浸模式">
             <i className="fa-solid fa-expand" style={{ fontSize: '1rem' }}></i>
+          </div>
+        </div>
+      )}
+
+      {/* Full-width Search Bar Row */}
+      {!immersiveMode && (
+        <div className="video-search-row">
+          <div className="video-search-bar" onClick={handleSearch}>
+            <i className="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" className="search-input" placeholder="极品专区" readOnly />
           </div>
         </div>
       )}
