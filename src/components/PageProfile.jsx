@@ -138,6 +138,13 @@ export default function PageProfile() {
 
   return (
     <div className="app-page active" id="page-profile">
+      {/* Header Bar */}
+      <div className="lobby-header-bar">
+        <div className="lobby-logo-pill">
+          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+        </div>
+      </div>
+
       {/* Top Header Section */}
       <div className="profile-header-container">
         <div className="profile-header-top-row">

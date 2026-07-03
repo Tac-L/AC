@@ -455,6 +455,13 @@ export default function PageDramas() {
 
   return (
     <div className="app-page active" id="page-dramas" onWheel={handleWheel}>
+      {/* Header Bar */}
+      <div className="lobby-header-bar">
+        <div className="lobby-logo-pill">
+          <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+        </div>
+      </div>
+
       <div className="short-drama-container" id="drama-player-area">
         {/* Vertical still background */}
         <img

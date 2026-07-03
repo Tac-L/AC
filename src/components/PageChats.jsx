@@ -486,6 +486,14 @@ export default function PageChats() {
 
   return (
     <div className="app-page active" id="page-chats">
+      {!currentRoom && (
+        <div className="lobby-header-bar">
+          <div className="lobby-logo-pill">
+            <img src="assets/logo.svg" className="lobby-brand-logo" alt="LOGO" />
+          </div>
+        </div>
+      )}
+
       {/* 1. Chatrooms Lobby View */}
       {!currentRoom ? (
         showSearchPage ? (
