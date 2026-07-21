@@ -40,6 +40,29 @@ export default function PageSports() {
 
   const matchesData = [
     {
+      id: '100',
+      sport: 'soccer',
+      filters: ['live', 'today', 'hot'],
+      league: '美国乙级联赛',
+      home: 'SC圣地亚哥市',
+      away: '阿纳海姆足球俱乐部',
+      homeFlag: '🇺🇸',
+      awayFlag: '🇺🇸',
+      homeScore: 0,
+      awayScore: 0,
+      halftime: '0:0',
+      corners: '0:0',
+      yellows: '0:0',
+      elapsed: '上半场 20:09',
+      odds: {
+        winHome: 1.85, winAway: 3.40, winDraw: 3.10,
+        handicapHomeText: '-1', handicapHomeVal: 1.77,
+        handicapAwayText: '+1', handicapAwayVal: 2.01,
+        ouOverText: '大 3', ouOverVal: 1.96,
+        ouUnderText: '小 3', ouUnderVal: 1.82
+      }
+    },
+    {
       id: '101',
       sport: 'soccer',
       filters: ['live', 'today', 'hot'],
@@ -575,7 +598,7 @@ export default function PageSports() {
 
               <div className="match-card-footer">
                 <span className="match-time-elapsed">{match.elapsed}</span>
-                <span className="more-markets-btn" onClick={() => showToast('提示：更多玩法盘口对接中！')}>
+                <span className="more-markets-btn" onClick={() => setActiveSubGame('sports_more_play')}>
                   更多玩法 <i className="fa-solid fa-chevron-right"></i>
                 </span>
               </div>

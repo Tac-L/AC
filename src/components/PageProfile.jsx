@@ -235,16 +235,28 @@ export default function PageProfile() {
         <div className="profile-vip-card">
           <div className="profile-vip-left">
             <div className="profile-vip-title">
-              <i className="fa-solid fa-crown"></i> 普通会员
+              <span className="vip-crown-icon-wrapper">
+                <i className="fa-solid fa-crown"></i>
+              </span>
+              <span>AC 尊享 VIP 会员</span>
+              <span className="vip-mini-badge">Exclusive</span>
             </div>
-            <div className="profile-vip-desc">
-              开通VIP，海量影片，专属线路，全场畅看<br />
-              充值1元起送季度卡，彩票打码1000元再送永久卡！
+            <div className="profile-vip-perks">
+              <div className="vip-perk-item">
+                <i className="fa-solid fa-circle-check"></i>
+                <span>海量独家影片 · 极速专线播放</span>
+              </div>
+              <div className="vip-perk-item">
+                <i className="fa-solid fa-circle-check"></i>
+                <span>充值 1 元送季度卡，打码送永久卡</span>
+              </div>
             </div>
           </div>
           <div className="profile-vip-right">
-            <span className="profile-vip-badge">限时特惠</span>
-            <button className="profile-vip-btn" id="btn-buy-vip" onClick={handleBuyVip}>特惠开通</button>
+            <button className="profile-vip-btn" id="btn-buy-vip" onClick={handleBuyVip}>
+              <span>立即开通</span>
+              <i className="fa-solid fa-chevron-right"></i>
+            </button>
           </div>
         </div>
 

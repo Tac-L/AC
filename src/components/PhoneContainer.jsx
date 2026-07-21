@@ -51,36 +51,19 @@ export default function PhoneContainer({ children }) {
           {/* Web App Body Inside Phone */}
           <div className={`app-body skin-${selectedSkin} ${immersiveMode ? 'immersive' : ''}`} id="app-root">
             {children}
+
+            {/* Toast Notification Overlays */}
+            {toasts.map(toast => (
+              <div key={toast.id} className="toast-notification">
+                {toast.message}
+              </div>
+            ))}
           </div>
 
           {/* Floating Immersive Widget */}
           {immersiveMode && !activeSubGame && (
             <ImmersiveWidget />
           )}
-
-          {/* Toast Notification Overlays */}
-          {toasts.map(toast => (
-            <div key={toast.id} className="toast-notification" style={{
-              position: 'absolute',
-              top: '75px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              backgroundColor: 'rgba(0, 0, 0, 0.95)',
-              color: '#fff',
-              border: '1px solid #d4af37', // Gold color variable fallback
-              padding: '8px 16px',
-              borderRadius: '20px',
-              fontSize: '0.7rem',
-              zIndex: '9999',
-              boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-              pointerEvents: 'none',
-              width: '80%',
-              textAlign: 'center',
-              wordBreak: 'break-all'
-            }}>
-              {toast.message}
-            </div>
-          ))}
         </div>
       </div>
     </div>

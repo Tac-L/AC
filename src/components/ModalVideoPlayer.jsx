@@ -40,6 +40,41 @@ const RACE_COLORS = {
   6: '#7a52d6', 7: '#9aa1a8', 8: '#e03131', 9: '#7a2222', 10: '#2f9e44'
 };
 
+// 鱼虾蟹（魚蝦蟹）六面图案 —— 图标来自 public/鱼虾蟹/
+const FISH_CRAB_SYMBOLS = [
+  { key: 'fish', label: '鱼', icon: '鱼虾蟹/鱼.svg', color: '#e03131' },
+  { key: 'prawn', label: '虾', icon: '鱼虾蟹/虾.svg', color: '#2f9e44' },
+  { key: 'crab', label: '蟹', icon: '鱼虾蟹/蟹.svg', color: '#2f9e44' },
+  { key: 'gourd', label: '葫芦', icon: '鱼虾蟹/葫芦.svg', color: '#1971c2' },
+  { key: 'coin', label: '金钱', icon: '鱼虾蟹/金钱.svg', color: '#1971c2' },
+  { key: 'rooster', label: '鸡', icon: '鱼虾蟹/鸡.svg', color: '#c2255c' }
+];
+
+// ===== 百家乐 (Baccarat) 配置 —— 扑克牌素材来自 public/poker/{花色}/{点数}.svg =====
+const BAC_C = { banker: '#e5405e', player: '#12a5cf', tie: '#2fb344', gold: '#e8912a' };
+// 庄闲：庄/闲左右两列（竖），和/庄幸运6 中间上下
+const BAC_MAIN = [
+  { name: '庄', odds: '1.95', color: BAC_C.banker, area: 'z' },
+  { name: '和', odds: '9.0', color: BAC_C.tie, area: 'h' },
+  { name: '庄幸运6', odds: '12.0', color: BAC_C.gold, area: 'l' },
+  { name: '闲', odds: '2.0', color: BAC_C.player, area: 'x' }
+];
+const BAC_PAIR = [
+  { name: '庄对', odds: '12.0', color: BAC_C.banker },
+  { name: '闲对', odds: '12.0', color: BAC_C.player },
+  { name: '任意对子', odds: '6.0', color: BAC_C.tie },
+  { name: '完美对子', odds: '26.0', color: BAC_C.gold }
+];
+const BAC_SIDES = [
+  { name: '闲单', odds: '1.96', color: BAC_C.player },
+  { name: '闲双', odds: '1.96', color: BAC_C.player },
+  { name: '庄单', odds: '1.96', color: BAC_C.banker },
+  { name: '庄双', odds: '1.96', color: BAC_C.banker }
+];
+// 百家乐点数：A=1，10/J/Q/K=0，其余按面值；总和取个位
+const bacCardPoint = (rank) => (rank === 'A' ? 1 : ['10', 'J', 'Q', 'K'].includes(rank) ? 0 : parseInt(rank, 10));
+const bacHandPoints = (cards) => cards.reduce((s, c) => s + bacCardPoint(c.rank), 0) % 10;
+
 export default function ModalVideoPlayer() {
   const {
     balance,
@@ -80,6 +115,21 @@ export default function ModalVideoPlayer() {
   const [srActiveTab, setSrActiveTab] = useState('two-sides'); // two-sides, sum, single
   // Speed Race last draw result:排列 1~10
   const [srResult, setSrResult] = useState([1, 2, 7, 9, 4, 10, 6, 5, 8, 3]);
+
+  // 鱼虾蟹 (Fish-Prawn-Crab) embedded selections: key encoded as `${category}|${symbolKey}`
+  const [selectedFC, setSelectedFC] = useState(new Set());
+  const [fcActiveTab, setFcActiveTab] = useState('single'); // single(单骰), all(全围)
+  const [showFcRules, setShowFcRules] = useState(false);
+  // 鱼虾蟹 last draw result: three symbol keys
+  const [fcResult, setFcResult] = useState(['fish', 'coin', 'rooster']);
+
+  // 百家乐 (Baccarat) selections: key `${category}|${name}`
+  const [selectedBac, setSelectedBac] = useState(new Set());
+  const [bacActiveTab, setBacActiveTab] = useState('main'); // main(庄闲), pair(对子), sides(两面)
+  const [showBacRules, setShowBacRules] = useState(false);
+  // 百家乐当前牌局（补牌示例：闲 2♠3♦=5点→补 4♣=9点；庄 4♥A♠=5点，闲三张为4→补 2♦=7点）
+  const [bacPlayer] = useState([{ suit: 'spade', rank: '2' }, { suit: 'diamond', rank: '3' }, { suit: 'club', rank: '4' }]);
+  const [bacBanker] = useState([{ suit: 'heart', rank: '4' }, { suit: 'spade', rank: 'A' }, { suit: 'diamond', rank: '2' }]);
 
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
@@ -274,7 +324,7 @@ export default function ModalVideoPlayer() {
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace'];
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'fishcrab', 'baccarat'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -445,9 +495,11 @@ export default function ModalVideoPlayer() {
 
   // Games carousel items
   const carouselGameItems = [
-    { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
-    { key: 'marksix', label: '一分六合彩', img: 'assets/mo_mark_six.png' },
-    { key: 'speedrace', label: '一分极速赛车', img: 'assets/speed_race.png' },
+    { key: 'fast3', label: '一分快三', img: '游戏图标/701010.png' },
+    { key: 'marksix', label: '一分六合彩', img: '游戏图标/1070110.png' },
+    { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
+    { key: 'fishcrab', label: '鱼虾蟹', img: '鱼虾蟹/鱼.svg' },
+    { key: 'baccarat', label: '百家乐', emoji: '🃏' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
@@ -629,6 +681,92 @@ export default function ModalVideoPlayer() {
     });
     openBetDetailsModal('speed_race', items);
     setSelectedSR(new Set());
+  };
+
+  // ===== 鱼虾蟹 (Fish-Prawn-Crab) embedded gameplay =====
+  const FC_ODDS = { single: '1.97', all: '180.0' };
+  const handleFCCardClick = (category, symbolKey) => {
+    const key = `${category}|${symbolKey}`;
+    const next = new Set(selectedFC);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedFC(next);
+  };
+
+  const fcCount = selectedFC.size;
+  const fcTotalCost = fcCount * currentBetPrice;
+
+  const handleFCReset = () => {
+    setSelectedFC(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleFCSubmit = () => {
+    if (fcCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (fcTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedFC).map(key => {
+      const [category, symbolKey] = key.split('|');
+      const sym = FISH_CRAB_SYMBOLS.find(s => s.key === symbolKey);
+      return {
+        name: sym ? sym.label : symbolKey,
+        odds: category === '全围' ? FC_ODDS.all : FC_ODDS.single,
+        baseVal: currentBetPrice,
+        category
+      };
+    });
+    openBetDetailsModal('fish_crab', items);
+    setSelectedFC(new Set());
+  };
+
+  // ===== 百家乐 (Baccarat) embedded gameplay =====
+  const BAC_ALL = [...BAC_MAIN, ...BAC_PAIR, ...BAC_SIDES];
+  const bacCategoryOf = { main: '庄闲', pair: '对子', sides: '两面' };
+  const handleBacCardClick = (name) => {
+    const key = `${bacCategoryOf[bacActiveTab]}|${name}`;
+    const next = new Set(selectedBac);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedBac(next);
+  };
+
+  const bacCount = selectedBac.size;
+  const bacTotalCost = bacCount * currentBetPrice;
+
+  const handleBacReset = () => {
+    setSelectedBac(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleBacSubmit = () => {
+    if (bacCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (bacTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedBac).map(key => {
+      const [category, name] = key.split('|');
+      const def = BAC_ALL.find(b => b.name === name);
+      return { name, odds: def ? def.odds : '2.0', baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('baccarat', items);
+    setSelectedBac(new Set());
   };
 
   const toggleDropdownMenu = () => {
@@ -858,7 +996,11 @@ export default function ModalVideoPlayer() {
                         className={`vp-game-card ${activeCarouselGame === item.key ? 'active' : ''} ${isPlayable ? '' : 'disabled'}`}
                         onClick={() => handleCarouselGameClick(item)}
                       >
-                        <img src={item.img} alt={item.label} />
+                        {item.emoji ? (
+                          <span className="vp-game-emoji-icon">{item.emoji}</span>
+                        ) : (
+                          <img src={item.img} alt={item.label} />
+                        )}
                         <span className="vp-game-label-capsule">{item.label}</span>
                       </div>
                     );
@@ -872,7 +1014,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <i className="fa-solid fa-dice" style={{ color: '#3b82f6' }}></i>
+                          <img src="gametype/快三-2.png" alt="一分快三" className="vp-bet-title-icon" />
                           <span>一分快三</span>
                         </div>
                         <div className="vp-bet-countdown-box">
@@ -978,22 +1120,28 @@ export default function ModalVideoPlayer() {
 
                         {/* Middle Action Row */}
                         <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                          <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                          <button
+                            className="console-edit-amount-btn"
+                            onClick={() => setEditQuickAmountsActive(true)}
+                          >
+                            <i className="fa-solid fa-pencil"></i>
+                          </button>
+                          <div className="quick-amounts-bar" style={{ gap: '4px' }}>
                             {quickAmounts.map(val => (
-                              <div 
+                              <div
                                 key={val}
                                 className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                                 onClick={() => handleQuickAmountClick(val)}
-                                style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                                style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                               >
                                 {val}
                               </div>
                             ))}
                           </div>
-                          <input 
-                            type="number" 
-                            className="manual-amount-input" 
-                            placeholder="输入金额" 
+                          <input
+                            type="number"
+                            className="manual-amount-input"
+                            placeholder="输入金额"
                             value={manualAmount}
                             onChange={(e) => setManualAmount(e.target.value)}
                             style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
@@ -1018,7 +1166,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <i className="fa-solid fa-table-cells" style={{ color: '#e03131' }}></i>
+                          <img src="gametype/六合彩-2.png" alt="一分六合彩" className="vp-bet-title-icon" />
                           <span>一分六合彩</span>
                         </div>
                         <div className="vp-bet-countdown-box">
@@ -1213,7 +1361,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <i className="fa-solid fa-flag-checkered" style={{ color: '#2f9e44' }}></i>
+                          <img src="gametype/PK10-2.png" alt="一分极速赛车" className="vp-bet-title-icon" />
                           <span>一分极速赛车</span>
                         </div>
                         <div className="vp-bet-countdown-box">
@@ -1391,6 +1539,319 @@ export default function ModalVideoPlayer() {
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
                         <button className="console-submit-btn active" onClick={handleSRSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'fishcrab' ? (
+                  // 鱼虾蟹 (Fish-Prawn-Crab) console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <img src="鱼虾蟹/鱼.svg" alt="鱼虾蟹" className="vp-bet-title-icon" />
+                          <span>鱼虾蟹</span>
+                        </div>
+                        <div className="vp-bet-countdown-box">
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-colon">:</span>
+                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
+                          <span className="vp-digit-box">{countdown % 10}</span>
+                        </div>
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-circle-question" onClick={() => setShowFcRules(true)} title="玩法说明"></i>
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="vp-fc-result-row" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                          {fcResult.map((symKey, idx) => {
+                            const sym = FISH_CRAB_SYMBOLS.find(s => s.key === symKey);
+                            return sym ? (
+                              <img key={idx} src={sym.icon} alt={sym.label} className="vp-fc-result-img" />
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play tabs: 单骰 / 全围 */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {[
+                          { cat: 'single', label: '单骰' },
+                          { cat: 'all', label: '全围' }
+                        ].map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${fcActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setFcActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                          {FISH_CRAB_SYMBOLS.map(sym => {
+                            const category = fcActiveTab === 'all' ? '全围' : '单骰';
+                            const odds = fcActiveTab === 'all' ? FC_ODDS.all : FC_ODDS.single;
+                            const isSelected = selectedFC.has(`${category}|${sym.key}`);
+                            return (
+                              <div
+                                key={sym.key}
+                                className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                onClick={() => handleFCCardClick(category, sym.key)}
+                                style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                              >
+                                <img className="vp-fc-symbol-img" src={sym.icon} alt={sym.label} />
+                                <div className="odds-card-val" style={{ fontSize: '0.74rem', color: sym.color, fontWeight: 'bold' }}>{odds}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 玩法/游戏规则 overlay */}
+                    {showFcRules && (
+                      <div className="vp-fc-rules-overlay" onClick={() => setShowFcRules(false)}>
+                        <div className="vp-fc-rules-panel" onClick={(e) => e.stopPropagation()}>
+                          <div className="vp-fc-rules-header">
+                            <span>鱼虾蟹玩法说明</span>
+                            <i className="fa-solid fa-xmark" onClick={() => setShowFcRules(false)}></i>
+                          </div>
+                          <div className="vp-fc-rules-body">
+                            <p>鱼虾蟹，又称鱼虾蟹骰宝，在中国南方民间曾是相当普遍的游戏，直至现在人们仍然经常于新春期间进行作娱乐之用。其型式与赔率跟另壹游戏骰宝玩法基本壹样，不过采用的骰子由鱼、虾、蟹、金钱、葫芦及鸡的图案代替点数。</p>
+                            <p className="vp-fc-rules-subtitle">1. 单骰</p>
+                            <p>投注每颗骰子 1 至 6 中指定的图案：</p>
+                            <ul>
+                              <li>图案出现壹次，赔率 1.97</li>
+                              <li>图案出现二次，赔率 2.94</li>
+                              <li>图案出现三次，赔率 3.92</li>
+                            </ul>
+                            <p className="vp-fc-rules-subtitle">2. 全围</p>
+                            <ul>
+                              <li>三颗骰子的图案都壹样视为中奖，赔率 180.0</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{fcCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{fcTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleFCReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleFCSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'baccarat' ? (
+                  // 百家乐 (Baccarat) console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <span className="vp-bet-title-emoji">🃏</span>
+                          <span>百家乐</span>
+                        </div>
+                        <div className="vp-bet-countdown-box">
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-box">0</span>
+                          <span className="vp-digit-colon">:</span>
+                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
+                          <span className="vp-digit-box">{countdown % 10}</span>
+                        </div>
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-circle-question" onClick={() => setShowBacRules(true)} title="游戏规则"></i>
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+                      {/* 开奖结果：缩小置于右上角，比照其他游戏 */}
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="bac-mini-result">
+                          <span className="bac-mini-pts" style={{ color: BAC_C.player }}>闲{bacHandPoints(bacPlayer)}</span>
+                          {/* 闲家：补牌（第三张）放在最左侧，横放 */}
+                          {(bacPlayer.length === 3 ? [bacPlayer[2], bacPlayer[0], bacPlayer[1]] : bacPlayer).map((c, i) => (
+                            <img key={`p${i}`} className={`bac-mini-card ${bacPlayer.length === 3 && i === 0 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
+                          ))}
+                          <span className="bac-mini-sep">|</span>
+                          {/* 庄家：补牌（第三张）放在最右侧，横放 */}
+                          {bacBanker.map((c, i) => (
+                            <img key={`b${i}`} className={`bac-mini-card ${bacBanker.length === 3 && i === 2 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
+                          ))}
+                          <span className="bac-mini-pts" style={{ color: BAC_C.banker }}>庄{bacHandPoints(bacBanker)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play tabs: 庄闲 / 对子 / 两面 */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {[
+                          { cat: 'main', label: '庄闲' },
+                          { cat: 'pair', label: '对子' },
+                          { cat: 'sides', label: '两面' }
+                        ].map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${bacActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setBacActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {bacActiveTab === 'main' && (
+                          <div className="bac-main-grid">
+                            {BAC_MAIN.map(bet => {
+                              const isSel = selectedBac.has(`庄闲|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`bac-bet-card bac-area-${bet.area} ${isSel ? 'selected' : ''}`}
+                                  onClick={() => handleBacCardClick(bet.name)}
+                                >
+                                  <span className="bac-bet-name" style={{ color: bet.color }}>{bet.name}</span>
+                                  <span className="bac-bet-odds" style={{ color: bet.color }}>{bet.odds}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {(bacActiveTab === 'pair' || bacActiveTab === 'sides') && (
+                          <div className="bac-2x2-grid">
+                            {(bacActiveTab === 'pair' ? BAC_PAIR : BAC_SIDES).map(bet => {
+                              const cat = bacActiveTab === 'pair' ? '对子' : '两面';
+                              const isSel = selectedBac.has(`${cat}|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`bac-bet-card ${isSel ? 'selected' : ''}`}
+                                  onClick={() => handleBacCardClick(bet.name)}
+                                >
+                                  <span className="bac-bet-name" style={{ color: bet.color }}>{bet.name}</span>
+                                  <span className="bac-bet-odds" style={{ color: bet.color }}>{bet.odds}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 游戏规则 overlay */}
+                    {showBacRules && (
+                      <div className="vp-fc-rules-overlay" onClick={() => setShowBacRules(false)}>
+                        <div className="vp-fc-rules-panel" onClick={(e) => e.stopPropagation()}>
+                          <div className="vp-fc-rules-header">
+                            <span>百家乐游戏规则</span>
+                            <i className="fa-solid fa-xmark" onClick={() => setShowBacRules(false)}></i>
+                          </div>
+                          <div className="vp-fc-rules-body">
+                            <p className="vp-fc-rules-subtitle">游戏简介</p>
+                            <p>百家乐分为【闲家】和【庄家】，玩家可以下注闲家或庄家，点数总和最接近 9 点者获胜。双方各收到至少两至三张牌，将依照补牌规则多发一张牌。任何一家拿到「例牌」（两张牌合计为 8 或 9 点）时，牌局即结束，不再补牌。</p>
+                            <p className="vp-fc-rules-subtitle">点数计算方法</p>
+                            <p>10、J、Q、K 的扑克牌算作零点，其他按牌面点数计算。当所有牌的点数总和超过 9 点时，仅算总数中的个位。例，最小点数为 0 点（4+6=10）；最大点数为 9 点（4+5=9）取个位数。</p>
+                            <p className="vp-fc-rules-subtitle">例牌</p>
+                            <p>庄闲任何一方两牌合计为 8 或 9 点（称为例牌），双方都不需补牌，即定胜负（双方同持 8 点或 9 点为和局）。</p>
+                            <p className="vp-fc-rules-subtitle">补牌规则</p>
+                            <p>若闲家不需补牌（即闲家首两张牌合计为「6 至 9 点」），庄家以「闲家补牌规则」补牌，即庄首两张牌合计「0 至 5」点要补一张牌，6 点以上不许补牌。</p>
+                            <p className="vp-fc-rules-subtitle">赔率</p>
+                            <ul>
+                              <li>庄 1.95 / 闲 2.0 / 和 9.0 / 庄幸运6 12.0</li>
+                              <li>庄对 12.0 / 闲对 12.0 / 任意对子 6.0 / 完美对子 26.0</li>
+                              <li>闲单 / 闲双 / 庄单 / 庄双 1.96</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{bacCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{bacTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleBacReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleBacSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>

@@ -27,6 +27,10 @@ export default function ModalBetDetails() {
     gameTitle = '一分快三(视频) 投注详情';
   } else if (currentActiveGame === 'speed_race') {
     gameTitle = '一分极速赛车 投注详情';
+  } else if (currentActiveGame === 'fish_crab') {
+    gameTitle = '鱼虾蟹 投注详情';
+  } else if (currentActiveGame === 'baccarat') {
+    gameTitle = '百家乐 投注详情';
   }
 
   // Handle amount change for specific staged item.
@@ -75,6 +79,10 @@ export default function ModalBetDetails() {
       gameName = '一分快三(视频)';
     } else if (currentActiveGame === 'speed_race') {
       gameName = '一分极速赛车';
+    } else if (currentActiveGame === 'fish_crab') {
+      gameName = '鱼虾蟹';
+    } else if (currentActiveGame === 'baccarat') {
+      gameName = '百家乐';
     }
 
     showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);

@@ -5,10 +5,10 @@ export default function PageSkinSettings() {
   const { goBack, selectedSkin, setSelectedSkin, showToast } = useApp();
 
   const skinOptions = [
-    { value: 1, label: '浅蓝', color: '#38bdf8', desc: '清新明亮的天空浅蓝色调' },
-    { value: 2, label: '深蓝 (默认)', color: '#1d4ed8', desc: '经典稳重的系统默认深蓝色调' },
-    { value: 3, label: '午夜蓝', color: '#0f172a', desc: '静谧深邃的暗夜蓝黑色调' },
-    { value: 4, label: '午夜紫', color: '#6b21a8', desc: '高贵神秘的午夜暗紫色调' },
+    { value: 1, label: '浅蓝', color: '#bae6fd', desc: '清爽的天蓝色系' },
+    { value: 2, label: '深蓝 (默认)', color: '#4a72f5', desc: '沉稳的靛蓝色系' },
+    { value: 3, label: '午夜蓝', color: '#1b223c', desc: '深邃的靛蓝紫色系' },
+    { value: 4, label: '午夜紫', color: '#2b1b54', desc: '深邃的靛紫色系' },
   ];
 
   const handleSelectSkin = (value, label) => {

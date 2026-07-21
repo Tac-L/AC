@@ -36,7 +36,8 @@ export default function PageDramas() {
     openBetDetailsModal,
     setEditQuickAmountsActive,
     immersiveMode,
-    setImmersiveMode
+    setImmersiveMode,
+    openActivityPage
   } = useApp();
 
   // Top-left content category tabs. Both tabs share the exact same layout /
@@ -516,11 +517,17 @@ export default function PageDramas() {
 
         {/* Left Promo Gift Badge */}
         {promoVisible && (
-          <div className="drama-left-promo" id="drama-promo-badge">
-            <div className="drama-promo-close" onClick={(e) => { e.stopPropagation(); setPromoVisible(false); }}>×</div>
-            <div className="drama-promo-item highlight">開通特權</div>
-            <div className="drama-promo-item">邀請好友</div>
-            <div className="drama-promo-item">打卡賺錢</div>
+          <div className="drama-left-promo" id="drama-promo-badge" onClick={() => openActivityPage && openActivityPage('task')}>
+            <div className="drama-promo-close" onClick={(e) => { e.stopPropagation(); setPromoVisible(false); }}>
+              <i className="fa-solid fa-xmark"></i>
+            </div>
+            <div className="drama-promo-icon-wrap">
+              <i className="fa-solid fa-gift"></i>
+            </div>
+            <div className="drama-promo-content">
+              <span className="promo-text-highlight">特權開通</span>
+              <span className="promo-text-sub">打卡 · 邀請好友</span>
+            </div>
           </div>
         )}
 

@@ -29,16 +29,13 @@ export default function SubGameSpeedRace() {
       {/* 1. Header Bar (嵌套框) - Shown only when not in fullscreen mode */}
       {!isFullscreen && (
         <div 
+          className="sub-game-header-bar"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#242d3c',
             padding: '0 16px',
             height: '44px',
-            borderBottom: '3px solid transparent',
-            borderImage: 'linear-gradient(90deg, #ffe259, #ffa751, #ffe259) 1',
-            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 226, 89, 0.2)',
             flexShrink: 0,
             boxSizing: 'border-box'
           }}
@@ -50,7 +47,6 @@ export default function SubGameSpeedRace() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#ffa751',
               fontSize: '1.25rem',
               cursor: 'pointer',
               display: 'flex',
@@ -72,7 +68,6 @@ export default function SubGameSpeedRace() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#ffa751',
               fontSize: '1.15rem',
               cursor: 'pointer',
               display: 'flex',

@@ -1,7 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
-  <!-- Filled Blue Video Icon for Active state -->
+  <defs>
+    <mask id="cutout">
+      <rect x="0" y="0" width="24" height="24" fill="#ffffff" />
+      <polygon points="10 9 15 12 10 15" fill="#000000" />
+    </mask>
+  </defs>
   <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="5" width="18" height="14" rx="3" fill="#3b82f6" />
-    <polygon points="10 9 15 12 10 15" fill="#ffffff" />
+    <rect x="3" y="5" width="18" height="14" rx="3" fill="#3b82f6" mask="url(#cutout)" />
   </g>
 </svg>

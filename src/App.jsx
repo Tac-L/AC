@@ -38,6 +38,7 @@ import SubGameMarkSix from './components/SubGameMarkSix';
 import SubGameFastThree from './components/SubGameFastThree';
 import SubGameSpeedRace from './components/SubGameSpeedRace';
 import PageSportsPlatforms from './components/PageSportsPlatforms';
+import PageSportsMorePlay from './components/PageSportsMorePlay';
 
 // Modals
 import ModalBetDetails from './components/ModalBetDetails';
@@ -63,6 +64,9 @@ function MainApp() {
     }
     if (activeSubGame === 'sports_platforms') {
       return <PageSportsPlatforms />;
+    }
+    if (activeSubGame === 'sports_more_play') {
+      return <PageSportsMorePlay />;
     }
 
     switch (activePage) {
