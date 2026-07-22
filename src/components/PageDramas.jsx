@@ -592,8 +592,8 @@ export default function PageDramas() {
             <i className="fa-solid fa-comment-dots"></i>
             <span>{(commentsList[activeIdx] || []).length > 0 ? (commentsList[activeIdx] || []).length : '2.8k'}</span>
           </div>
-          <div className="hud-action-icon" onClick={() => showToast('已加入收藏夹！')}>
-            <i className="fa-regular fa-star"></i>
+          <div className={`hud-action-icon ${isCurrentFavorited ? 'favorited' : ''}`} onClick={toggleFavoriteDrama}>
+            <i className={isCurrentFavorited ? 'fa-solid fa-star' : 'fa-regular fa-star'} style={{ color: isCurrentFavorited ? '#f7b731' : '' }}></i>
             <span>9.4w</span>
           </div>
           <div className="hud-action-icon" onClick={() => showToast('链接已复制到剪切板，去分享给好友吧！')}>
@@ -767,7 +767,12 @@ export default function PageDramas() {
               onClick={toggleFavoriteDrama}
               aria-label={isCurrentFavorited ? '已收藏' : '收藏'}
             >
-              <i className={isCurrentFavorited ? 'fa-solid fa-star' : 'fa-regular fa-star'}></i>
+              {/* 收藏星标：已收藏 / 默认 两张图，替换时改 public 下同名文件即可 */}
+              <img
+                className="drama-episodes-fav-icon"
+                src={isCurrentFavorited ? '收藏-已收藏.svg' : '收藏-默认.svg'}
+                alt=""
+              />
             </button>
           </div>
 
