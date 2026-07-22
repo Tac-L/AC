@@ -59,7 +59,9 @@ export default function PageDramas() {
         '周末好去处推荐｜city walk 打卡日常 #生活 #分享 #日常'
       ],
       creators: ['@旅行的意义', '@巧手日记', '@科学怪谈', '@城市漫游者'],
-      likes: [0, 89000, 152000, 67000]
+      likes: [0, 89000, 152000, 67000],
+      names: ['东京夜の散步', '折纸玫瑰教程', '科学冷知识', 'city walk 打卡'],
+      episodeCounts: [12, 8, 6, 10]
     },
     duanju: {
       bases: ['drama_still1', 'origami', 'banner', 'science'],
@@ -76,7 +78,9 @@ export default function PageDramas() {
         '《战神重生成奶爸》第二集：我的萌宝是天才 #都市 #热血 #打脸'
       ],
       creators: ['@陈名豪,谭盐盐,李一沐,伍雅露', '@小美剧场', '@经典剧场栏目', '@奶爸战神'],
-      likes: [0, 125000, 348000, 521000]
+      likes: [0, 125000, 348000, 521000],
+      names: ['依然的喜事', '霸道总裁爱上我', '真假千金的豪门较量', '战神重生成奶爸'],
+      episodeCounts: [8, 24, 30, 16]
     }
   };
 
@@ -103,6 +107,8 @@ export default function PageDramas() {
 
   const dramaTitles = activeContent.titles;
   const dramaCreators = activeContent.creators;
+  const dramaNames = activeContent.names;
+  const dramaEpisodeCounts = activeContent.episodeCounts;
 
   // Store numerical representation of likes to handle local increments
   const [likesData, setLikesData] = useState(TAB_CONTENT.douyin.likes);
@@ -132,6 +138,18 @@ export default function PageDramas() {
   const [manualAmount, setManualAmount] = useState('');
   const [liveK3Issue, setLiveK3Issue] = useState(20260609622);
   const [liveK3Dice, setLiveK3Dice] = useState([4, 2, 2]);
+
+  // Episodes selection modal state
+  const [episodesOpen, setEpisodesOpen] = useState(false);
+  const [selectedEpisode, setSelectedEpisode] = useState(1);
+  // Favorited dramas keyed by "tab-idx" so each drama keeps its own state
+  const [favoritedDramas, setFavoritedDramas] = useState(new Set());
+
+  // Current drama's total episode count and favorite key (must sit after the
+  // activeIdx / favoritedDramas state declarations above)
+  const currentEpisodeCount = dramaEpisodeCounts[activeIdx] || 1;
+  const currentFavKey = `${activeTab}-${activeIdx}`;
+  const isCurrentFavorited = favoritedDramas.has(currentFavKey);
 
   // Comments state
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -436,6 +454,29 @@ export default function PageDramas() {
     });
   };
 
+  // --- Episodes modal handlers ---
+  const openEpisodes = () => {
+    setEpisodesOpen(true);
+  };
+
+  const handleSelectEpisode = (ep) => {
+    setSelectedEpisode(ep);
+    setEpisodesOpen(false);
+    showToast(`正在播放第 ${ep} 集`);
+  };
+
+  const toggleFavoriteDrama = () => {
+    const next = new Set(favoritedDramas);
+    if (next.has(currentFavKey)) {
+      next.delete(currentFavKey);
+      showToast('已取消收藏');
+    } else {
+      next.add(currentFavKey);
+      showToast('已加入收藏 ⭐');
+    }
+    setFavoritedDramas(next);
+  };
+
   const handleSendComment = (e) => {
     if (e) e.preventDefault();
     if (!newCommentText.trim()) return;
@@ -582,8 +623,8 @@ export default function PageDramas() {
           <p id="drama-title">{dramaTitles[activeIdx]}</p>
           
           {/* Series episodes list link */}
-          <div className="drama-episodes-link" onClick={() => showToast('正在加载短剧剧集列表...')}>
-            <span>全9集 进入剧集</span>
+          <div className="drama-episodes-link" onClick={(e) => { e.stopPropagation(); openEpisodes(); }}>
+            <span>全{currentEpisodeCount}集 进入剧集</span>
             <i className="fa-solid fa-chevron-right" style={{ marginLeft: '4px' }}></i>
           </div>
 
@@ -698,6 +739,60 @@ export default function PageDramas() {
         {/* Betting Bottom Sheet Drawer */}
         <div className={`drama-comments-sheet drama-betting-sheet ${betPanelOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
           <ModalVideoPlayer embedded onClose={() => setBetPanelOpen(false)} />
+        </div>
+
+        {/* Episodes Backdrop Overlay */}
+        <div
+          className={`drama-comments-backdrop ${episodesOpen ? 'open' : ''}`}
+          onClick={() => setEpisodesOpen(false)}
+        />
+
+        {/* Episodes Selection Bottom Sheet */}
+        <div className={`drama-comments-sheet drama-episodes-sheet ${episodesOpen ? 'open' : ''}`} onClick={(e) => e.stopPropagation()}>
+          <div className="drama-episodes-handle" />
+
+          {/* Drama info header */}
+          <div className="drama-episodes-info">
+            <img
+              className="drama-episodes-poster"
+              src={dramaStills[activeIdx]}
+              alt={dramaNames[activeIdx]}
+            />
+            <div className="drama-episodes-meta">
+              <div className="drama-episodes-name">{dramaNames[activeIdx]}</div>
+              <div className="drama-episodes-count">全{currentEpisodeCount}集</div>
+            </div>
+            <button
+              className={`drama-episodes-fav-btn ${isCurrentFavorited ? 'active' : ''}`}
+              onClick={toggleFavoriteDrama}
+              aria-label={isCurrentFavorited ? '已收藏' : '收藏'}
+            >
+              <i className={isCurrentFavorited ? 'fa-solid fa-star' : 'fa-regular fa-star'}></i>
+            </button>
+          </div>
+
+          {/* Episode range chip */}
+          <div className="drama-episodes-range">
+            <span className="drama-episodes-range-chip active">1-{currentEpisodeCount}</span>
+          </div>
+
+          {/* Episode grid */}
+          <div className="drama-episodes-grid-wrap">
+            <div className="drama-episodes-grid">
+              {Array.from({ length: currentEpisodeCount }).map((_, i) => {
+                const ep = i + 1;
+                return (
+                  <button
+                    key={ep}
+                    className={`drama-episode-cell ${selectedEpisode === ep ? 'active' : ''}`}
+                    onClick={() => handleSelectEpisode(ep)}
+                  >
+                    {ep}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
