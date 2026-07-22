@@ -1287,6 +1287,14 @@ body {
   flex-shrink: 0;
 }
 
+/* 短剧模式：切换游戏面板打开时，点面板以外区域关闭（透明遮罩，层级低于面板高于控制台） */
+.vp-carousel-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 125;
+  background: transparent;
+}
+
 /* 短剧模式：切换游戏面板从顶部弹出，四周内缩为圆角浮层，右侧留出间距 */
 .vp-game-carousel-overlay {
   position: absolute;

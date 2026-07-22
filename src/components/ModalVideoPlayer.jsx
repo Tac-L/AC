@@ -885,6 +885,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
               <div className="vp-play-panel">
                 {/* Game Carousel Switcher（视频常驻顶部；短剧点切换箭头后从上方弹出） */}
                 {(!embedded || carouselOpen) && (
+                <>
+                {embedded && carouselOpen && (
+                  <div className="vp-carousel-backdrop" onClick={() => setCarouselOpen(false)}></div>
+                )}
                 <div className={`vp-game-carousel ${embedded ? 'vp-game-carousel-overlay' : ''}`}>
                   {carouselGameItems.map(item => {
                     const isPlayable = playableCarouselGames.includes(item.key);
@@ -904,6 +908,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     );
                   })}
                 </div>
+                </>
                 )}
 
                 {/* Betting Area - conditional on selected game */}
