@@ -1,22 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
-// Helper to render points as dice
+// 快三点位：用 public/K3-ball/{1-6}.png 骰子球图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
-    const digits = name.split('').map(Number);
+    const digits = name.split('');
+    const size = digits.length === 1 ? 42 : digits.length === 2 ? 32 : 24;
     return (
       <div style={{ display: 'flex', gap: '3px', justifyContent: 'center', alignItems: 'center' }}>
         {digits.map((val, idx) => (
-          <div key={idx} className={`dice dice-${val}`} style={{ width: '18px', height: '18px', padding: '2px', border: '1px solid #cbd5e0', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-            {val === 1 ? (
-              <span className="dot red-dot" style={{ width: '4px', height: '4px' }}></span>
-            ) : (
-              Array.from({ length: val }).map((_, dIdx) => (
-                <span key={dIdx} className="dot" style={{ width: '3px', height: '3px' }}></span>
-              ))
-            )}
-          </div>
+          <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: `${size}px`, height: `${size}px` }} />
         ))}
       </div>
     );
@@ -75,6 +68,14 @@ const BAC_SIDES = [
 const bacCardPoint = (rank) => (rank === 'A' ? 1 : ['10', 'J', 'Q', 'K'].includes(rank) ? 0 : parseInt(rank, 10));
 const bacHandPoints = (cards) => cards.reduce((s, c) => s + bacCardPoint(c.rank), 0) % 10;
 
+// ===== 动物运动会（冠军玩法）—— 开奖用 public/T-ball/T{1-6}.svg =====
+const ANIMAL_C = { blue: '#5b7cf5', orange: '#f0a83a' };
+const ANIMAL_TWOSIDES = [
+  { name: '大', color: ANIMAL_C.blue }, { name: '小', color: ANIMAL_C.orange },
+  { name: '单', color: ANIMAL_C.blue }, { name: '双', color: ANIMAL_C.orange },
+  { name: '龙', color: ANIMAL_C.blue }, { name: '虎', color: ANIMAL_C.orange }
+];
+
 export default function ModalVideoPlayer() {
   const {
     balance,
@@ -92,8 +93,8 @@ export default function ModalVideoPlayer() {
   // Local state for embedded Fast Three
   const [collapsed, setCollapsed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [countdown, setCountdown] = useState(9);
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [countdown, setCountdown] = useState(55);
+  const [phase, setPhase] = useState('betting'); // 'betting' | 'sealed'（封盘含开奖）
   const [issue, setIssue] = useState(202606041274);
   const [lastDice, setLastDice] = useState([1, 3, 6]);
   const [analysis, setAnalysis] = useState({ sum: 10, size: '小', oe: '双' });
@@ -103,6 +104,7 @@ export default function ModalVideoPlayer() {
   const [selectedOdds, setSelectedOdds] = useState(new Set());
   const [betAmount, setBetAmount] = useState(50);
   const [manualAmount, setManualAmount] = useState('');
+  const [manualFocused, setManualFocused] = useState(false); // 是否聚焦「输入金额」
 
   // Mark Six (六合彩) embedded selections: each entry is { name, odds, category }
   const [selectedM6, setSelectedM6] = useState(new Set());
@@ -130,6 +132,12 @@ export default function ModalVideoPlayer() {
   // 百家乐当前牌局（补牌示例：闲 2♠3♦=5点→补 4♣=9点；庄 4♥A♠=5点，闲三张为4→补 2♦=7点）
   const [bacPlayer] = useState([{ suit: 'spade', rank: '2' }, { suit: 'diamond', rank: '3' }, { suit: 'club', rank: '4' }]);
   const [bacBanker] = useState([{ suit: 'heart', rank: '4' }, { suit: 'spade', rank: 'A' }, { suit: 'diamond', rank: '2' }]);
+
+  // 动物运动会 (Animal Sports) selections: key `${category}|${name}`
+  const [selectedAnimal, setSelectedAnimal] = useState(new Set());
+  const [animalActiveTab, setAnimalActiveTab] = useState('twosides'); // twosides(冠军两面), single(冠军单码)
+  // 动物运动会开奖结果：名次排列（T-ball 1~6）
+  const [animalResult] = useState([3, 1, 5, 2, 6, 4]);
 
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
@@ -173,47 +181,62 @@ export default function ModalVideoPlayer() {
   const chatEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
-  // Countdown loop
+  // 投注时长：百家乐 25 秒，其他游戏 55 秒（+ 5 秒封盘含开奖）
+  const SEALED_SECONDS = 5;
+  const getBettingSeconds = () => (activeCarouselGame === 'baccarat' ? 25 : 55);
+
+  // 切换游戏时重置本期倒计时为该游戏的投注时长
+  useEffect(() => {
+    setPhase('betting');
+    setCountdown(activeCarouselGame === 'baccarat' ? 25 : 55);
+  }, [activeCarouselGame]);
+
+  // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期
   useEffect(() => {
     if (!videoPlayerActive) return;
     let timer;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
-    } else {
+    } else if (phase === 'betting') {
+      // 进入封盘并开奖
       performDrawing();
+      setPhase('sealed');
+      setCountdown(SEALED_SECONDS);
+    } else {
+      // 封盘结束，进入下一期投注
+      setIssue(prev => prev + 1);
+      setPhase('betting');
+      setCountdown(getBettingSeconds());
     }
     return () => clearTimeout(timer);
-  }, [countdown, videoPlayerActive]);
+  }, [countdown, phase, videoPlayerActive, activeCarouselGame]);
 
+  // 开奖：更新快三骰子/分析结果（不再重置倒计时，由状态机负责）
   const performDrawing = () => {
-    setIsDrawing(true);
-    let rollCount = 0;
-    const rollTimer = setInterval(() => {
-      setLastDice([
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1
-      ]);
-      rollCount++;
-      if (rollCount >= 10) {
-        clearInterval(rollTimer);
-        const finalDice = [
-          Math.floor(Math.random() * 6) + 1,
-          Math.floor(Math.random() * 6) + 1,
-          Math.floor(Math.random() * 6) + 1
-        ];
-        setLastDice(finalDice);
-        
-        const sumVal = finalDice[0] + finalDice[1] + finalDice[2];
-        const sizeVal = sumVal >= 11 ? '大' : '小';
-        const oeVal = sumVal % 2 === 0 ? '双' : '单';
-        setAnalysis({ sum: sumVal, size: sizeVal, oe: oeVal });
+    const finalDice = [
+      Math.floor(Math.random() * 6) + 1,
+      Math.floor(Math.random() * 6) + 1,
+      Math.floor(Math.random() * 6) + 1
+    ];
+    setLastDice(finalDice);
+    const sumVal = finalDice[0] + finalDice[1] + finalDice[2];
+    setAnalysis({ sum: sumVal, size: sumVal >= 11 ? '大' : '小', oe: sumVal % 2 === 0 ? '双' : '单' });
+  };
 
-        setIssue(prev => prev + 1);
-        setCountdown(15);
-        setIsDrawing(false);
-      }
-    }, 100);
+  // 倒计时显示：投注中(数字) → 已封盘
+  const renderCountdown = () => {
+    if (phase === 'sealed') {
+      return <span className="vp-phase-tag vp-phase-sealed">已封盘</span>;
+    }
+    return (
+      <div className="vp-bet-countdown-box">
+        <span className="vp-digit-box">0</span>
+        <span className="vp-digit-box">0</span>
+        <span className="vp-digit-colon">:</span>
+        <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
+        <span className="vp-digit-box">{countdown % 10}</span>
+      </div>
+    );
   };
 
   // Rotating banner announcements configuration
@@ -324,7 +347,7 @@ export default function ModalVideoPlayer() {
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'fishcrab', 'baccarat'];
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'animal', 'fishcrab', 'baccarat'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -498,6 +521,7 @@ export default function ModalVideoPlayer() {
     { key: 'fast3', label: '一分快三', img: '游戏图标/701010.png' },
     { key: 'marksix', label: '一分六合彩', img: '游戏图标/1070110.png' },
     { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
+    { key: 'animal', label: '动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
     { key: 'fishcrab', label: '鱼虾蟹', img: '鱼虾蟹/鱼.svg' },
     { key: 'baccarat', label: '百家乐', emoji: '🃏' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
@@ -522,7 +546,7 @@ export default function ModalVideoPlayer() {
     triple: [
       { name: '111', odds: '200.0' }, { name: '222', odds: '200.0' }, { name: '333', odds: '200.0' },
       { name: '444', odds: '200.0' }, { name: '555', odds: '200.0' }, { name: '666', odds: '200.0' },
-      { name: '任意豹子', odds: '35.0' }
+      { name: '全豹', odds: '35.0' }
     ],
     sum: [
       { name: '和值4', odds: '80.0' }, { name: '和值5', odds: '40.0' }, { name: '和值6', odds: '25.0' },
@@ -547,7 +571,7 @@ export default function ModalVideoPlayer() {
     setSelectedOdds(nextSet);
   };
 
-  const activeQuickAmount = manualAmount === '' ? betAmount : 0;
+  const activeQuickAmount = (manualFocused || manualAmount !== '') ? 0 : betAmount;
 
   const handleQuickAmountClick = (val) => {
     setBetAmount(val);
@@ -586,7 +610,7 @@ export default function ModalVideoPlayer() {
       // Find matching odds from configured grids
       let odds = '9.75'; // default
       if (activeTab === 'pair') odds = '12.5';
-      if (activeTab === 'triple') odds = name === '任意豹子' ? '35.0' : '200.0';
+      if (activeTab === 'triple') odds = name === '全豹' ? '35.0' : '200.0';
       if (activeTab === 'sum') {
         const found = oddsData.sum.find(x => x.name === name);
         odds = found ? found.odds : '9.0';
@@ -731,10 +755,24 @@ export default function ModalVideoPlayer() {
   // ===== 百家乐 (Baccarat) embedded gameplay =====
   const BAC_ALL = [...BAC_MAIN, ...BAC_PAIR, ...BAC_SIDES];
   const bacCategoryOf = { main: '庄闲', pair: '对子', sides: '两面' };
+  // 互斥盘口：选中其一会取消同组其他项（庄/闲，闲单/闲双，庄单/庄双）
+  const BAC_EXCLUSIVE = {
+    '庄闲|庄': ['庄闲|闲'],
+    '庄闲|闲': ['庄闲|庄'],
+    '两面|闲单': ['两面|闲双'],
+    '两面|闲双': ['两面|闲单'],
+    '两面|庄单': ['两面|庄双'],
+    '两面|庄双': ['两面|庄单']
+  };
   const handleBacCardClick = (name) => {
     const key = `${bacCategoryOf[bacActiveTab]}|${name}`;
     const next = new Set(selectedBac);
-    next.has(key) ? next.delete(key) : next.add(key);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      (BAC_EXCLUSIVE[key] || []).forEach(k => next.delete(k));
+      next.add(key);
+    }
     setSelectedBac(next);
   };
 
@@ -767,6 +805,45 @@ export default function ModalVideoPlayer() {
     });
     openBetDetailsModal('baccarat', items);
     setSelectedBac(new Set());
+  };
+
+  // ===== 动物运动会 (Animal Sports) embedded gameplay =====
+  const animalCatOf = { twosides: '冠军两面', single: '冠军单码' };
+  const handleAnimalCardClick = (name) => {
+    const key = `${animalCatOf[animalActiveTab]}|${name}`;
+    const next = new Set(selectedAnimal);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedAnimal(next);
+  };
+
+  const animalCount = selectedAnimal.size;
+  const animalTotalCost = animalCount * currentBetPrice;
+
+  const handleAnimalReset = () => {
+    setSelectedAnimal(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleAnimalSubmit = () => {
+    if (animalCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (animalTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedAnimal).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: category === '冠军单码' ? '5.7' : '1.9', baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('animal_sports', items);
+    setSelectedAnimal(new Set());
   };
 
   const toggleDropdownMenu = () => {
@@ -1014,16 +1091,9 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <img src="gametype/快三-2.png" alt="一分快三" className="vp-bet-title-icon" />
                           <span>一分快三</span>
                         </div>
-                        <div className="vp-bet-countdown-box">
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-colon">:</span>
-                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-                          <span className="vp-digit-box">{countdown % 10}</span>
-                        </div>
+                        {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
@@ -1085,19 +1155,19 @@ export default function ModalVideoPlayer() {
                         ))}
                       </div>
 
-                      {/* Betting Options Grid */}
-                      <div className="vid-fast3-options-wrap" style={{ padding: '8px 12px', minHeight: '120px', flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-                        <div className="live-betting-options-grid active" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {/* Betting Options Grid（点位样式与一分六合彩一致） */}
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                           {oddsData[activeTab]?.map(card => {
                             const isSelected = selectedOdds.has(card.name);
                             return (
-                              <div 
+                              <div
                                 key={card.name}
                                 className={`live-odds-card ${isSelected ? 'selected' : ''}`}
                                 onClick={() => handleOddsCardClick(card.name)}
                                 style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                               >
-                                <div className="odds-card-name" style={{ fontSize: '0.75rem' }}>{renderDiceOptionName(card.name)}</div>
+                                <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{activeTab === 'sum' ? card.name.replace('和值', '') : renderDiceOptionName(card.name)}</div>
                                 <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>{card.odds}</div>
                               </div>
                             );
@@ -1144,6 +1214,8 @@ export default function ModalVideoPlayer() {
                             placeholder="输入金额"
                             value={manualAmount}
                             onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
                             style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
                           />
                         </div>
@@ -1166,16 +1238,9 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <img src="gametype/六合彩-2.png" alt="一分六合彩" className="vp-bet-title-icon" />
                           <span>一分六合彩</span>
                         </div>
-                        <div className="vp-bet-countdown-box">
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-colon">:</span>
-                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-                          <span className="vp-digit-box">{countdown % 10}</span>
-                        </div>
+                        {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
@@ -1211,9 +1276,9 @@ export default function ModalVideoPlayer() {
                       {/* Play category tabs */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
-                          { cat: 'two-sides', label: '两面' },
-                          { cat: 'color', label: '色波' },
-                          { cat: 'zodiac', label: '生肖' },
+                          { cat: 'two-sides', label: '特码两面' },
+                          { cat: 'color', label: '特码色波' },
+                          { cat: 'zodiac', label: '特码生肖' },
                           { cat: 'special', label: '特码' }
                         ].map(tab => (
                           <div
@@ -1269,7 +1334,7 @@ export default function ModalVideoPlayer() {
 
                         {/* 生肖 */}
                         {m6ActiveTab === 'zodiac' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px' }}>
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                             {M6_ZODIACS.map(name => {
                               const isSelected = selectedM6.has(`生肖|${name}`);
                               return (
@@ -1277,10 +1342,10 @@ export default function ModalVideoPlayer() {
                                   key={name}
                                   className={`live-odds-card ${isSelected ? 'selected' : ''}`}
                                   onClick={() => handleM6CardClick('生肖', name)}
-                                  style={{ height: '48px', padding: '0 2px' }}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
-                                  <div className="odds-card-name" style={{ fontSize: '0.8rem', marginBottom: '2px' }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.62rem' }}>9.75</div>
+                                  <div className="odds-card-name" style={{ fontSize: '0.9rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
                                 </div>
                               );
                             })}
@@ -1289,7 +1354,7 @@ export default function ModalVideoPlayer() {
 
                         {/* 特码 */}
                         {m6ActiveTab === 'special' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(7, 1fr)', gap: '5px' }}>
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
                             {Array.from({ length: 49 }, (_, i) => i + 1).map(n => {
                               const name = n.toString().padStart(2, '0');
                               const isSelected = selectedM6.has(`特码|${name}`);
@@ -1298,10 +1363,10 @@ export default function ModalVideoPlayer() {
                                   key={n}
                                   className={`live-odds-card ${isSelected ? 'selected' : ''}`}
                                   onClick={() => handleM6CardClick('特码', name)}
-                                  style={{ height: '46px', padding: '2px' }}
+                                  style={{ height: '58px', padding: '2px' }}
                                 >
-                                  <span className={`m6new-num-ball ball-${getM6BallColor(n)}`} style={{ width: '24px', height: '24px', fontSize: '0.6rem', marginBottom: '2px' }}>{name}</span>
-                                  <div className="odds-card-val" style={{ fontSize: '0.55rem' }}>9.75</div>
+                                  <span className={`m6new-num-ball ball-${getM6BallColor(n)}`} style={{ width: '30px', height: '30px', fontSize: '0.72rem', marginBottom: '3px' }}>{name}</span>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.75</div>
                                 </div>
                               );
                             })}
@@ -1323,13 +1388,16 @@ export default function ModalVideoPlayer() {
                       </div>
 
                       <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
                           {quickAmounts.map(val => (
                             <div
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -1341,6 +1409,8 @@ export default function ModalVideoPlayer() {
                           placeholder="输入金额"
                           value={manualAmount}
                           onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
                           style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
@@ -1361,16 +1431,9 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <img src="gametype/PK10-2.png" alt="一分极速赛车" className="vp-bet-title-icon" />
                           <span>一分极速赛车</span>
                         </div>
-                        <div className="vp-bet-countdown-box">
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-colon">:</span>
-                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-                          <span className="vp-digit-box">{countdown % 10}</span>
-                        </div>
+                        {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
@@ -1512,13 +1575,16 @@ export default function ModalVideoPlayer() {
                       </div>
 
                       <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
                           {quickAmounts.map(val => (
                             <div
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -1530,6 +1596,8 @@ export default function ModalVideoPlayer() {
                           placeholder="输入金额"
                           value={manualAmount}
                           onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
                           style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
@@ -1550,16 +1618,9 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <img src="鱼虾蟹/鱼.svg" alt="鱼虾蟹" className="vp-bet-title-icon" />
                           <span>鱼虾蟹</span>
                         </div>
-                        <div className="vp-bet-countdown-box">
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-colon">:</span>
-                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-                          <span className="vp-digit-box">{countdown % 10}</span>
-                        </div>
+                        {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <i className="fa-solid fa-circle-question" onClick={() => setShowFcRules(true)} title="玩法说明"></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
@@ -1656,13 +1717,16 @@ export default function ModalVideoPlayer() {
                       </div>
 
                       <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
                           {quickAmounts.map(val => (
                             <div
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -1674,6 +1738,8 @@ export default function ModalVideoPlayer() {
                           placeholder="输入金额"
                           value={manualAmount}
                           onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
                           style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
@@ -1694,16 +1760,9 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <span className="vp-bet-title-emoji">🃏</span>
                           <span>百家乐</span>
                         </div>
-                        <div className="vp-bet-countdown-box">
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-box">0</span>
-                          <span className="vp-digit-colon">:</span>
-                          <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-                          <span className="vp-digit-box">{countdown % 10}</span>
-                        </div>
+                        {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <i className="fa-solid fa-circle-question" onClick={() => setShowBacRules(true)} title="游戏规则"></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
@@ -1826,13 +1885,16 @@ export default function ModalVideoPlayer() {
                         </div>
                       </div>
                       <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                        <div className="quick-amounts-bar" style={{ padding: '2px', gap: '3px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
                           {quickAmounts.map(val => (
                             <div
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.65rem', padding: '4px 6px' }}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -1844,6 +1906,8 @@ export default function ModalVideoPlayer() {
                           placeholder="输入金额"
                           value={manualAmount}
                           onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
                           style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
@@ -1857,13 +1921,158 @@ export default function ModalVideoPlayer() {
                       </div>
                     </div>
                   </div>
+                ) : activeCarouselGame === 'animal' ? (
+                  // 动物运动会 (Animal Sports) console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <span>动物运动会</span>
+                        </div>
+                        {renderCountdown()}
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 开奖结果：T-ball 名次排列 */}
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="animal-mini-result">
+                          {animalResult.map((n, i) => (
+                            <img key={i} className="animal-mini-ball" src={`T-ball/T${n}.svg`} alt={`T${n}`} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play tabs: 冠军两面 / 冠军单码 */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {[
+                          { cat: 'twosides', label: '冠军两面' },
+                          { cat: 'single', label: '冠军单码' }
+                        ].map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${animalActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setAnimalActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {animalActiveTab === 'twosides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {ANIMAL_TWOSIDES.map(bet => {
+                              const isSel = selectedAnimal.has(`冠军两面|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`live-odds-card ${isSel ? 'selected' : ''}`}
+                                  onClick={() => handleAnimalCardClick(bet.name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{bet.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>1.9</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {animalActiveTab === 'single' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {[1, 2, 3, 4, 5, 6].map(n => {
+                              const isSel = selectedAnimal.has(`冠军单码|${n}`);
+                              return (
+                                <div
+                                  key={n}
+                                  className={`live-odds-card ${isSel ? 'selected' : ''}`}
+                                  onClick={() => handleAnimalCardClick(String(n))}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <img className="animal-ball-img" src={`T-ball/T${n}.svg`} alt={`T${n}`} style={{ marginBottom: '4px' }} />
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>5.7</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{animalCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{animalTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleAnimalReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleAnimalSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   // Interactive slots gameplay panel
                   <div className="vp-slots-betting-box">
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          <i className="fa-solid fa-gamepad" style={{ color: '#d97706' }}></i>
                           <span>{carouselGameItems.find(g => g.key === activeCarouselGame)?.label || '电子游戏'}</span>
                         </div>
                         <div className="vp-bet-header-right">
@@ -1932,7 +2141,7 @@ export default function ModalVideoPlayer() {
                 <div className="vp-promo-banner" onClick={() => showToast('恭喜！特权赠送活动正在对接中！')}>
                   <div>
                     <span className="vp-promo-badge">VIP</span>
-                    <span>开通特权 送钱 畅享全站资源... 可游戏 可提现 可约炮</span>
+                    <span>开通特权 送钱 畅享全站资源... 可游戏 可提现</span>
                   </div>
                   <span style={{ color: '#f59e0b', fontSize: '0.65rem' }}>立即开通 &gt;&gt;</span>
                 </div>

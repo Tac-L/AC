@@ -31,6 +31,8 @@ export default function ModalBetDetails() {
     gameTitle = '鱼虾蟹 投注详情';
   } else if (currentActiveGame === 'baccarat') {
     gameTitle = '百家乐 投注详情';
+  } else if (currentActiveGame === 'animal_sports') {
+    gameTitle = '动物运动会 投注详情';
   }
 
   // Handle amount change for specific staged item.
@@ -83,6 +85,8 @@ export default function ModalBetDetails() {
       gameName = '鱼虾蟹';
     } else if (currentActiveGame === 'baccarat') {
       gameName = '百家乐';
+    } else if (currentActiveGame === 'animal_sports') {
+      gameName = '动物运动会';
     }
 
     showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);

@@ -116,14 +116,13 @@ export default function ModalsConfig() {
             </button>
           </div>
           
-          <div className="sub-modal-inputs-grid">
+          <div className="sub-modal-inputs-grid qa-edit-grid">
             {localQuicks.map((amt, idx) => (
-              <div key={idx} className="input-item">
-                <span className="input-lbl">金额 {idx + 1}</span>
-                <input 
-                  type="number" 
-                  className="sub-modal-input" 
-                  id={`input-quick-${idx + 1}`} 
+              <div key={idx} className="qa-edit-item">
+                <input
+                  type="number"
+                  className="sub-modal-input"
+                  id={`input-quick-${idx + 1}`}
                   value={amt}
                   onChange={(e) => {
                     const val = parseFloat(e.target.value) || '';
@@ -132,10 +131,21 @@ export default function ModalsConfig() {
                     setLocalQuicks(next);
                   }}
                 />
+                <button
+                  type="button"
+                  className="qa-edit-clear"
+                  onClick={() => {
+                    const next = [...localQuicks];
+                    next[idx] = '';
+                    setLocalQuicks(next);
+                  }}
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
               </div>
             ))}
           </div>
-          
+
           <div className="sub-modal-actions">
             <button className="sub-modal-btn default-btn" id="btn-reset-quick-amounts-default" onClick={handleResetQuickAmounts}>恢复默认</button>
             <button className="sub-modal-btn save-btn" id="btn-save-quick-amounts" onClick={handleSaveQuickAmounts}>保存</button>

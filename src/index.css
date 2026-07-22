@@ -4803,6 +4803,16 @@ input:checked + .slider:before {
 }
 .embedded-bet-console .manual-amount-input::placeholder {
   color: #a5b1c2;
+  font-size: 0.6rem;
+}
+/* 点入输入金额时：输入框变蓝底 */
+.embedded-bet-console .manual-amount-input:focus {
+  background: #1e90ff;
+  border-color: #1e90ff;
+  color: #ffffff;
+}
+.embedded-bet-console .manual-amount-input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.8);
 }
 .embedded-bet-console .console-cancel-btn {
   background-color: #ffffff;
@@ -6911,6 +6921,59 @@ input:checked + .slider:before {
   background: #0975e6;
 }
 
+/* 快捷金额编辑：从底部弹出的面板 */
+#modal-edit-quick-amounts {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+#modal-edit-quick-amounts .sub-modal-content {
+  width: 100%;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px 22px;
+  animation: qa-sheet-up 0.25s ease-out;
+}
+@keyframes qa-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.qa-edit-grid {
+  gap: 12px 12px;
+}
+.qa-edit-item {
+  position: relative;
+}
+.qa-edit-item .sub-modal-input {
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+  text-align: left;
+  padding: 0 34px 0 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.qa-edit-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c7ccd6;
+  color: #ffffff;
+  border: none;
+  font-size: 0.58rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.qa-edit-clear:hover {
+  background: #9aa1ad;
+}
+
 .sub-modal-inputs-list {
   display: flex;
   flex-direction: column;
@@ -7507,6 +7570,8 @@ input:checked + .slider:before {
 
 .live-play-tab.active {
   background: linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%);
+  background-clip: padding-box;
+  -webkit-background-clip: padding-box;
   border-color: transparent;
   color: #ffffff;
   font-weight: bold;
@@ -10379,8 +10444,9 @@ body {
   color: #ffffff !important;
 }
 .console-cancel-btn {
-  background-color: #f1f5f9 !important;
+  background-color: #ffffff !important;
   border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
   color: var(--text-grey) !important;
 }
 .console-submit-btn {
@@ -11233,6 +11299,24 @@ body {
   font-weight: 700;
 }
 
+/* ===== 动物运动会 ===== */
+.animal-mini-result {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.animal-mini-ball {
+  width: 22px;
+  height: 18px;
+}
+
+.animal-ball-img {
+  width: 44px;
+  height: 35px;
+  flex-shrink: 0;
+}
+
 /* 鱼虾蟹 玩法/规则 overlay */
 .vp-fc-rules-overlay {
   position: absolute;
@@ -11388,19 +11472,39 @@ body {
 }
 
 .vp-digit-box {
-  background-color: #1e293b;
-  color: #ffffff;
-  font-size: 0.75rem;
+  background-color: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cdd8ea;
+  font-size: 0.78rem;
   font-weight: bold;
-  padding: 1px 4px;
-  border-radius: 3px;
-  min-width: 14px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  min-width: 16px;
   text-align: center;
 }
 
 .vp-digit-colon {
   font-weight: bold;
   color: #1e293b;
+}
+
+/* 倒计时阶段标签 */
+.vp-phase-tag {
+  font-size: 0.74rem;
+  font-weight: bold;
+  padding: 4px 14px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.vp-phase-sealed {
+  background-color: #fdecef;
+  color: #e5405e;
+}
+
+.vp-phase-drawing {
+  background-color: #fdf4dd;
+  color: #c8912a;
 }
 
 .vp-bet-header-right {
