@@ -76,7 +76,7 @@ const ANIMAL_TWOSIDES = [
   { name: '龙', color: ANIMAL_C.blue }, { name: '虎', color: ANIMAL_C.orange }
 ];
 
-export default function ModalVideoPlayer() {
+export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
   const {
     balance,
     updateBalance,
@@ -142,6 +142,7 @@ export default function ModalVideoPlayer() {
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
   const [activeCarouselGame, setActiveCarouselGame] = useState('fast3');
+  const [carouselOpen, setCarouselOpen] = useState(false); // 短剧模式：切换游戏面板是否展开
   const [activeMoreGamesCat, setActiveMoreGamesCat] = useState('hot');
 
   // Video details interaction states
@@ -193,7 +194,7 @@ export default function ModalVideoPlayer() {
 
   // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期
   useEffect(() => {
-    if (!videoPlayerActive) return;
+    if (!videoPlayerActive && !embedded) return;
     let timer;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
@@ -354,11 +355,16 @@ export default function ModalVideoPlayer() {
     if (!playableCarouselGames.includes(item.key)) return;
     setActiveCarouselGame(item.key);
     setMenuOpen(false);
+    if (embedded) setCarouselOpen(false); // 短剧：选择游戏后关闭切换面板
     showToast(`已切换至游戏：${item.label}`);
   };
 
   // Close bet area chevron/x
   const handleBetHeaderClose = () => {
+    if (embedded) {
+      onClose?.();
+      return;
+    }
     setVpActiveTab('chatroom');
   };
 
@@ -514,7 +520,7 @@ export default function ModalVideoPlayer() {
     showToast(`已为您切入：【${game.label}】`);
   };
 
-  if (!videoPlayerActive) return null;
+  if (!videoPlayerActive && !embedded) return null;
 
   // Games carousel items
   const carouselGameItems = [
@@ -874,197 +880,12 @@ export default function ModalVideoPlayer() {
     setLandscape(true);
   };
 
-  return (
-    <div className="video-player-overlay active" id="video-player-modal" style={{ display: 'flex' }} ref={overlayRef}>
-      <div className={`split-player-container ${immersive ? 'immersive' : ''}`}>
-
-        {/* 1/3 Top Mock Video Player */}
-        <div className="mock-player-box">
-          <img id="modal-player-still" src={activeVideo?.img || "assets/sports_cover.png"} alt="播放视频" />
-          <div className="player-hud-top">
-            <button id="btn-close-player" className="player-close-btn" onClick={() => setVideoPlayerActive(false)}>
-              <i className="fa-solid fa-chevron-left"></i>
-            </button>
-            <span className="video-watermark-overlay">影院独播 1080P</span>
-          </div>
-          <div className="player-hud-center">
-            <i className="fa-solid fa-circle-play player-btn-main"></i>
-          </div>
-          <div className="player-hud-bottom">
-            <i className="fa-solid fa-pause"></i>
-            <div className="player-progress-track">
-              <div className="progress-indicator" style={{ width: '32%' }}></div>
-            </div>
-            <span className="time-lbl">02:18 / 95:00</span>
-            <i className="fa-solid fa-gear player-hud-icon" title="设置" onClick={() => showToast('画质 / 倍速设置开发中')}></i>
-            <i className={`fa-solid fa-film player-hud-icon ${immersive ? 'active' : ''}`} title="沉浸式" onClick={toggleImmersive}></i>
-            <i className="fa-solid fa-up-right-and-down-left-from-center player-hud-icon" title="全屏" onClick={enterLandscape}></i>
-          </div>
-        </div>
-
-        {/* 2/3 Scrollable Video Info & Games Content */}
-        <div className="player-scroll-content" ref={scrollContainerRef}>
-          
-          {/* Video Info Block & Tab Bar - Only show when NOT in Watch & Play tab */}
-          {vpActiveTab !== 'play' && (
-            <>
-              {/* Video Info Block */}
-              <div className="vp-video-info-block">
-                <h3 className="vp-video-title">
-                  {activeVideo?.title || "诺曼底72小时"}
-                </h3>
-                
-                {/* Meta stats row */}
-                <div className="vp-video-meta-row">
-                  <div className="vp-meta-item">
-                    <i className="fa-regular fa-clock"></i>
-                    <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
-                  </div>
-                  <div className="vp-meta-item">
-                    <i className="fa-regular fa-eye"></i>
-                    <span>{activeVideo?.views || "1.9万"}</span>
-                  </div>
-                  <div className="vp-meta-item">
-                    <i className="fa-solid fa-star meta-star"></i>
-                    <span>{activeVideo?.rating || "8.2"}</span>
-                  </div>
-                </div>
-
-                {/* Tags row */}
-                <div className="vp-video-tags-row">
-                  {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
-                    <span key={idx} className="vp-video-tag">{tag}</span>
-                  ))}
-                </div>
-
-                {/* Description block */}
-                <div className="vp-video-description-box" style={{ 
-                  margin: '8px 12px', 
-                  padding: '10px 0', 
-                  borderTop: '1px solid #f1f5f9',
-                  borderBottom: '1px solid #f1f5f9',
-                  fontSize: '0.78rem', 
-                  color: '#4b5563', 
-                  lineHeight: '1.45',
-                  textAlign: 'justify'
-                }}>
-                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
-                  <span style={{ color: '#3b82f6', cursor: 'pointer', marginLeft: '4px', fontWeight: '500' }} onClick={() => showToast('详情功能暂未开放')}>
-                    详情 &gt;
-                  </span>
-                </div>
-
-                {/* Actions row */}
-                <div className="vp-actions-row">
-                  <button className={`vp-action-btn ${hasLiked ? 'active' : ''}`} onClick={handleLike}>
-                    <i className={`${hasLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up`}></i>
-                    <span>{likes}</span>
-                  </button>
-                  <button className={`vp-action-btn ${hasDisliked ? 'active' : ''}`} onClick={handleDislike}>
-                    <i className={`${hasDisliked ? 'fa-solid' : 'fa-regular'} fa-thumbs-down`}></i>
-                    <span>{dislikes}</span>
-                  </button>
-                  <button className="vp-action-btn" onClick={() => showToast('评论功能暂未开放')}>
-                    <i className="fa-regular fa-comment-dots"></i>
-                    <span>0</span>
-                  </button>
-                  <button className={`vp-action-btn ${hasFav ? 'active' : ''}`} onClick={handleFavorite}>
-                    <i className={`${hasFav ? 'fa-solid' : 'fa-regular'} fa-star`}></i>
-                    <span>{favCount}</span>
-                  </button>
-                </div>
-
-                {/* Rotating winning banner */}
-                <div className="vp-winning-banner">
-                  <div className="vp-banner-left">
-                    <span className="vp-banner-badge">恭喜中奖</span>
-                    <span className="vp-banner-text">
-                      恭喜 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].name}</span> 赢的 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].amount}</span> 元
-                    </span>
-                  </div>
-                  <div className="vp-banner-right">
-                    <span className="vp-banner-game-tag">{winningAnnouncements[bannerIdx].game}</span>
-                    <i className="fa-solid fa-chevron-right"></i>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sticky Tab Bar */}
-              <div className="vp-tab-bar">
-                <button className={`vp-tab-btn ${vpActiveTab === 'chatroom' ? 'active' : ''}`} onClick={() => setVpActiveTab('chatroom')}>
-                  聊天室
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'play' ? 'active' : ''}`} onClick={() => setVpActiveTab('play')}>
-                  边看边玩
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'recommend' ? 'active' : ''}`} onClick={() => setVpActiveTab('recommend')}>
-                  为您推荐
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'more-games' ? 'active' : ''}`} onClick={() => setVpActiveTab('more-games')}>
-                  更多游戏
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* Tab Content Panel */}
-          <div className="vp-tab-content">
-            {vpActiveTab === 'chatroom' && (
-              <div className="vp-chatroom-panel">
-                <div className="vp-chat-messages-list">
-                  {chatMessages.map(msg => (
-                    <div key={msg.id} className="vp-chat-msg-row">
-                      {msg.type === 'join' ? (
-                        <>
-                          <span className="vp-msg-badge join">进入</span>
-                          <span className="vp-chat-user">{msg.user}</span>
-                          <span className="vp-chat-text">{msg.text || '进入了直播间'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="vp-msg-badge win">中奖</span>
-                          <span className="vp-chat-user">{msg.user}</span>
-                          <span className="vp-chat-text">
-                            在 <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>{msg.game}</span> 中中了 <span className="vp-chat-win-highlight">{msg.prize} 元</span>
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                
-                {/* Chat bottom bar */}
-                <div className="vp-chatroom-bottom-bar">
-                  <div className="vp-chat-input-wrap">
-                    <i className="fa-regular fa-comment-dots"></i>
-                    <input 
-                      type="text" 
-                      placeholder="说点什么~" 
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && chatInput.trim()) {
-                          setChatMessages(prev => [
-                            ...prev, 
-                            { id: Date.now(), type: 'join', user: '我', text: chatInput.trim() }
-                          ]);
-                          setChatInput('');
-                        }
-                      }}
-                    />
-                  </div>
-                  <button className="vp-chat-bet-btn" onClick={() => setVpActiveTab('play')}>
-                    立即下注
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {vpActiveTab === 'play' && (
+  // 边看边玩游戏控制台（视频/短剧共用）
+  const renderPlayTab = () => (
               <div className="vp-play-panel">
-                {/* Game Carousel Switcher */}
-                <div className="vp-game-carousel">
+                {/* Game Carousel Switcher（视频常驻顶部；短剧点切换箭头后从上方弹出） */}
+                {(!embedded || carouselOpen) && (
+                <div className={`vp-game-carousel ${embedded ? 'vp-game-carousel-overlay' : ''}`}>
                   {carouselGameItems.map(item => {
                     const isPlayable = playableCarouselGames.includes(item.key);
                     return (
@@ -1083,6 +904,7 @@ export default function ModalVideoPlayer() {
                     );
                   })}
                 </div>
+                )}
 
                 {/* Betting Area - conditional on selected game */}
                 {activeCarouselGame === 'fast3' ? (
@@ -1091,6 +913,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>一分快三</span>
                         </div>
                         {renderCountdown()}
@@ -1238,6 +1061,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>一分六合彩</span>
                         </div>
                         {renderCountdown()}
@@ -1431,6 +1255,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>一分极速赛车</span>
                         </div>
                         {renderCountdown()}
@@ -1618,6 +1443,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>鱼虾蟹</span>
                         </div>
                         {renderCountdown()}
@@ -1760,6 +1586,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>百家乐</span>
                         </div>
                         {renderCountdown()}
@@ -1927,6 +1754,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>动物运动会</span>
                         </div>
                         {renderCountdown()}
@@ -2073,6 +1901,7 @@ export default function ModalVideoPlayer() {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
                           <span>{carouselGameItems.find(g => g.key === activeCarouselGame)?.label || '电子游戏'}</span>
                         </div>
                         <div className="vp-bet-header-right">
@@ -2133,7 +1962,201 @@ export default function ModalVideoPlayer() {
                   </div>
                 )}
               </div>
+  );
+
+  // 短剧等嵌入场景：只渲染游戏控制台
+  if (embedded) {
+    return <div className="drama-embedded-games">{renderPlayTab()}</div>;
+  }
+
+  return (
+    <div className="video-player-overlay active" id="video-player-modal" style={{ display: 'flex' }} ref={overlayRef}>
+      <div className={`split-player-container ${immersive ? 'immersive' : ''}`}>
+
+        {/* 1/3 Top Mock Video Player */}
+        <div className="mock-player-box">
+          <img id="modal-player-still" src={activeVideo?.img || "assets/sports_cover.png"} alt="播放视频" />
+          <div className="player-hud-top">
+            <button id="btn-close-player" className="player-close-btn" onClick={() => setVideoPlayerActive(false)}>
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
+            <span className="video-watermark-overlay">影院独播 1080P</span>
+          </div>
+          <div className="player-hud-center">
+            <i className="fa-solid fa-circle-play player-btn-main"></i>
+          </div>
+          <div className="player-hud-bottom">
+            <i className="fa-solid fa-pause"></i>
+            <div className="player-progress-track">
+              <div className="progress-indicator" style={{ width: '32%' }}></div>
+            </div>
+            <span className="time-lbl">02:18 / 95:00</span>
+            <i className="fa-solid fa-gear player-hud-icon" title="设置" onClick={() => showToast('画质 / 倍速设置开发中')}></i>
+            <i className={`fa-solid fa-film player-hud-icon ${immersive ? 'active' : ''}`} title="沉浸式" onClick={toggleImmersive}></i>
+            <i className="fa-solid fa-up-right-and-down-left-from-center player-hud-icon" title="全屏" onClick={enterLandscape}></i>
+          </div>
+        </div>
+
+        {/* 2/3 Scrollable Video Info & Games Content */}
+        <div className="player-scroll-content" ref={scrollContainerRef}>
+          
+          {/* Video Info Block & Tab Bar - Only show when NOT in Watch & Play tab */}
+          {vpActiveTab !== 'play' && (
+            <>
+              {/* Video Info Block */}
+              <div className="vp-video-info-block">
+                <h3 className="vp-video-title">
+                  {activeVideo?.title || "诺曼底72小时"}
+                </h3>
+                
+                {/* Meta stats row */}
+                <div className="vp-video-meta-row">
+                  <div className="vp-meta-item">
+                    <i className="fa-regular fa-clock"></i>
+                    <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
+                  </div>
+                  <div className="vp-meta-item">
+                    <i className="fa-regular fa-eye"></i>
+                    <span>{activeVideo?.views || "1.9万"}</span>
+                  </div>
+                  <div className="vp-meta-item">
+                    <i className="fa-solid fa-star meta-star"></i>
+                    <span>{activeVideo?.rating || "8.2"}</span>
+                  </div>
+                </div>
+
+                {/* Tags row */}
+                <div className="vp-video-tags-row">
+                  {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
+                    <span key={idx} className="vp-video-tag">{tag}</span>
+                  ))}
+                </div>
+
+                {/* Description block */}
+                <div className="vp-video-description-box" style={{ 
+                  margin: '8px 12px', 
+                  padding: '10px 0', 
+                  borderTop: '1px solid #f1f5f9',
+                  borderBottom: '1px solid #f1f5f9',
+                  fontSize: '0.78rem', 
+                  color: '#4b5563', 
+                  lineHeight: '1.45',
+                  textAlign: 'justify'
+                }}>
+                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
+                  <span style={{ color: '#3b82f6', cursor: 'pointer', marginLeft: '4px', fontWeight: '500' }} onClick={() => showToast('详情功能暂未开放')}>
+                    详情 &gt;
+                  </span>
+                </div>
+
+                {/* Actions row */}
+                <div className="vp-actions-row">
+                  <button className={`vp-action-btn ${hasLiked ? 'active' : ''}`} onClick={handleLike}>
+                    <i className={`${hasLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up`}></i>
+                    <span>{likes}</span>
+                  </button>
+                  <button className={`vp-action-btn ${hasDisliked ? 'active' : ''}`} onClick={handleDislike}>
+                    <i className={`${hasDisliked ? 'fa-solid' : 'fa-regular'} fa-thumbs-down`}></i>
+                    <span>{dislikes}</span>
+                  </button>
+                  <button className="vp-action-btn" onClick={() => showToast('评论功能暂未开放')}>
+                    <i className="fa-regular fa-comment-dots"></i>
+                    <span>0</span>
+                  </button>
+                  <button className={`vp-action-btn ${hasFav ? 'active' : ''}`} onClick={handleFavorite}>
+                    <i className={`${hasFav ? 'fa-solid' : 'fa-regular'} fa-star`}></i>
+                    <span>{favCount}</span>
+                  </button>
+                </div>
+
+                {/* Rotating winning banner */}
+                <div className="vp-winning-banner">
+                  <div className="vp-banner-left">
+                    <span className="vp-banner-badge">恭喜中奖</span>
+                    <span className="vp-banner-text">
+                      恭喜 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].name}</span> 赢的 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].amount}</span> 元
+                    </span>
+                  </div>
+                  <div className="vp-banner-right">
+                    <span className="vp-banner-game-tag">{winningAnnouncements[bannerIdx].game}</span>
+                    <i className="fa-solid fa-chevron-right"></i>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sticky Tab Bar */}
+              <div className="vp-tab-bar">
+                <button className={`vp-tab-btn ${vpActiveTab === 'chatroom' ? 'active' : ''}`} onClick={() => setVpActiveTab('chatroom')}>
+                  聊天室
+                </button>
+                <button className={`vp-tab-btn ${vpActiveTab === 'play' ? 'active' : ''}`} onClick={() => setVpActiveTab('play')}>
+                  边看边玩
+                </button>
+                <button className={`vp-tab-btn ${vpActiveTab === 'recommend' ? 'active' : ''}`} onClick={() => setVpActiveTab('recommend')}>
+                  为您推荐
+                </button>
+                <button className={`vp-tab-btn ${vpActiveTab === 'more-games' ? 'active' : ''}`} onClick={() => setVpActiveTab('more-games')}>
+                  更多游戏
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Tab Content Panel */}
+          <div className="vp-tab-content">
+            {vpActiveTab === 'chatroom' && (
+              <div className="vp-chatroom-panel">
+                <div className="vp-chat-messages-list">
+                  {chatMessages.map(msg => (
+                    <div key={msg.id} className="vp-chat-msg-row">
+                      {msg.type === 'join' ? (
+                        <>
+                          <span className="vp-msg-badge join">进入</span>
+                          <span className="vp-chat-user">{msg.user}</span>
+                          <span className="vp-chat-text">{msg.text || '进入了直播间'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="vp-msg-badge win">中奖</span>
+                          <span className="vp-chat-user">{msg.user}</span>
+                          <span className="vp-chat-text">
+                            在 <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>{msg.game}</span> 中中了 <span className="vp-chat-win-highlight">{msg.prize} 元</span>
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+                
+                {/* Chat bottom bar */}
+                <div className="vp-chatroom-bottom-bar">
+                  <div className="vp-chat-input-wrap">
+                    <i className="fa-regular fa-comment-dots"></i>
+                    <input 
+                      type="text" 
+                      placeholder="说点什么~" 
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && chatInput.trim()) {
+                          setChatMessages(prev => [
+                            ...prev, 
+                            { id: Date.now(), type: 'join', user: '我', text: chatInput.trim() }
+                          ]);
+                          setChatInput('');
+                        }
+                      }}
+                    />
+                  </div>
+                  <button className="vp-chat-bet-btn" onClick={() => setVpActiveTab('play')}>
+                    立即下注
+                  </button>
+                </div>
+              </div>
             )}
+
+            {vpActiveTab === 'play' && renderPlayTab()}
 
             {vpActiveTab === 'recommend' && (
               <div className="vp-recommend-panel">

@@ -1249,10 +1249,54 @@ body {
   transform: translateY(0);
 }
 
-/* Betting drawer fits its content instead of a fixed 70% height */
+/* Betting drawer：嵌入视频游戏控制台，使用固定高度的底部抽屉（较低，露出上方短剧） */
 .drama-betting-sheet {
-  height: auto;
-  max-height: 85%;
+  height: 56%;
+  max-height: 56%;
+}
+
+/* 短剧内嵌的游戏控制台容器（供绝对定位的 player-embedded-game-panel 填充） */
+.drama-embedded-games {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f1f2f6;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.drama-embedded-games .vp-play-panel {
+  position: relative;
+  height: 100%;
+}
+
+/* 切换游戏按钮（标题左侧，短剧模式）：白底圆角框 + 蓝色左右箭头 */
+.vp-switch-game {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 24px;
+  border: 1px solid #d5dbe4;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #3b82f6;
+  font-size: 0.8rem;
+  margin-right: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 短剧模式：切换游戏面板从顶部弹出，四周内缩为圆角浮层，右侧留出间距 */
+.vp-game-carousel-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  z-index: 130;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .drama-comments-header {
