@@ -91,7 +91,7 @@ export default function BottomNav() {
         return (
           <div
             key={item.id}
-            className={`nav-btn ${isActive ? 'active' : ''}`}
+            className={`nav-btn ${isActive ? 'active' : ''} ${isActive && item.id === 'page-dramas' ? 'brand-active' : ''}`}
             onClick={() => handleNav(item.id)}
           >
             {NAV_ICONS[item.id]}
