@@ -25,3 +25,6 @@ dist-ssr
 
 # Claude Code local settings (per-agent, not shared)
 .claude/settings.local.json
+
+# 本機用的 dev server 啟動/關閉腳本（不共享）
+*.command
