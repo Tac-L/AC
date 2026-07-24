@@ -1,28 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
-// 快三点位：用点位骰子图（.dice/.dot）渲染点数，与开奖结果的骰子样式一致（单/对/豹子按数量调整大小）
+// 快三点位：用 public/K3-ball/{1-6}.png 骰子图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
-    const digits = name.split('').map(Number);
-    const dieSize = digits.length === 1 ? 40 : digits.length === 2 ? 30 : 24;
-    const dotSize = digits.length === 1 ? 7 : digits.length === 2 ? 5 : 4;
+    const digits = name.split('');
+    const size = digits.length === 1 ? 42 : digits.length === 2 ? 32 : 24;
     return (
-      <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '3px', justifyContent: 'center', alignItems: 'center' }}>
         {digits.map((val, idx) => (
-          <div
-            key={idx}
-            className={`dice dice-${val}`}
-            style={{ width: `${dieSize}px`, height: `${dieSize}px`, padding: `${Math.round(dieSize * 0.14)}px` }}
-          >
-            {val === 1 ? (
-              <span className="dot red-dot" style={{ width: `${dotSize}px`, height: `${dotSize}px` }}></span>
-            ) : (
-              Array.from({ length: val }).map((_, dIdx) => (
-                <span key={dIdx} className="dot" style={{ width: `${dotSize}px`, height: `${dotSize}px` }}></span>
-              ))
-            )}
-          </div>
+          <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: `${size}px`, height: `${size}px` }} />
         ))}
       </div>
     );
@@ -959,15 +946,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         <span>第 {issue} 期</span>
                         <div className="fast3-draw-balls" style={{ gap: '4px' }}>
                           {lastDice.map((val, idx) => (
-                            <div key={idx} className={`dice dice-${val}`} style={{ width: '18px', height: '18px' }}>
-                              {val === 1 ? (
-                                <span className="dot red-dot"></span>
-                              ) : (
-                                Array.from({ length: val }).map((_, dIdx) => (
-                                  <span key={dIdx} className="dot"></span>
-                                ))
-                              )}
-                            </div>
+                            <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: '22px', height: '22px' }} />
                           ))}
                         </div>
                       </div>
