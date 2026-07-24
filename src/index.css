@@ -11067,6 +11067,17 @@ body {
   margin-bottom: 6px;
 }
 
+/* 边看边玩：精简标题条（仅标题 + 元信息），让游戏面板不占满高度 */
+/* 标题与元信息保持与完整信息块完全一致，切换分页时不产生跳动 */
+.vp-play-title-bar {
+  flex-shrink: 0;
+  padding: 12px 14px 8px;
+}
+
+.vp-play-meta-row {
+  margin-bottom: 0;
+}
+
 .vp-video-meta-row {
   display: flex;
   align-items: center;
@@ -11404,8 +11415,8 @@ body {
 
 /* 鱼虾蟹 图案（下注格 / 开奖结果）—— SVG 自带圆角，不再额外裁切以免切到四角 */
 .vp-fc-symbol-img {
-  width: 46px;
-  height: 46px;
+  width: 38px;
+  height: 38px;
   border-radius: 0;
   object-fit: contain;
   margin-bottom: 4px;

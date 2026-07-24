@@ -857,8 +857,13 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
   };
 
   const handleMenuDropdownItemClick = (label) => {
-    showToast(`提示：【${label}】正在对接中，敬请期待！`);
     setMenuOpen(false);
+    if (label === '活动规则') {
+      // 已有规则说明的游戏：点击「活动规则」打开对应说明页
+      if (activeCarouselGame === 'fishcrab') { setShowFcRules(true); return; }
+      if (activeCarouselGame === 'baccarat') { setShowBacRules(true); return; }
+    }
+    showToast(`提示：【${label}】正在对接中，敬请期待！`);
   };
 
   // 沉浸式：切换视频铺满竖屏
@@ -923,7 +928,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1063,7 +1068,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1257,7 +1262,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1445,10 +1450,25 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-circle-question" onClick={() => setShowFcRules(true)} title="玩法说明"></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
                         <div className="vp-fc-result-row" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
@@ -1479,8 +1499,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         ))}
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
-                        <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                           {FISH_CRAB_SYMBOLS.map(sym => {
                             const category = fcActiveTab === 'all' ? '全围' : '单骰';
                             const odds = fcActiveTab === 'all' ? FC_ODDS.all : FC_ODDS.single;
@@ -1490,7 +1510,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                                 key={sym.key}
                                 className={`live-odds-card ${isSelected ? 'selected' : ''}`}
                                 onClick={() => handleFCCardClick(category, sym.key)}
-                                style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                style={{ height: '90px', padding: '0 4px' }}
                               >
                                 <img className="vp-fc-symbol-img" src={sym.icon} alt={sym.label} />
                                 <div className="odds-card-val" style={{ fontSize: '0.74rem', color: sym.color, fontWeight: 'bold' }}>{odds}</div>
@@ -1588,10 +1608,25 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-circle-question" onClick={() => setShowBacRules(true)} title="游戏规则"></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {/* 开奖结果：缩小置于右上角，比照其他游戏 */}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
@@ -1756,7 +1791,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-list" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -2097,6 +2132,29 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                 </button>
               </div>
             </>
+          )}
+
+          {/* Compact title bar for 边看边玩：保留标题区，游戏面板不占满高度 */}
+          {vpActiveTab === 'play' && (
+            <div className="vp-video-info-block vp-play-title-bar">
+              <h3 className="vp-video-title vp-play-title">
+                {activeVideo?.title || "诺曼底72小时"}
+              </h3>
+              <div className="vp-video-meta-row vp-play-meta-row">
+                <div className="vp-meta-item">
+                  <i className="fa-regular fa-clock"></i>
+                  <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
+                </div>
+                <div className="vp-meta-item">
+                  <i className="fa-regular fa-eye"></i>
+                  <span>{activeVideo?.views || "1.9万"}</span>
+                </div>
+                <div className="vp-meta-item">
+                  <i className="fa-solid fa-star meta-star"></i>
+                  <span>{activeVideo?.rating || "8.2"}</span>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Tab Content Panel */}
