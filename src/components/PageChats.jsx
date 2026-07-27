@@ -1,5 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
+import ModalVideoPlayer from './ModalVideoPlayer';
+
+// 依直播间信息推断对应的游戏投注页（对应视频里的游戏控制台）
+const roomToGameKey = (room) => {
+  const s = `${room?.name || ''} ${room?.label || ''} ${room?.gameBadge || ''} ${room?.title || ''}`;
+  if (s.includes('六合彩')) return 'marksix';
+  if (s.includes('百家乐')) return 'baccarat';
+  if (s.includes('鱼虾蟹') || s.includes('魚蝦蟹')) return 'fishcrab';
+  if (s.includes('分分彩')) return 'ffc';
+  if (s.includes('极速') || s.includes('赛车')) return 'speedrace';
+  if (s.includes('动物')) return 'animal';
+  return 'fast3'; // 默认一分快三
+};
 
 // Helper to render points as dice
 const renderDiceOptionName = (name) => {
@@ -1011,147 +1024,13 @@ export default function PageChats() {
               )}
             </div>
           ) : (
-            /* Live Betting Panel for Fast Three */
-            <div className="live-betting-panel" id="live-betting-panel" style={{ display: 'flex' }}>
-              {/* Header */}
-              <div className="live-betting-header">
-                <div className="live-betting-title-left">
-                  <i className="fa-solid fa-chevron-up"></i>
-                  <span>一分快三</span>
-                </div>
-                <span className="live-betting-status-tag">开奖中</span>
-                <div className="live-betting-actions-right">
-                  <button className="live-playbook-btn" onClick={() => showToast('玩法说明：一分快三，快速开奖！')}><i className="fa-regular fa-lightbulb"></i> 玩法</button>
-                  <button className="live-close-betting-btn" onClick={() => setShowBetPanel(false)}><i className="fa-solid fa-xmark"></i></button>
-                </div>
-              </div>
-
-              {/* Subheader with issue and rolling dice */}
-              <div className="live-betting-subheader">
-                <span className="live-issue-number">第 {liveK3Issue} 期</span>
-                <div className="live-dice-results-row">
-                  <div className="live-dice-balls">
-                    {liveK3Dice.map((val, idx) => (
-                      <div key={idx} className={`dice dice-${val}`}>
-                        {val === 1 ? (
-                          <span className="dot red-dot"></span>
-                        ) : (
-                          Array.from({ length: val }).map((_, dIdx) => (
-                            <span key={dIdx} className="dot"></span>
-                          ))
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <i className="fa-solid fa-chevron-down"></i>
-                </div>
-              </div>
-
-              {/* Play Tabs */}
-              <div className="live-play-tabs-row">
-                {[
-                  { cat: 'size', label: '大小' },
-                  { cat: 'pair', label: '对子' },
-                  { cat: 'triple', label: '豹子' },
-                  { cat: 'sum', label: '总和' },
-                  { cat: 'single', label: '单骰' }
-                ].map(tab => (
-                  <div 
-                    key={tab.cat}
-                    className={`live-play-tab ${selectedPlayCat === tab.cat ? 'active' : ''}`}
-                    onClick={() => {
-                      setSelectedPlayCat(tab.cat);
-                      selectedOddsCards.clear();
-                      setSelectedOddsCards(new Set());
-                    }}
-                  >
-                    {tab.label}
-                  </div>
-                ))}
-              </div>
-
-              {/* Betting Options Grid */}
-              <div className="live-betting-options-container">
-                <div className="live-betting-options-grid active">
-                  {oddsData[selectedPlayCat]?.map(card => {
-                    const isSelected = selectedOddsCards.has(card.name);
-                    return (
-                      <div 
-                        key={card.name} 
-                        className={`live-odds-card ${isSelected ? 'selected' : ''}`}
-                        onClick={() => handleOddsCardClick(card.name, card.odds)}
-                      >
-                        <div className="odds-card-name">{renderDiceOptionName(card.name)}</div>
-                        <div className="odds-card-val">{card.odds}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Console Footers */}
-              <div className="live-bet-console">
-                {/* Row 1: Balance & Summaries */}
-                <div className="console-info-row">
-                  <span className="console-balance">
-                    余额: <span>{balance.toFixed(2)}</span> 
-                    <i 
-                      className="fa-solid fa-rotate-right" 
-                      onClick={() => {
-                        updateBalance(3000, false);
-                        showToast('余额已刷新为 ¥3000.00！');
-                      }}
-                      style={{ cursor: 'pointer', fontSize: '0.7rem', marginLeft: '4px' }}
-                    ></i>
-                  </span>
-                  <span className="console-bet-summary">
-                    下注金额: <span className="bet-cost-value">{totalCost.toFixed(2)}</span>
-                  </span>
-                </div>
-
-                {/* Row 2: Preset amounts & Inputs */}
-                <div className="console-amount-row">
-                  <div className="console-amount-left">
-                    <button 
-                      className="console-edit-amount-btn" 
-                      onClick={() => setEditQuickAmountsActive(true)}
-                    >
-                      <i className="fa-solid fa-pencil"></i>
-                    </button>
-                    <div className="console-quick-amounts">
-                      {quickAmounts.map(val => (
-                        <button 
-                          key={val} 
-                          className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
-                          onClick={() => handleQuickAmountClick(val)}
-                        >
-                          {val}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <input 
-                    type="number" 
-                    className="console-manual-input" 
-                    placeholder="输入金额" 
-                    value={manualAmount}
-                    onChange={handleManualAmountChange}
-                  />
-                </div>
-
-                {/* Row 3: Action Buttons */}
-                <div className="console-action-row">
-                  <button className="console-cancel-btn" onClick={handleResetBets}>
-                    <i className="fa-solid fa-rotate-left"></i> 撤回
-                  </button>
-                  <button 
-                    className={`console-submit-btn ${selectedOddsCards.size > 0 && currentBetPrice > 0 ? 'active' : ''}`}
-                    onClick={handleSubmitLiveBets}
-                  >
-                    提交
-                  </button>
-                </div>
-              </div>
+            /* 直播「玩同款」投注页：复用视频里的游戏控制台，依直播间游戏切换 */
+            <div className="live-betting-panel" id="live-betting-panel" style={{ display: 'flex', padding: 0 }}>
+              <ModalVideoPlayer
+                embedded
+                initialGame={roomToGameKey(currentRoom)}
+                onClose={() => setShowBetPanel(false)}
+              />
             </div>
           )}
         </div>

@@ -1981,6 +1981,12 @@ body {
   flex-direction: column;
 }
 
+/* 直播「玩同款」投注页：顶部不要圆角 */
+.live-betting-panel .drama-embedded-games {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .chat-split-room.active {
   display: flex;
 }

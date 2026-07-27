@@ -70,7 +70,7 @@ const ANIMAL_TWOSIDES = [
   { name: '龙', color: ANIMAL_C.blue }, { name: '虎', color: ANIMAL_C.orange }
 ];
 
-export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
+export default function ModalVideoPlayer({ embedded = false, onClose, initialGame } = {}) {
   const {
     balance,
     updateBalance,
@@ -142,7 +142,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
 
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
-  const [activeCarouselGame, setActiveCarouselGame] = useState('fast3');
+  const [activeCarouselGame, setActiveCarouselGame] = useState(initialGame || 'fast3');
   const [carouselOpen, setCarouselOpen] = useState(false); // 短剧模式：切换游戏面板是否展开
   const [activeMoreGamesCat, setActiveMoreGamesCat] = useState('hot');
 
