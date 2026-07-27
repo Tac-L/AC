@@ -118,6 +118,13 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
   // Speed Race last draw result:排列 1~10
   const [srResult, setSrResult] = useState([1, 2, 7, 9, 4, 10, 6, 5, 8, 3]);
 
+  // 一分分分彩 (Every-Minute Lottery) selections: key `${category}|${name}`
+  const [selectedFFC, setSelectedFFC] = useState(new Set());
+  const [ffcActiveTab, setFfcActiveTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), position(前中后)
+  const [ffcActivePos, setFfcActivePos] = useState('ball1'); // 第二层：球号(ball1~ball5) 或 区段(front/mid/back)
+  // 一分分分彩开奖结果：5 颗球 0~9（图标取自 public/分分-ball/）
+  const [ffcResult] = useState([3, 8, 1, 6, 0]);
+
   // 鱼虾蟹 (Fish-Prawn-Crab) embedded selections: key encoded as `${category}|${symbolKey}`
   const [selectedFC, setSelectedFC] = useState(new Set());
   const [fcActiveTab, setFcActiveTab] = useState('single'); // single(单骰), all(全围)
@@ -348,7 +355,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'animal', 'fishcrab', 'baccarat'];
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'animal', 'fishcrab', 'baccarat'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -527,9 +534,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
     { key: 'fast3', label: '一分快三', img: '游戏图标/701010.png' },
     { key: 'marksix', label: '一分六合彩', img: '游戏图标/1070110.png' },
     { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
-    { key: 'animal', label: '动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
-    { key: 'fishcrab', label: '鱼虾蟹', img: '游戏图标/鱼虾蟹.png' },
-    { key: 'baccarat', label: '百家乐', img: '游戏图标/百家乐.png' },
+    { key: 'ffc', label: '一分分分彩', img: '游戏图标/601010.png' },
+    { key: 'animal', label: '一分动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
+    { key: 'fishcrab', label: '一分鱼虾蟹', img: '游戏图标/鱼虾蟹.png' },
+    { key: 'baccarat', label: '百家乐A1', img: '游戏图标/百家乐.png' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
@@ -711,6 +719,92 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
     });
     openBetDetailsModal('speed_race', items);
     setSelectedSR(new Set());
+  };
+
+  // ===== 一分分分彩 (Every-Minute Lottery) embedded gameplay =====
+  // 前中后各盘口赔率
+  const FFC_POSITION_BETS = [
+    { name: '豹子', odds: '150' },
+    { name: '顺子', odds: '15' },
+    { name: '对子', odds: '3' },
+    { name: '杂六', odds: '6' }
+  ];
+  // 龙虎和盘口赔率
+  const FFC_DRAGON_BETS = [
+    { name: '龙', odds: '2.22' },
+    { name: '虎', odds: '2.22' },
+    { name: '和', odds: '10' }
+  ];
+  // 依盘口分类/名称推算赔率
+  const ffcOddsOf = (category, name) => {
+    if (category === '总和') return '2';
+    if (category === '龙虎和') return FFC_DRAGON_BETS.find(b => b.name === name)?.odds || '2.22';
+    if (/^[0-9]$/.test(name)) return '10';           // 猜球号
+    if (['大', '小', '单', '双'].includes(name)) return '1.98'; // 两面（各球）
+    return FFC_POSITION_BETS.find(b => b.name === name)?.odds || '6'; // 前中后
+  };
+
+  // 第一层玩法 / 第二层选择（球号或区段），皆可左右滑动
+  const FFC_PLAY_TABS = [
+    { cat: 'cai', label: '猜球号' },
+    { cat: 'sides', label: '两面盘' },
+    { cat: 'position', label: '前中后' }
+  ];
+  const FFC_BALL_POSITIONS = [1, 2, 3, 4, 5].map(n => ({ key: `ball${n}`, label: `第${n}球` }));
+  // 两面盘第二层：各球 + 总和（总和排最后）
+  const FFC_SIDES_LAYER = [...FFC_BALL_POSITIONS, { key: 'sum', label: '总和' }];
+  // 前中后第二层：龙虎和排最前
+  const FFC_POS3_SECTIONS = [
+    { key: 'dragon', label: '龙虎和' },
+    { key: 'front', label: '前三' },
+    { key: 'mid', label: '中三' },
+    { key: 'back', label: '后三' }
+  ];
+  const ffcSecondLayer = ffcActiveTab === 'position'
+    ? FFC_POS3_SECTIONS
+    : (ffcActiveTab === 'sides' ? FFC_SIDES_LAYER : FFC_BALL_POSITIONS);
+  const ffcPosNum = Number(ffcActivePos.replace('ball', '')) || 1;
+  const ffcActiveSection = FFC_POS3_SECTIONS.find(s => s.key === ffcActivePos)?.label || '前三';
+  const handleFfcTabClick = (cat) => {
+    setFfcActiveTab(cat);
+    setFfcActivePos(cat === 'position' ? 'dragon' : 'ball1');
+  };
+
+  const handleFFCCardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedFFC);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedFFC(next);
+  };
+
+  const ffcCount = selectedFFC.size;
+  const ffcTotalCost = ffcCount * currentBetPrice;
+
+  const handleFFCReset = () => {
+    setSelectedFFC(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleFFCSubmit = () => {
+    if (ffcCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (ffcTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedFFC).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: ffcOddsOf(category, name), baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('ffc', items);
+    setSelectedFFC(new Set());
   };
 
   // ===== 鱼虾蟹 (Fish-Prawn-Crab) embedded gameplay =====
@@ -1439,6 +1533,198 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                       </div>
                     </div>
                   </div>
+                ) : activeCarouselGame === 'ffc' ? (
+                  // 一分分分彩 (Every-Minute Lottery) console
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          <span>一分分分彩</span>
+                        </div>
+                        {renderCountdown()}
+                        <div className="vp-bet-header-right">
+                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+                          {ffcResult.map((n, idx) => (
+                            <img key={idx} src={`分分-ball/${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* 第一层：玩法（可左右滑动） */}
+                      <div className="ffc-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '8px 12px', background: '#ffffff' }}>
+                        {FFC_PLAY_TABS.map(tab => {
+                          const active = ffcActiveTab === tab.cat;
+                          return (
+                            <div
+                              key={tab.cat}
+                              onClick={() => handleFfcTabClick(tab.cat)}
+                              style={{ flexShrink: 0, padding: '7px 18px', borderRadius: '18px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', background: active ? '#3b82f6' : '#ffffff', color: active ? '#ffffff' : '#475569', border: `1px solid ${active ? '#3b82f6' : '#e2e8f0'}` }}
+                            >
+                              {tab.label}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* 第二层：球号/区段（可左右滑动，两侧箭头） */}
+                      <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                        <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                        <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
+                          {ffcSecondLayer.map(item => {
+                            const active = ffcActivePos === item.key;
+                            return (
+                              <div
+                                key={item.key}
+                                onClick={() => setFfcActivePos(item.key)}
+                                style={{ flexShrink: 0, padding: '10px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                              >
+                                {item.label}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 猜球号：所选球号的 0~9 */}
+                        {ffcActiveTab === 'cai' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                            {Array.from({ length: 10 }, (_, d) => String(d)).map(d => {
+                              const category = `第${ffcPosNum}球`;
+                              const isSelected = selectedFFC.has(`${category}|${d}`);
+                              return (
+                                <div
+                                  key={d}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleFFCCardClick(category, d)}
+                                  style={{ height: '78px', padding: '0 4px' }}
+                                >
+                                  <img src={`分分-ball/${d}.png`} alt={d} style={{ width: '32px', height: '32px', marginBottom: '3px' }} />
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>10</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 两面盘：所选球号的 大/小/单/双，或「总和」的 大/小/单/双 */}
+                        {ffcActiveTab === 'sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {['大', '小', '单', '双'].map(name => {
+                              const isSum = ffcActivePos === 'sum';
+                              const category = isSum ? '总和' : `第${ffcPosNum}球两面`;
+                              const isSelected = selectedFFC.has(`${category}|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleFFCCardClick(category, name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>{isSum ? '2' : '1.98'}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 前中后：「龙虎和」的 龙/虎/和，或前三/中三/后三的 豹子/顺子/对子/杂六 */}
+                        {ffcActiveTab === 'position' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {(ffcActivePos === 'dragon' ? FFC_DRAGON_BETS : FFC_POSITION_BETS).map(bet => {
+                              const isSelected = selectedFFC.has(`${ffcActiveSection}|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleFFCCardClick(ffcActiveSection, bet.name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.8rem', marginBottom: '2px' }}>{bet.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.65rem' }}>{bet.odds}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{ffcCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{ffcTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleFFCReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleFFCSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ) : activeCarouselGame === 'fishcrab' ? (
                   // 鱼虾蟹 (Fish-Prawn-Crab) console
                   <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
@@ -1446,7 +1732,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
                           {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
-                          <span>鱼虾蟹</span>
+                          <span>一分鱼虾蟹</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
@@ -1604,7 +1890,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
                           {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
-                          <span>百家乐</span>
+                          <span>百家乐A1</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
@@ -1787,7 +2073,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
                           {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
-                          <span>动物运动会</span>
+                          <span>一分动物运动会</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
@@ -1838,7 +2124,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         ))}
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
                         {animalActiveTab === 'twosides' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                             {ANIMAL_TWOSIDES.map(bet => {
@@ -1848,7 +2134,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                                   key={bet.name}
                                   className={`live-odds-card ${isSel ? 'selected' : ''}`}
                                   onClick={() => handleAnimalCardClick(bet.name)}
-                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                  style={{ height: '90px', padding: '0 4px' }}
                                 >
                                   <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px' }}>{bet.name}</div>
                                   <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>1.9</div>
@@ -1867,7 +2153,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                                   key={n}
                                   className={`live-odds-card ${isSel ? 'selected' : ''}`}
                                   onClick={() => handleAnimalCardClick(String(n))}
-                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                  style={{ height: '90px', padding: '0 4px' }}
                                 >
                                   <img className="animal-ball-img" src={`T-ball/T${n}.svg`} alt={`T${n}`} style={{ marginBottom: '4px' }} />
                                   <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>5.7</div>

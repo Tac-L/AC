@@ -496,6 +496,15 @@ body {
   display: none;
 }
 
+/* 一分分分彩：上下两层菜单的横向滑动列，隐藏滚动条 */
+.ffc-scroll-row {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ffc-scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
 .scroll-categories {
   display: flex;
   gap: 10px;
@@ -11357,9 +11366,9 @@ body {
 /* Game switcher carousel */
 .vp-game-carousel {
   display: flex;
-  gap: 10px;
+  gap: 2px;
   overflow-x: auto;
-  padding: 10px 12px;
+  padding: 6px 8px;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -11370,36 +11379,35 @@ body {
 
 .vp-game-card {
   flex-shrink: 0;
-  width: 58px;
-  height: 72px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  width: 92px;
+  height: 89px;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 3px 0 0 0;
-  overflow: hidden;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 0;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .vp-game-card.active {
-  border-color: #3b82f6;
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
+  box-shadow: none;
 }
 
 .vp-game-card img {
-  width: 46px;
-  height: 46px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .vp-game-emoji-icon {
-  width: 46px;
-  height: 46px;
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11603,19 +11611,23 @@ body {
 
 .vp-game-label-capsule {
   width: 100%;
-  background-color: #94a3b8;
-  color: #ffffff;
+  height: 16px;
+  line-height: 16px;
+  background-color: transparent;
+  color: #94a3b8;
   font-size: 0.52rem;
-  font-weight: bold;
+  font-weight: normal;
   text-align: center;
-  padding: 2px 0;
+  padding: 0;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .vp-game-card.active .vp-game-label-capsule {
-  background-color: #3b82f6;
+  background-color: transparent;
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: calc(0.52rem + 2px);
 }
 
 .vp-game-card.disabled {
