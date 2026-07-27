@@ -11372,6 +11372,7 @@ body {
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  position: relative;
 }
 
 /* Game switcher carousel */

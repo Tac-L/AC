@@ -27,12 +27,6 @@ const getM6BallColor = (num) => {
   return 'green';
 };
 
-// Speed Race (极速赛车) 1~10 名次球颜色（PK10 标准配色）
-const RACE_COLORS = {
-  1: '#f5c211', 2: '#2f6fdb', 3: '#3a3a3a', 4: '#f07c19', 5: '#16b1c4',
-  6: '#7a52d6', 7: '#9aa1a8', 8: '#e03131', 9: '#7a2222', 10: '#2f9e44'
-};
-
 // 鱼虾蟹（魚蝦蟹）六面图案 —— 图标来自 public/鱼虾蟹/
 const FISH_CRAB_SYMBOLS = [
   { key: 'fish', label: '鱼', icon: '鱼虾蟹/鱼.svg', color: '#e03131' },
@@ -362,8 +356,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
     if (!playableCarouselGames.includes(item.key)) return;
     setActiveCarouselGame(item.key);
     setMenuOpen(false);
-    if (embedded) setCarouselOpen(false); // 短剧：选择游戏后关闭切换面板
-    showToast(`已切换至游戏：${item.label}`);
+    setCarouselOpen(false); // 选择游戏后关闭切换面板
   };
 
   // Close bet area chevron/x
@@ -982,13 +975,11 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
   // 边看边玩游戏控制台（视频/短剧共用）
   const renderPlayTab = () => (
               <div className="vp-play-panel">
-                {/* Game Carousel Switcher（视频常驻顶部；短剧点切换箭头后从上方弹出） */}
-                {(!embedded || carouselOpen) && (
+                {/* Game Carousel Switcher（视频/短剧统一：默认收合，点左上角切换箭头后从上方弹出） */}
+                {carouselOpen && (
                 <>
-                {embedded && carouselOpen && (
-                  <div className="vp-carousel-backdrop" onClick={() => setCarouselOpen(false)}></div>
-                )}
-                <div className={`vp-game-carousel ${embedded ? 'vp-game-carousel-overlay' : ''}`}>
+                <div className="vp-carousel-backdrop" onClick={() => setCarouselOpen(false)}></div>
+                <div className="vp-game-carousel vp-game-carousel-overlay">
                   {carouselGameItems.map(item => {
                     const isPlayable = playableCarouselGames.includes(item.key);
                     return (
@@ -1017,7 +1008,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分快三</span>
                         </div>
                         {renderCountdown()}
@@ -1157,7 +1148,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分六合彩</span>
                         </div>
                         {renderCountdown()}
@@ -1351,7 +1342,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分极速赛车</span>
                         </div>
                         {renderCountdown()}
@@ -1378,16 +1369,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                         <span>第 {issue} 期</span>
                         <div className="vp-sr-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
                           {srResult.map((n, idx) => (
-                            <span
-                              key={idx}
-                              style={{
-                                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                                width: '18px', height: '18px', borderRadius: '50%',
-                                background: RACE_COLORS[n], color: '#fff', fontSize: '0.6rem', fontWeight: 'bold'
-                              }}
-                            >
-                              {n}
-                            </span>
+                            <img key={idx} src={`PK10-ball/num=${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
                           ))}
                         </div>
                       </div>
@@ -1465,15 +1447,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                                   onClick={() => handleSRCardClick('冠军单码', name)}
                                   style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
-                                  <span
-                                    style={{
-                                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                                      width: '22px', height: '22px', borderRadius: '50%',
-                                      background: RACE_COLORS[num], color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '2px'
-                                    }}
-                                  >
-                                    {num}
-                                  </span>
+                                  <img src={`PK10-ball/num=${num}.png`} alt={num} style={{ width: '26px', height: '26px', marginBottom: '2px' }} />
                                   <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.75</div>
                                 </div>
                               );
@@ -1539,7 +1513,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分分分彩</span>
                         </div>
                         {renderCountdown()}
@@ -1731,7 +1705,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分鱼虾蟹</span>
                         </div>
                         {renderCountdown()}
@@ -1889,7 +1863,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>百家乐A1</span>
                         </div>
                         {renderCountdown()}
@@ -2072,7 +2046,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>一分动物运动会</span>
                         </div>
                         {renderCountdown()}
@@ -2219,7 +2193,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
                           <span>{carouselGameItems.find(g => g.key === activeCarouselGame)?.label || '电子游戏'}</span>
                         </div>
                         <div className="vp-bet-header-right">
