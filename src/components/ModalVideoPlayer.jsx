@@ -1017,12 +1017,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分快三</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1157,12 +1157,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分六合彩</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1351,12 +1351,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分极速赛车</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1539,12 +1539,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分分分彩</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1731,12 +1731,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分鱼虾蟹</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -1889,12 +1889,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>百家乐A1</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -2072,12 +2072,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>一分动物运动会</span>
                         </div>
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-bars-staggered" onClick={toggleDropdownMenu}></i>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
                         </div>
                       </div>
@@ -2219,7 +2219,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose } = {}) {
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
-                          {embedded && <i className="fa-solid fa-left-right vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏"></i>}
+                          {embedded && <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />}
                           <span>{carouselGameItems.find(g => g.key === activeCarouselGame)?.label || '电子游戏'}</span>
                         </div>
                         <div className="vp-bet-header-right">
