@@ -1,3 +1,13 @@
+/**
+ * ⚠️ 已弃用 (DEPRECATED) — 请勿在此继续开发
+ * -----------------------------------------------------------------------------
+ * 这是早期自制的「一分快三」示意游戏画面，仅在 activeSubGame === 'fast_three' 时渲染。
+ * 现在「游戏」页所有带 roomid 的彩票（含快三）都已改为内嵌外部站点
+ * (SubGameSpeedRace 里的 iframe: tac-l.github.io/F-2)，此路由不再被触发，本组件已无入口。
+ *
+ * 需要调整快三玩法 / 样式时，请改仍在使用的 ModalVideoPlayer（视频/边看边玩投注页）。
+ * -----------------------------------------------------------------------------
+ */
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 

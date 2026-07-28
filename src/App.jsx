@@ -53,6 +53,7 @@ function MainApp() {
 
   // Determine active view inside Phone container
   const renderActivePage = () => {
+    // ⚠️ 已弃用：mark_six / fast_three 两条路由不再被设置（游戏页彩票已改内嵌 iframe，见各组件顶部说明）
     if (activeSubGame === 'mark_six') {
       return <SubGameMarkSix />;
     }

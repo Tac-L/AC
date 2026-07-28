@@ -170,6 +170,9 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [favCount, setFavCount] = useState(7);
   const [hasFav, setHasFav] = useState(false);
 
+  // 详情弹窗：显示影片更完整的信息
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+
   // Rotating banner index
   const [bannerIdx, setBannerIdx] = useState(0);
 
@@ -211,6 +214,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       el.scrollLeft = active.offsetLeft - (el.clientWidth - active.clientWidth) / 2;
     }
   }, [carouselOpen]);
+
+  // 点击选单以外的任意区域即收合下拉选单
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = () => setMenuOpen(false);
+    const id = setTimeout(() => document.addEventListener('click', handler), 0);
+    return () => {
+      clearTimeout(id);
+      document.removeEventListener('click', handler);
+    };
+  }, [menuOpen]);
 
   // 投注时长：百家乐 25 秒，其他游戏 55 秒（+ 5 秒封盘含开奖）
   const SEALED_SECONDS = 5;
@@ -1257,10 +1271,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         <span>第 {issue} 期</span>
                         <div className="vp-m6-result-balls">
                           {m6Result.slice(0, 6).map((n, idx) => (
-                            <span key={idx} className={`vp-m6-result-ball ball-${getM6BallColor(n)}`}>{n.toString().padStart(2, '0')}</span>
+                            <img key={idx} className="vp-m6-result-ball-img" src={`lhc-ball/num=${n.toString().padStart(2, '0')}.png`} alt={n.toString().padStart(2, '0')} />
                           ))}
                           <span className="vp-m6-result-plus">+</span>
-                          <span className={`vp-m6-result-ball ball-${getM6BallColor(m6Result[6])}`}>{m6Result[6].toString().padStart(2, '0')}</span>
+                          <img className="vp-m6-result-ball-img" src={`lhc-ball/num=${m6Result[6].toString().padStart(2, '0')}.png`} alt={m6Result[6].toString().padStart(2, '0')} />
                         </div>
                       </div>
                     </div>
@@ -1358,7 +1372,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   onClick={() => handleM6CardClick('特码', name)}
                                   style={{ height: '58px', padding: '2px' }}
                                 >
-                                  <span className={`m6new-num-ball ball-${getM6BallColor(n)}`} style={{ width: '30px', height: '30px', fontSize: '0.72rem', marginBottom: '3px' }}>{name}</span>
+                                  <img className="vp-m6-num-ball-img" src={`lhc-ball/num=${name}.png`} alt={name} style={{ width: '30px', height: '30px', marginBottom: '3px' }} />
                                   <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.75</div>
                                 </div>
                               );
@@ -2597,20 +2611,11 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                 </div>
 
                 {/* Description block */}
-                <div className="vp-video-description-box" style={{ 
-                  margin: '8px 12px', 
-                  padding: '10px 0', 
-                  borderTop: '1px solid #f1f5f9',
-                  borderBottom: '1px solid #f1f5f9',
-                  fontSize: '0.78rem', 
-                  color: '#4b5563', 
-                  lineHeight: '1.45',
-                  textAlign: 'justify'
-                }}>
-                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
-                  <span style={{ color: '#3b82f6', cursor: 'pointer', marginLeft: '4px', fontWeight: '500' }} onClick={() => showToast('详情功能暂未开放')}>
-                    详情 &gt;
-                  </span>
+                <div className="vp-video-description-box">
+                  <div className="vp-desc-text">
+                    {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
+                  </div>
+                  <span className="vp-desc-more" onClick={() => setShowDetailsModal(true)}>详情 &gt;</span>
                 </div>
 
                 {/* Actions row */}
@@ -2669,10 +2674,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
           {/* Compact title bar for 边看边玩：保留标题区，游戏面板不占满高度 */}
           {vpActiveTab === 'play' && (
             <div className="vp-video-info-block vp-play-title-bar">
-              <h3 className="vp-video-title vp-play-title">
+              <h3 className="vp-video-title">
                 {activeVideo?.title || "诺曼底72小时"}
               </h3>
-              <div className="vp-video-meta-row vp-play-meta-row">
+              <div className="vp-video-meta-row">
                 <div className="vp-meta-item">
                   <i className="fa-regular fa-clock"></i>
                   <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
@@ -2686,11 +2691,22 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                   <span>{activeVideo?.rating || "8.2"}</span>
                 </div>
               </div>
+              <div className="vp-video-tags-row">
+                {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
+                  <span key={idx} className="vp-video-tag">{tag}</span>
+                ))}
+              </div>
+              <div className="vp-video-description-box">
+                <div className="vp-desc-text">
+                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
+                </div>
+                <span className="vp-desc-more" onClick={() => setShowDetailsModal(true)}>详情 &gt;</span>
+              </div>
             </div>
           )}
 
           {/* Tab Content Panel */}
-          <div className="vp-tab-content">
+          <div className={`vp-tab-content ${vpActiveTab === 'play' ? 'vp-play-sheet' : ''}`}>
             {vpActiveTab === 'chatroom' && (
               <div className="vp-chatroom-panel">
                 <div className="vp-chat-messages-list">
@@ -2847,6 +2863,36 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
             </div>
             <span className="time-lbl">02:18 / 95:00</span>
             <i className="fa-solid fa-down-left-and-up-right-to-center player-hud-icon" title="退出全屏" onClick={() => setLandscape(false)}></i>
+          </div>
+        </div>
+      )}
+
+      {/* 详情弹窗：点击「详情」后从底部弹出，显示更完整的影片信息 */}
+      {showDetailsModal && (
+        <div className="vp-details-overlay" onClick={() => setShowDetailsModal(false)}>
+          <div className="vp-details-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="vp-details-header">
+              <span className="vp-details-header-title">详情</span>
+              <i className="fa-solid fa-xmark" onClick={() => setShowDetailsModal(false)}></i>
+            </div>
+            <div className="vp-details-scroll">
+              <h3 className="vp-details-title">{activeVideo?.title || '诺曼底72小时'}</h3>
+              <div className="vp-details-stats">
+                <span className="vp-details-hot"><i className="fa-solid fa-fire"></i> {activeVideo?.views || '1.9万'}</span>
+                <span className="vp-details-score"><i className="fa-solid fa-star"></i> {activeVideo?.rating || '8.2'}</span>
+              </div>
+              <div className="vp-details-tags">
+                {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
+                  <span key={idx} className="vp-details-tag">{tag}</span>
+                ))}
+              </div>
+              <div className="vp-details-crew"><span className="vp-details-crew-label">导演：</span>{activeVideo?.director || '吴家伟'}</div>
+              <div className="vp-details-crew"><span className="vp-details-crew-label">主演：</span>{activeVideo?.cast || '蔡洁, 王浩信, 林子善, 岑珈其, 洪浚嘉'}</div>
+              <h4 className="vp-details-subhead">简介</h4>
+              <p className="vp-details-desc">
+                {activeVideo?.description || '影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。'}
+              </p>
+            </div>
           </div>
         </div>
       )}

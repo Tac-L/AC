@@ -1,3 +1,13 @@
+/**
+ * ⚠️ 已弃用 (DEPRECATED) — 请勿在此继续开发
+ * -----------------------------------------------------------------------------
+ * 这是早期自制的「一分六合彩」示意游戏画面，仅在 activeSubGame === 'mark_six' 时渲染。
+ * 现在「游戏」页所有带 roomid 的彩票（含六合彩）都已改为内嵌外部站点
+ * (SubGameSpeedRace 里的 iframe: tac-l.github.io/F-2)，此路由不再被触发，本组件已无入口。
+ *
+ * 需要调整六合彩开奖球 / 玩法样式时，请改仍在使用的 ModalVideoPlayer（视频/边看边玩投注页）。
+ * -----------------------------------------------------------------------------
+ */
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -165,13 +175,13 @@ export default function SubGameMarkSix() {
           <div className="m6new-balls">
             {lastResult.slice(0, 6).map((b, i) => (
               <div key={i} className="m6new-ball-wrap">
-                <div className={`m6new-ball ball-${getBallColor(b.n)}`}>{b.n.toString().padStart(2, '0')}</div>
+                <img className="m6new-ball-img" src={`/lhc-ball/num=${b.n.toString().padStart(2, '0')}.png`} alt={b.n.toString().padStart(2, '0')} />
                 <span className="m6new-ball-zodiac">{b.z}</span>
               </div>
             ))}
             <span className="m6new-plus">+</span>
             <div className="m6new-ball-wrap">
-              <div className={`m6new-ball ball-${getBallColor(lastResult[6].n)}`}>{lastResult[6].n.toString().padStart(2, '0')}</div>
+              <img className="m6new-ball-img" src={`/lhc-ball/num=${lastResult[6].n.toString().padStart(2, '0')}.png`} alt={lastResult[6].n.toString().padStart(2, '0')} />
               <span className="m6new-ball-zodiac">{lastResult[6].z}</span>
             </div>
           </div>

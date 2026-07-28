@@ -384,7 +384,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 68px); /* Less bottom navigation height */
+  height: calc(100% - 52px); /* Less bottom navigation height */
   display: none;
   flex-direction: column;
   animation: tabFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -408,14 +408,14 @@ body {
 
 /* Bottom Navigation Bar */
 .bottom-nav {
-  height: 68px;
+  height: 52px;
   background-color: var(--bg-dark);
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding-top: 8px; /* breathing room above icons */
-  padding-bottom: 10px; /* Accommodate iOS Home bar space */
+  padding-top: 4px; /* breathing room above icons */
+  padding-bottom: 5px; /* Accommodate iOS Home bar space */
   position: absolute;
   bottom: 0;
   left: 0;
@@ -4651,6 +4651,7 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   position: relative;
+  background-color: #ffffff;
 }
 
 .player-scroll-content::-webkit-scrollbar {
@@ -6614,12 +6615,12 @@ input:checked + .slider:before {
 
   /* Keep the bottom nav clear of the iOS home indicator / browser chrome */
   .bottom-nav {
-    height: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .app-page {
-    height: calc(100% - 68px - env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(100% - 52px - env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
@@ -11081,13 +11082,12 @@ body {
 /* Restructured Video Player Page Styles */
 .vp-video-info-block {
   background-color: #ffffff;
-  padding: 12px 14px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 12px 14px 6px;
 }
 
 .vp-video-title {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 400;
   color: #1e293b;
   line-height: 1.4;
   margin-bottom: 6px;
@@ -11108,8 +11108,8 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 0.7rem;
-  color: #64748b;
+  font-size: calc(0.66rem - 1px);
+  color: #94a3b8;
   margin-bottom: 6px;
 }
 
@@ -11127,39 +11127,172 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .vp-video-tag {
   font-size: 0.65rem;
-  color: #3b82f6;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* 视频简介：最多显示三行，末尾「详情 >」浮在右下角 */
+.vp-video-description-box {
+  position: relative;
+  margin: 6px 0;
+  font-size: calc(0.72rem - 2px);
+  color: #94a3b8;
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.vp-desc-text {
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vp-desc-more {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding-left: 24px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #ffffff 45%);
+  color: #94a3b8;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+/* 详情弹窗（底部弹出） */
+.vp-details-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 130;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.vp-details-sheet {
+  background: #ffffff;
+  border-radius: 16px 16px 0 0;
+  max-height: 72%;
+  display: flex;
+  flex-direction: column;
+  animation: vpDetailsUp 0.25s ease;
+}
+
+@keyframes vpDetailsUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.vp-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.vp-details-header-title {
+  font-size: 0.85rem;
   font-weight: 500;
+  color: #1e293b;
+}
+
+.vp-details-header i {
+  font-size: 1rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.vp-details-scroll {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.vp-details-title {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.vp-details-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: calc(0.66rem - 1px);
+  margin-bottom: 8px;
+}
+
+.vp-details-hot { color: #ef4444; }
+.vp-details-hot i { margin-right: 4px; }
+.vp-details-score { color: #f59e0b; }
+.vp-details-score i { margin-right: 4px; }
+
+.vp-details-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-bottom: 16px;
+}
+
+.vp-details-crew {
+  font-size: calc(0.72rem - 1px);
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.vp-details-crew-label {
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.vp-details-subhead {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #1e293b;
+  margin: 14px 0 6px;
+}
+
+.vp-details-desc {
+  font-size: calc(0.72rem - 1px);
+  color: #94a3b8;
+  line-height: 1.6;
+  text-align: left;
 }
 
 .vp-actions-row {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 10px;
-  margin-bottom: 8px;
+  padding-top: 0;
+  margin-bottom: 6px;
 }
 
 .vp-action-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: none;
   border: none;
-  color: #64748b;
-  font-size: 0.68rem;
+  color: #373838;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .vp-action-btn i {
-  font-size: 1rem;
+  font-size: 0.92rem;
 }
 
 .vp-action-btn.active {
@@ -11175,7 +11308,7 @@ body {
   border: 1px solid #fde68a;
   border-radius: 18px;
   padding: 6px 12px;
-  margin: 4px 0 8px 0;
+  margin: 0;
   font-size: 0.7rem;
   color: #78350f;
 }
@@ -11234,8 +11367,8 @@ body {
   flex: 1;
   text-align: center;
   padding: 10px 0;
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: calc(0.85rem - 3px);
+  font-weight: 400;
   color: #64748b;
   background: none;
   border: none;
@@ -11246,6 +11379,7 @@ body {
 
 .vp-tab-btn.active {
   color: #3b82f6;
+  font-weight: 700;
 }
 
 .vp-tab-btn.active::after {
@@ -11267,6 +11401,13 @@ body {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+}
+
+/* 边看边玩：游戏台改成从简介下方升起的半屏弹窗（圆角 + 阴影 + 上滑） */
+.vp-play-sheet {
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  animation: vpDetailsUp 0.25s ease;
 }
 
 /* Chatroom sub-page */
@@ -11291,7 +11432,7 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 0.72rem;
+  font-size: calc(0.72rem - 1px);
   line-height: 1.4;
 }
 
@@ -11362,7 +11503,7 @@ body {
 }
 
 .vp-chat-bet-btn {
-  background: linear-gradient(135deg, #f59e0b, #eab308);
+  background: linear-gradient(135deg, #ffd94a, #f7b500);
   border: none;
   color: #1e293b;
   font-size: 0.75rem;
@@ -11673,6 +11814,19 @@ body {
   flex-shrink: 0;
 }
 
+.vp-m6-result-ball-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+.vp-m6-num-ball-img {
+  object-fit: contain;
+  display: block;
+}
+
 .vp-m6-result-plus {
   font-size: 0.7rem;
   font-weight: 700;
@@ -11770,6 +11924,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 22px; /* 固定行高，避免不同游戏开奖球/骰子高度不同造成切换时微跳动 */
   font-size: 0.7rem;
   color: #64748b;
 }
@@ -11915,6 +12070,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 16px 16px 0 0;
 }
 
 /* 游戏画面：顶端对齐等比铺满，让浮层按钮压在画面上，留白落在底部并与画面暗色融合 */
@@ -15952,6 +16108,13 @@ body {
   border: 2px solid #ccc;
 }
 
+.m6new-ball-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
+
 .m6new-ball.ball-red {
   border-color: #e03131;
   color: #e03131;
@@ -17988,8 +18151,8 @@ body {
 .skin-1 .pbal-header-bar,
 .skin-1 .search-header-bar,
 .skin-1 .sub-game-header-bar {
-  background: #e6f4ff !important;
-  background-color: #e6f4ff !important;
+  background: linear-gradient(90deg, #EAF5FF 0%, #D7EBFF 100%) !important;
+  background-color: #D7EBFF !important;
   border-bottom: 1px solid #bae6fd !important;
   color: #1e3a8a !important;
 }
@@ -18035,16 +18198,16 @@ body {
   color: #2563eb !important;
 }
 .skin-1 .video-search-row {
-  background-color: #e6f4ff !important;
+  background-color: #D7EBFF !important;
 }
 .skin-1 .ac-logo-card-styled {
-  background: linear-gradient(135deg, #e6f4ff 0%, #bfdbfe 100%) !important;
+  background: linear-gradient(135deg, #D7EBFF 0%, #bfdbfe 100%) !important;
 }
 .skin-1 .ac-card-logo-sub {
   color: #2563eb !important;
 }
 .skin-1 .profile-features-header {
-  background: linear-gradient(90deg, #e6f4ff 0%, #bfdbfe 100%) !important;
+  background: linear-gradient(90deg, #D7EBFF 0%, #bfdbfe 100%) !important;
 }
 .skin-1 .drawer-restore-btn {
   color: #2563eb !important;
