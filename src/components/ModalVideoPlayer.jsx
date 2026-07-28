@@ -182,6 +182,19 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // Refs for scroll handling
   const chatEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
+  const gameCarouselRef = useRef(null);
+
+  // 打开游戏选单时（仅在开合切换那一刻），把当前选中的游戏滚动到可视中央；
+  // 打开期间的重渲染（如倒计时每秒跳动）不再触发，手动滚动不会被弹回。
+  useEffect(() => {
+    if (!carouselOpen) return;
+    const el = gameCarouselRef.current;
+    if (!el) return;
+    const active = el.querySelector('.vp-game-card.active');
+    if (active) {
+      el.scrollLeft = active.offsetLeft - (el.clientWidth - active.clientWidth) / 2;
+    }
+  }, [carouselOpen]);
 
   // 投注时长：百家乐 25 秒，其他游戏 55 秒（+ 5 秒封盘含开奖）
   const SEALED_SECONDS = 5;
@@ -349,7 +362,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'animal', 'fishcrab', 'baccarat'];
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -531,6 +544,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     { key: 'animal', label: '一分动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
     { key: 'fishcrab', label: '一分鱼虾蟹', img: '游戏图标/鱼虾蟹.png' },
     { key: 'baccarat', label: '百家乐A1', img: '游戏图标/百家乐.png' },
+    { key: 'candy', label: '糖果派对', emoji: '🍬' },
     { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
@@ -979,7 +993,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                 {carouselOpen && (
                 <>
                 <div className="vp-carousel-backdrop" onClick={() => setCarouselOpen(false)}></div>
-                <div className="vp-game-carousel vp-game-carousel-overlay">
+                <div className="vp-game-carousel vp-game-carousel-overlay" ref={gameCarouselRef}>
                   {carouselGameItems.map(item => {
                     const isPlayable = playableCarouselGames.includes(item.key);
                     return (
@@ -2185,6 +2199,30 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           提交下注
                         </button>
                       </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'candy' ? (
+                  // 糖果派对 (Candy Party Slot) —— 示意图 mockup
+                  // Slot 游戏不显示标题列，改用画面上的浮层按钮（左上切换游戏 / 右上关闭）
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    {/* 糖果派对游戏画面：直接使用示意图（图内无 X，使用可见关闭按钮） */}
+                    <div className="vp-slot-stage">
+                      <img src="糖果slot示意.png" className="vp-slot-screen" alt="糖果派对" />
+                      {/* 左上角：切换游戏按钮（打开游戏选单） */}
+                      <img src="左右箭头.png" className="vp-slot-switch" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
+                      {/* 右上角：关闭 */}
+                      <button className="vp-slot-close" onClick={handleBetHeaderClose} title="关闭" aria-label="关闭"><i className="fa-solid fa-xmark"></i></button>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'mahjong' ? (
+                  // 麻将胡了2 (Mahjong Ways 2 Slot) —— 示意图（图内无 X，使用可见关闭按钮）
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-slot-stage">
+                      <img src="麻胡2示意.png" className="vp-slot-screen" alt="麻将胡了2" />
+                      {/* 左上角：切换游戏按钮（打开游戏选单） */}
+                      <img src="左右箭头.png" className="vp-slot-switch" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
+                      {/* 右上角：关闭 */}
+                      <button className="vp-slot-close" onClick={handleBetHeaderClose} title="关闭" aria-label="关闭"><i className="fa-solid fa-xmark"></i></button>
                     </div>
                   </div>
                 ) : (
