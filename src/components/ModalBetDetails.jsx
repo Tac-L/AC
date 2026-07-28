@@ -35,6 +35,8 @@ export default function ModalBetDetails() {
     gameTitle = '一分动物运动会 投注详情';
   } else if (currentActiveGame === 'ffc') {
     gameTitle = '一分分分彩 投注详情';
+  } else if (currentActiveGame === 'ffc2') {
+    gameTitle = '一分分分彩2 投注详情';
   }
 
   // Handle amount change for specific staged item.
@@ -91,6 +93,8 @@ export default function ModalBetDetails() {
       gameName = '一分动物运动会';
     } else if (currentActiveGame === 'ffc') {
       gameName = '一分分分彩';
+    } else if (currentActiveGame === 'ffc2') {
+      gameName = '一分分分彩2';
     }
 
     showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);
