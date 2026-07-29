@@ -519,7 +519,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const moreGamesList = {
     hot: [
       { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
-      { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
+      { key: 'mahjong', label: '麻将胡了2', img: '游戏图标/麻将湖了2.png' },
       { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
       { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
       { key: 'goldcity', label: '寻宝黄金城', img: 'assets/drawing.png' },
@@ -531,7 +531,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       { key: 'bbin', label: 'BBIN视讯', img: 'assets/chat_cover.png' }
     ],
     slots: [
-      { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
+      { key: 'mahjong', label: '麻将胡了2', img: '游戏图标/麻将湖了2.png' },
       { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
       { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
       { key: 'goldcity', label: '寻宝黄金城', img: 'assets/drawing.png' }
@@ -581,8 +581,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     { key: 'animal', label: '一分动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
     { key: 'fishcrab', label: '一分鱼虾蟹', img: '游戏图标/鱼虾蟹.png' },
     { key: 'baccarat', label: '百家乐A1', img: '游戏图标/百家乐.png' },
-    { key: 'candy', label: '糖果派对', emoji: '🍬' },
-    { key: 'mahjong', label: '麻将胡了2', img: 'assets/game_mahjong.png' },
+    { key: 'candy', label: '糖果派对', img: '游戏图标/糖果派对.png' },
+    { key: 'mahjong', label: '麻将胡了2', img: '游戏图标/麻将湖了2.png' },
     { key: 'captain', label: '赏金船长', img: 'assets/origami.png' },
     { key: 'queen', label: '赏金女王', img: 'assets/sports_cover.png' },
     { key: 'goldcity', label: '寻宝黄金城', img: 'assets/drawing.png' },
