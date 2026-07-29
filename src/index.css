@@ -1454,6 +1454,12 @@ body {
   box-sizing: border-box;
 }
 
+/* 直播间「玩同款」：游戏由直播间固定，隐藏切换游戏按钮（含 Slot 浮层按钮），游戏名靠左 */
+#live-betting-panel .vp-switch-game,
+#live-betting-panel .vp-slot-switch {
+  display: none;
+}
+
 .vp-menu-icon {
   width: 18px;
   height: 18px;
@@ -12071,6 +12077,11 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 16px 16px 0 0;
+}
+
+/* 直播间「玩同款」：Slot 画面顶端不留圆角，避免露出背景色 */
+#live-betting-panel .vp-slot-stage {
+  border-radius: 0;
 }
 
 /* 游戏画面：顶端对齐等比铺满，让浮层按钮压在画面上，留白落在底部并与画面暗色融合 */

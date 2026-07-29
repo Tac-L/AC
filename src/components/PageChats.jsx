@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import ModalVideoPlayer from './ModalVideoPlayer';
 
+// Slot 类游戏（示意图玩法），直播间不提供「跟注」
+const SLOT_GAME_KEYS = ['candy', 'mahjong'];
+
 // 依直播间信息推断对应的游戏投注页（对应视频里的游戏控制台）
 const roomToGameKey = (room) => {
+  if (room?.gameKey) return room.gameKey; // 房间显式指定游戏时优先
   const s = `${room?.name || ''} ${room?.label || ''} ${room?.gameBadge || ''} ${room?.title || ''}`;
   if (s.includes('六合彩')) return 'marksix';
   if (s.includes('百家乐')) return 'baccarat';
@@ -172,7 +176,17 @@ export default function PageChats() {
     { id: 9, name: 'VIP专属至尊快三', category: 'vip', sub: ['recommend', 'game'], img: 'assets/game_fast3.png', viewer: 250109, label: 'BL 一分快三', badge: '88' },
     { id: 10, name: 'VIP美女一对一', category: 'vip', sub: ['voice'], img: 'assets/chat_cover.png', viewer: 48201, label: 'BL 语音厅', badge: '99' },
     { id: 11, name: '深夜暖心歌会', category: 'naked', sub: ['recommend', 'voice'], img: 'assets/science.png', viewer: 398104, label: 'BL 语音厅', badge: '99' },
-    { id: 12, name: '户外野营生活', category: 'naked', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 148202, label: 'BL 体育赛事', badge: '72' }
+    { id: 12, name: '户外野营生活', category: 'naked', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 148202, label: 'BL 体育赛事', badge: '72' },
+    // 各已完成游戏各开一间「玩同款」直播间，gameKey 决定进房后打开的游戏
+    { id: 13, name: '澳门六合彩厅', category: 'chatroom', sub: ['recommend', 'game'], img: 'assets/mo_mark_six.png', viewer: 188206, label: 'BL 一分六合彩', badge: '66', gameKey: 'marksix' },
+    { id: 14, name: '极速赛车竞技场', category: 'chatroom', sub: ['game'], img: '游戏图标/1062010.png', viewer: 176540, label: 'BL 极速赛车', badge: '48', gameKey: 'speedrace' },
+    { id: 15, name: '分分彩鑫运厅', category: 'chatroom', sub: ['recommend', 'game'], img: '游戏图标/601010.png', viewer: 165330, label: 'BL 一分分分彩', badge: '37', gameKey: 'ffc' },
+    { id: 16, name: '分分彩2简约厅', category: 'chatroom', sub: ['game'], img: '游戏图标/601010.png', viewer: 152118, label: 'BL 一分分分彩2', badge: '29', gameKey: 'ffc2' },
+    { id: 17, name: '动物运动会', category: 'chatroom', sub: ['recommend', 'game'], img: '游戏图标/1001-D6CpfLEz.png', viewer: 143902, label: 'BL 动物运动会', badge: '54', gameKey: 'animal' },
+    { id: 18, name: '鱼虾蟹财神殿', category: 'chatroom', sub: ['game'], img: '游戏图标/鱼虾蟹.png', viewer: 138771, label: 'BL 一分鱼虾蟹', badge: '41', gameKey: 'fishcrab' },
+    { id: 19, name: '百家乐尊爵厅', category: 'vip', sub: ['recommend', 'game'], img: '游戏图标/百家乐.png', viewer: 231044, label: 'BL 百家乐', badge: '88', gameKey: 'baccarat' },
+    { id: 20, name: '糖果派对乐园', category: 'chatroom', sub: ['game'], img: '糖果slot示意.png', viewer: 121885, label: 'BL 糖果派对', badge: '35', gameKey: 'candy' },
+    { id: 21, name: '麻将胡了2嗨房', category: 'chatroom', sub: ['game'], img: '麻胡2示意.png', viewer: 119327, label: 'BL 麻将胡了2', badge: '33', gameKey: 'mahjong' }
   ];
 
   const chatTemplates = [
@@ -280,7 +294,7 @@ export default function PageChats() {
       return roomsData.filter(r => r.category === 'chatroom' || r.category === 'naked' || r.label.includes('语音'));
     }
     if (activeCustomTab === '游戏') {
-      return roomsData.filter(r => r.category === 'vip' || r.label.includes('快三'));
+      return roomsData.filter(r => r.gameKey || r.category === 'vip' || r.label.includes('快三'));
     }
     return []; // '预告' and '预约' are handled separately in the render
   };
@@ -288,6 +302,8 @@ export default function PageChats() {
   const handleEnterRoom = (room) => {
     setCurrentRoom(room);
     setShowBetPanel(false);
+    // Slot 房间无「跟注」，避免残留在已隐藏的 follow tab
+    if (SLOT_GAME_KEYS.includes(roomToGameKey(room))) setActiveLiveTab('chat');
     
     // Set mock live viewer count
     const randViewer = (Math.floor(Math.random() * 5000) + 12000);
@@ -859,7 +875,9 @@ export default function PageChats() {
           {/* Sub-tabs bar below the stream */}
           <div className="live-room-tabs-bar">
             <div className="live-tabs-left">
-              {['chat', 'follow', 'more'].map(tab => (
+              {['chat', 'follow', 'more']
+                .filter(tab => !(tab === 'follow' && SLOT_GAME_KEYS.includes(roomToGameKey(currentRoom))))
+                .map(tab => (
                 <div 
                   key={tab} 
                   className={`live-tab ${activeLiveTab === tab ? 'active' : ''}`}
