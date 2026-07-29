@@ -1461,8 +1461,13 @@ body {
 }
 
 .vp-menu-icon {
-  width: 18px;
-  height: 18px;
+  width: 30px;
+  height: 24px;
+  border: 1px solid #d5dbe4;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 4px 6px;
+  box-sizing: border-box;
   object-fit: contain;
   cursor: pointer;
   flex-shrink: 0;
@@ -11907,6 +11912,7 @@ body {
 .vp-phase-sealed {
   background-color: #fdecef;
   color: #e5405e;
+  border-radius: 4px;
 }
 
 .vp-phase-drawing {
@@ -11921,9 +11927,32 @@ body {
 }
 
 .vp-bet-header-right i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 24px;
+  border: 1px solid #d5dbe4;
+  border-radius: 6px;
+  background: #ffffff;
+  box-sizing: border-box;
   color: #64748b;
   font-size: 0.9rem;
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.vp-close-icon {
+  width: 30px;
+  height: 24px;
+  border: 1px solid #d5dbe4;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  object-fit: contain;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .vp-bet-header-row2 {
@@ -12097,8 +12126,8 @@ body {
 .vp-slot-switch {
   position: absolute;
   z-index: 7;
-  top: 10px; left: 10px;
-  width: 34px; height: 34px;
+  top: 14px; left: 14px;
+  width: 24px; height: 24px;
   object-fit: contain;
   cursor: pointer;
 }

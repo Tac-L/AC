@@ -1189,7 +1189,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -1329,7 +1329,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -1523,7 +1523,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -1694,7 +1694,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -1722,20 +1722,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
-                      {/* 第一层：玩法（可左右滑动） */}
-                      <div className="ffc-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '8px 12px', background: '#ffffff' }}>
-                        {FFC_PLAY_TABS.map(tab => {
-                          const active = ffcActiveTab === tab.cat;
-                          return (
-                            <div
-                              key={tab.cat}
-                              onClick={() => handleFfcTabClick(tab.cat)}
-                              style={{ flexShrink: 0, padding: '7px 18px', borderRadius: '18px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', background: active ? '#3b82f6' : '#ffffff', color: active ? '#ffffff' : '#475569', border: `1px solid ${active ? '#3b82f6' : '#e2e8f0'}` }}
-                            >
-                              {tab.label}
-                            </div>
-                          );
-                        })}
+                      {/* 第一层：玩法（样式同一分分分彩2） */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {FFC_PLAY_TABS.map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${ffcActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => handleFfcTabClick(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
                       </div>
 
                       {/* 第二层：球号/区段（可左右滑动，两侧箭头） */}
@@ -1748,7 +1745,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               <div
                                 key={item.key}
                                 onClick={() => setFfcActivePos(item.key)}
-                                style={{ flexShrink: 0, padding: '10px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
                               >
                                 {item.label}
                               </div>
@@ -1814,8 +1811,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   onClick={() => handleFFCCardClick(ffcActiveSection, bet.name)}
                                   style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
-                                  <div className="odds-card-name" style={{ fontSize: '0.8rem', marginBottom: '2px', color: lotteryColor(bet.name) }}>{bet.name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.65rem', color: lotteryColor(bet.name) }}>{bet.odds}</div>
+                                  <div className="odds-card-name" style={{ fontSize: '0.8rem', marginBottom: '2px', color: bet.name === '龙' ? LOTTERY_PINK : bet.name === '虎' ? LOTTERY_BLUE : lotteryColor(bet.name) }}>{bet.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.65rem', color: bet.name === '龙' ? LOTTERY_PINK : bet.name === '虎' ? LOTTERY_BLUE : lotteryColor(bet.name) }}>{bet.odds}</div>
                                 </div>
                               );
                             })}
@@ -1886,7 +1883,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -2052,7 +2049,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -2243,7 +2240,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -2401,7 +2398,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -2584,7 +2581,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         {renderCountdown()}
                         <div className="vp-bet-header-right">
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
 
@@ -2753,7 +2750,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <span>{carouselGameItems.find(g => g.key === activeCarouselGame)?.label || '电子游戏'}</span>
                         </div>
                         <div className="vp-bet-header-right">
-                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
                     </div>
