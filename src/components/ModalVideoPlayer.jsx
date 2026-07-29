@@ -135,6 +135,11 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedFFC2, setSelectedFFC2] = useState(new Set());
   const [ffc2ActiveTab, setFfc2ActiveTab] = useState('wan'); // wan(万位), dragon(龙虎), bai(佰位)
 
+  // 一分幸运28 (Lucky 28) selections: key `${category}|${name}`；开奖 3 颗球 0~9，取自 public/分分-ball/
+  const [selectedL28, setSelectedL28] = useState(new Set());
+  const [l28ActiveTab, setL28ActiveTab] = useState('sides'); // sides(总和两面), dragon(龙虎豹), triple(三球), sum(总和)
+  const [l28Result] = useState([9, 8, 0]);
+
   // 鱼虾蟹 (Fish-Prawn-Crab) embedded selections: key encoded as `${category}|${symbolKey}`
   const [selectedFC, setSelectedFC] = useState(new Set());
   const [fcActiveTab, setFcActiveTab] = useState('single'); // single(单骰), all(全围)
@@ -392,7 +397,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'ffc2', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
+  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'ffc2', 'lucky28', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -572,6 +577,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
     { key: 'ffc', label: '一分分分彩', img: '游戏图标/601010.png' },
     { key: 'ffc2', label: '一分分分彩2', img: '游戏图标/601010.png' },
+    { key: 'lucky28', label: '一分幸运28', img: '游戏图标/1069010.png' },
     { key: 'animal', label: '一分动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
     { key: 'fishcrab', label: '一分鱼虾蟹', img: '游戏图标/鱼虾蟹.png' },
     { key: 'baccarat', label: '百家乐A1', img: '游戏图标/百家乐.png' },
@@ -894,6 +900,79 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     });
     openBetDetailsModal('ffc2', items);
     setSelectedFFC2(new Set());
+  };
+
+  // ===== 一分幸运28 (Lucky 28) embedded gameplay =====
+  // 四个页签：总和两面(大小单双 2) / 龙虎豹(龙虎豹 2.99) / 三球(顺子16.66 豹子100 对子3.7) / 总和(0~27)
+  const L28_TABS = [
+    { cat: 'sides', label: '总和两面' },
+    { cat: 'dragon', label: '龙虎豹' },
+    { cat: 'triple', label: '三球' },
+    { cat: 'sum', label: '总和' }
+  ];
+  const L28_SIDES = ['大', '小', '单', '双'];
+  const L28_DRAGON = [
+    { name: '龙', color: LOTTERY_PINK },
+    { name: '虎', color: LOTTERY_BLUE },
+    { name: '豹', color: LOTTERY_YELLOW }
+  ];
+  const L28_TRIPLE = [
+    { name: '顺子', odds: '16.66', color: LOTTERY_PINK },
+    { name: '豹子', odds: '100', color: LOTTERY_YELLOW },
+    { name: '对子', odds: '3.7', color: LOTTERY_BLUE }
+  ];
+  // 总和 0~27 赔率（对称：n 与 27-n 相同）
+  const L28_SUM_ODDS = ['1000', '333.33', '166.66', '100', '66.66', '47.61', '35.71', '27.77', '22.22', '18.18', '15.87', '14.49', '13.69', '13.33'];
+  const l28SumOddsOf = (n) => L28_SUM_ODDS[n <= 13 ? n : 27 - n];
+  const l28OddsOf = (category, name) => {
+    if (category === '总和两面') return '2';
+    if (category === '龙虎豹') return '2.99';
+    if (category === '三球') return L28_TRIPLE.find(t => t.name === name)?.odds || '3.7';
+    if (category === '总和') return l28SumOddsOf(Number(name));
+    return '2';
+  };
+  const l28ColorOf = (category, name) => {
+    if (category === '龙虎豹') return L28_DRAGON.find(d => d.name === name)?.color;
+    if (category === '三球') return L28_TRIPLE.find(t => t.name === name)?.color;
+    return lotteryColor(name) || '#1e293b';
+  };
+  const l28Sum = l28Result.reduce((a, b) => a + b, 0);
+
+  const handleL28CardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedL28);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedL28(next);
+  };
+
+  const l28Count = selectedL28.size;
+  const l28TotalCost = l28Count * currentBetPrice;
+
+  const handleL28Reset = () => {
+    setSelectedL28(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleL28Submit = () => {
+    if (l28Count === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (l28TotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedL28).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: l28OddsOf(category, name), baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('lucky28', items);
+    setSelectedL28(new Set());
   };
 
   // ===== 鱼虾蟹 (Fish-Prawn-Crab) embedded gameplay =====
@@ -1956,6 +2035,197 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
                         <button className="console-submit-btn active" onClick={handleFFC2Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'lucky28' ? (
+                  // 一分幸运28 (Lucky 28) console —— 样式沿用一分分分彩2
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box">
+                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
+                          <span>一分幸运28</span>
+                        </div>
+                        {renderCountdown()}
+                        <div className="vp-bet-header-right">
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
+                          <i className="fa-solid fa-xmark" onClick={handleBetHeaderClose}></i>
+                        </div>
+                      </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="vp-bet-header-row2">
+                        <span>第 {issue} 期</span>
+                        <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                          {l28Result.map((n, idx) => (
+                            <React.Fragment key={idx}>
+                              {idx > 0 && <span style={{ fontWeight: 700, color: '#64748b' }}>+</span>}
+                              <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: '#fff', fontWeight: 700, fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{n}</span>
+                            </React.Fragment>
+                          ))}
+                          <span style={{ fontWeight: 700, color: '#64748b' }}>=</span>
+                          <span style={{ minWidth: '22px', height: '20px', lineHeight: '20px', textAlign: 'center', padding: '0 5px', borderRadius: '4px', background: '#2563eb', color: '#fff', fontWeight: 700, fontSize: '0.72rem' }}>{l28Sum}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {/* Play category tabs：总和两面 / 龙虎豹 / 三球 / 总和 */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {L28_TABS.map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${l28ActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setL28ActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 总和两面：大 / 小 / 单 / 双 */}
+                        {l28ActiveTab === 'sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {L28_SIDES.map(name => {
+                              const isSelected = selectedL28.has(`总和两面|${name}`);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleL28CardClick('总和两面', name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: l28ColorOf('总和两面', name) }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: l28ColorOf('总和两面', name) }}>2</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 龙虎豹：龙 / 虎 / 豹 */}
+                        {l28ActiveTab === 'dragon' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {L28_DRAGON.map(bet => {
+                              const isSelected = selectedL28.has(`龙虎豹|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleL28CardClick('龙虎豹', bet.name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: bet.color }}>{bet.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: bet.color }}>2.99</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 三球：顺子 / 豹子 / 对子 */}
+                        {l28ActiveTab === 'triple' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {L28_TRIPLE.map(bet => {
+                              const isSelected = selectedL28.has(`三球|${bet.name}`);
+                              return (
+                                <div
+                                  key={bet.name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleL28CardClick('三球', bet.name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: bet.color }}>{bet.name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: bet.color }}>{bet.odds}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 总和：0 ~ 27，赔率依点数 */}
+                        {l28ActiveTab === 'sum' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {Array.from({ length: 28 }, (_, i) => i).map(n => {
+                              const isSelected = selectedL28.has(`总和|${n}`);
+                              return (
+                                <div
+                                  key={n}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleL28CardClick('总和', String(n))}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '2px', color: '#1e293b' }}>{n}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.62rem' }}>{l28SumOddsOf(n)}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{l28Count}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{l28TotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleL28Reset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleL28Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>

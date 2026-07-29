@@ -18585,7 +18585,7 @@ body {
 
 /* Skin 1 (天蓝) Toast */
 .skin-1 .toast-notification {
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important;
+  background: #ffffff !important;
   color: #0369a1 !important;
   border: 1px solid #7dd3fc !important;
   box-shadow: 0 4px 15px rgba(3, 105, 161, 0.18) !important;
