@@ -235,11 +235,31 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const SEALED_SECONDS = 5;
   const getBettingSeconds = () => (activeCarouselGame === 'baccarat' ? 25 : 55);
 
-  // 切换游戏时重置本期倒计时为该游戏的投注时长
+  // 切换游戏时重置本期倒计时为该游戏的投注时长，并清空所有游戏的选中点位
   useEffect(() => {
     setPhase('betting');
     setCountdown(activeCarouselGame === 'baccarat' ? 25 : 55);
+    setSelectedOdds(new Set());
+    setSelectedM6(new Set());
+    setSelectedSR(new Set());
+    setSelectedFFC(new Set());
+    setSelectedFFC2(new Set());
+    setSelectedL28(new Set());
+    setSelectedFC(new Set());
+    setSelectedBac(new Set());
+    setSelectedAnimal(new Set());
   }, [activeCarouselGame]);
+
+  // 切换游戏内上方玩法 tab 时，清空该游戏的选中点位
+  useEffect(() => { setSelectedOdds(new Set()); }, [activeTab]);
+  useEffect(() => { setSelectedM6(new Set()); }, [m6ActiveTab]);
+  useEffect(() => { setSelectedSR(new Set()); }, [srActiveTab]);
+  useEffect(() => { setSelectedFFC(new Set()); }, [ffcActiveTab]);
+  useEffect(() => { setSelectedFFC2(new Set()); }, [ffc2ActiveTab]);
+  useEffect(() => { setSelectedL28(new Set()); }, [l28ActiveTab]);
+  useEffect(() => { setSelectedFC(new Set()); }, [fcActiveTab]);
+  useEffect(() => { setSelectedBac(new Set()); }, [bacActiveTab]);
+  useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
 
   // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期
   useEffect(() => {
