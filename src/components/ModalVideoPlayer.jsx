@@ -108,6 +108,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // Betting states
   const [activeTab, setActiveTab] = useState('size'); // size, pair, triple, sum, single
   const [selectedOdds, setSelectedOdds] = useState(new Set());
+  // 一分快三 专业版盘面（样式同一分分分彩）
+  const [f3SimpleMode, setF3SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [selectedF3P, setSelectedF3P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
+  const [f3PlayTab, setF3PlayTab] = useState('army'); // 玩法：army(三军) short(短牌) long(长牌) triple(全骰) sum(和值) ...
   const [betAmount, setBetAmount] = useState(50);
   const [manualAmount, setManualAmount] = useState('');
   const [manualFocused, setManualFocused] = useState(false); // 是否聚焦「输入金额」
@@ -246,6 +250,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setPhase('betting');
     setCountdown(activeCarouselGame === 'baccarat' ? 25 : 55);
     setSelectedOdds(new Set());
+    setSelectedF3P(new Set());
     setSelectedM6(new Set());
     setSelectedSR(new Set());
     setSelectedSRP(new Set());
@@ -259,6 +264,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
   // 切换游戏内上方玩法 tab 时，清空该游戏的选中点位
   useEffect(() => { setSelectedOdds(new Set()); }, [activeTab]);
+  useEffect(() => { setSelectedF3P(new Set()); }, [f3PlayTab]);
   useEffect(() => { setSelectedM6(new Set()); }, [m6ActiveTab]);
   useEffect(() => { setSelectedSR(new Set()); }, [srActiveTab]);
   useEffect(() => { setSelectedSRP(new Set()); }, [srPlayTab]);
@@ -714,6 +720,80 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     openBetDetailsModal('fast_three_embedded', items);
     // Clear selections locally
     setSelectedOdds(new Set());
+  };
+
+  // ===== 一分快三 专业版盘面（样式同一分分分彩） =====
+  // 玩法页签（可左右滑动）——「二同号 / 三不同」待补图后开放
+  const F3_PLAY_TABS = [
+    { cat: 'army', label: '三军' },
+    { cat: 'short', label: '短牌' },
+    { cat: 'long', label: '长牌' },
+    { cat: 'triple', label: '全骰' },
+    { cat: 'sum', label: '和值' }
+  ];
+  // 三军：单骰 1~6
+  const F3_ARMY = ['1', '2', '3', '4', '5', '6'];
+  // 短牌：双同号 11~66
+  const F3_SHORT = ['11', '22', '33', '44', '55', '66'];
+  // 长牌：两颗不同点数的组合（C(6,2)=15）
+  const F3_LONG = (() => {
+    const list = [];
+    for (let a = 1; a <= 6; a++) for (let b = a + 1; b <= 6; b++) list.push(`${a}${b}`);
+    return list;
+  })();
+  // 全骰：三同号 111~666 + 任意全骰
+  const F3_TRIPLE = ['111', '222', '333', '444', '555', '666'];
+  // 和值 3~18 赔率（对称）
+  const F3_SUM_ODDS = {
+    3: '200.88', 4: '69.12', 5: '35.28', 6: '21.16', 7: '14.11', 8: '10',
+    9: '8.46', 10: '7.84', 11: '7.84', 12: '8.46', 13: '10', 14: '14.11',
+    15: '21.16', 16: '35.28', 17: '69.12', 18: '200.88'
+  };
+  const f3pOddsOf = (category, name) => {
+    if (category === '三军') return '1.96';
+    if (category === '短牌') return '13.23';
+    if (category === '长牌') return '7';
+    if (category === '全骰') return name === '全骰' ? '35.28' : '200.88';
+    if (category === '和值') return F3_SUM_ODDS[name] || '10';
+    return '1.96';
+  };
+  const toggleF3SimpleMode = () => {
+    setF3SimpleMode(v => !v);
+    setSelectedOdds(new Set());
+    setSelectedF3P(new Set());
+  };
+  const handleF3PCardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedF3P);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedF3P(next);
+  };
+  const f3pCount = selectedF3P.size;
+  const f3pTotalCost = f3pCount * currentBetPrice;
+  const handleF3PReset = () => {
+    setSelectedF3P(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+  const handleF3PSubmit = () => {
+    if (f3pCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (f3pTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedF3P).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: f3pOddsOf(category, name), baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('fast_three_embedded', items);
+    setSelectedF3P(new Set());
   };
 
   // ===== Mark Six (一分六合彩) embedded gameplay =====
@@ -1322,7 +1402,46 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       )}
 
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            className="vp-f3-mode-switch"
+                            onClick={toggleF3SimpleMode}
+                            title={f3SimpleMode ? '当前简易版，点击切换专业版' : '当前专业版，点击切换简易版'}
+                            style={{
+                              flexShrink: 0,
+                              position: 'relative',
+                              width: '46px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: '#eef2f6',
+                              border: '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                left: '2px',
+                                width: '18px',
+                                height: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                color: '#ffffff',
+                                background: f3SimpleMode ? '#22c55e' : '#ef4444',
+                                transform: f3SimpleMode ? 'translateX(22px)' : 'translateX(0)',
+                                transition: 'transform 0.18s ease, background 0.18s ease'
+                              }}
+                            >
+                              {f3SimpleMode ? '简' : '专'}
+                            </span>
+                          </div>
+                          <span>第 {String(issue).slice(-5)} 期</span>
+                        </div>
                         <div className="fast3-draw-balls" style={{ gap: '4px' }}>
                           {lastDice.map((val, idx) => (
                             <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: '22px', height: '22px' }} />
@@ -1332,6 +1451,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {f3SimpleMode ? (
+                      <>
                       {/* Play tabs */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -1341,7 +1462,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           { cat: 'sum', label: '总和' },
                           { cat: 'single', label: '单骰' }
                         ].map(tab => (
-                          <div 
+                          <div
                             key={tab.cat}
                             className={`live-play-tab ${activeTab === tab.cat ? 'active' : ''}`}
                             onClick={() => {
@@ -1373,6 +1494,125 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           })}
                         </div>
                       </div>
+                      </>
+                      ) : (
+                      <>
+                      {/* 专业版：玩法页签（可左右滑动，样式同一分分分彩的圆角胶囊） */}
+                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '8px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                        {F3_PLAY_TABS.map(tab => {
+                          const active = f3PlayTab === tab.cat;
+                          return (
+                            <div
+                              key={tab.cat}
+                              onClick={() => setF3PlayTab(tab.cat)}
+                              style={{
+                                flexShrink: 0,
+                                minWidth: '58px',
+                                textAlign: 'center',
+                                padding: '6px 16px',
+                                borderRadius: '8px',
+                                fontSize: '0.75rem',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                border: active ? '1px solid transparent' : '1px solid #e1e8ed',
+                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                color: active ? '#ffffff' : '#57606f',
+                                fontWeight: active ? 700 : 500
+                              }}
+                            >
+                              {tab.label}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 三军：单骰 1~6 */}
+                        {f3PlayTab === 'army' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_ARMY.map(name => {
+                              const isSelected = selectedF3P.has(`三军|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('三军', name)} style={{ height: '92px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDiceOptionName(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.65rem' }}>1.96</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 短牌：双同号 11~66 */}
+                        {f3PlayTab === 'short' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_SHORT.map(name => {
+                              const isSelected = selectedF3P.has(`短牌|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('短牌', name)} style={{ height: '92px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDiceOptionName(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.65rem' }}>13.23</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 长牌：两颗不同点数 15 组 */}
+                        {f3PlayTab === 'long' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_LONG.map(name => {
+                              const isSelected = selectedF3P.has(`长牌|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('长牌', name)} style={{ height: '92px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDiceOptionName(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.65rem' }}>7</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 全骰：三同号 111~666 + 任意全骰 */}
+                        {f3PlayTab === 'triple' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_TRIPLE.map(name => {
+                              const isSelected = selectedF3P.has(`全骰|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('全骰', name)} style={{ height: '92px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDiceOptionName(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>200.88</div>
+                                </div>
+                              );
+                            })}
+                            {(() => {
+                              const isSelected = selectedF3P.has('全骰|全骰');
+                              return (
+                                <div key="全骰" className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('全骰', '全骰')} style={{ height: '92px', padding: '0 4px' }}>
+                                  <div className="odds-card-name" style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '4px', color: LOTTERY_YELLOW }}>全骰</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem', color: LOTTERY_YELLOW }}>35.28</div>
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
+
+                        {/* 和值 3~18 */}
+                        {f3PlayTab === 'sum' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {Array.from({ length: 16 }, (_, i) => i + 3).map(sum => {
+                              const isSelected = selectedF3P.has(`和值|${sum}`);
+                              return (
+                                <div key={sum} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('和值', String(sum))} style={{ height: '76px', padding: '0 4px' }}>
+                                  <div className="odds-card-name" style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '4px', color: '#1e293b' }}>{sum}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>{F3_SUM_ODDS[sum]}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      </>
+                      )}
 
                       {/* Embedded game betting console */}
                       <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
@@ -1383,7 +1623,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                             <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
                           </div>
                           <div className="info-selected-box">
-                            下注金额: <span className="console-selected-value">{totalCost.toFixed(2)}</span>
+                            {!f3SimpleMode && <>共 <span className="console-selected-value">{f3pCount}</span> 注 &nbsp; </>}下注金额: <span className="console-selected-value">{(f3SimpleMode ? totalCost : f3pTotalCost).toFixed(2)}</span>
                           </div>
                         </div>
 
@@ -1421,10 +1661,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                         {/* Bottom Button Row */}
                         <div className="bet-console-buttons-row">
-                          <button className="console-cancel-btn" onClick={handleResetBets} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <button className="console-cancel-btn" onClick={f3SimpleMode ? handleResetBets : handleF3PReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                             <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                           </button>
-                          <button className="console-submit-btn active" onClick={handleSubmitBet} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <button className="console-submit-btn active" onClick={f3SimpleMode ? handleSubmitBet : handleF3PSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                             提交下注
                           </button>
                         </div>
