@@ -121,6 +121,11 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // Speed Race (一分极速赛车) embedded selections: key encoded as `${category}|${name}`
   const [selectedSR, setSelectedSR] = useState(new Set());
   const [srActiveTab, setSrActiveTab] = useState('two-sides'); // two-sides, sum, single
+  // 专业版盘面（样式同一分分分彩）
+  const [srSimpleMode, setSrSimpleMode] = useState(false); // false=专业版, true=简易版
+  const [selectedSRP, setSelectedSRP] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
+  const [srPlayTab, setSrPlayTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), sum(冠亚和)
+  const [srActivePos, setSrActivePos] = useState('p1'); // 第二层名次：p1~p10 或 sum
   // Speed Race last draw result:排列 1~10
   const [srResult, setSrResult] = useState([1, 2, 7, 9, 4, 10, 6, 5, 8, 3]);
 
@@ -243,6 +248,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setSelectedOdds(new Set());
     setSelectedM6(new Set());
     setSelectedSR(new Set());
+    setSelectedSRP(new Set());
     setSelectedFFC(new Set());
     setSelectedFFC2(new Set());
     setSelectedL28(new Set());
@@ -255,6 +261,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedOdds(new Set()); }, [activeTab]);
   useEffect(() => { setSelectedM6(new Set()); }, [m6ActiveTab]);
   useEffect(() => { setSelectedSR(new Set()); }, [srActiveTab]);
+  useEffect(() => { setSelectedSRP(new Set()); }, [srPlayTab]);
   useEffect(() => { setSelectedFFC(new Set()); }, [ffcActiveTab]);
   useEffect(() => { setSelectedFFC2(new Set()); }, [ffc2ActiveTab]);
   useEffect(() => { setSelectedL28(new Set()); }, [l28ActiveTab]);
@@ -784,6 +791,85 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     });
     openBetDetailsModal('speed_race', items);
     setSelectedSR(new Set());
+  };
+
+  // ===== Speed Race 专业版盘面（样式同一分分分彩） =====
+  const SR_PLAY_TABS = [
+    { cat: 'cai', label: '猜球号' },
+    { cat: 'sides', label: '两面盘' },
+    { cat: 'sum', label: '冠亚和' }
+  ];
+  // 名次（第二层）：冠军 ~ 第十名
+  const SR_POSITIONS = [
+    { key: 'p1', label: '冠军', num: 1 },
+    { key: 'p2', label: '亚军', num: 2 },
+    { key: 'p3', label: '第三名', num: 3 },
+    { key: 'p4', label: '第四名', num: 4 },
+    { key: 'p5', label: '第五名', num: 5 },
+    { key: 'p6', label: '第六名', num: 6 },
+    { key: 'p7', label: '第七名', num: 7 },
+    { key: 'p8', label: '第八名', num: 8 },
+    { key: 'p9', label: '第九名', num: 9 },
+    { key: 'p10', label: '第十名', num: 10 }
+  ];
+  const SR_SUM_LAYER = [{ key: 'sum', label: '冠亚和' }];
+  // 冠亚和赔率：和值 3~19
+  const SR_SUM_ODDS = {
+    3: '44.1', 4: '44.1', 5: '22.05', 6: '22.05', 7: '14.7', 8: '14.7',
+    9: '11.02', 10: '11.02', 11: '8.82', 12: '11.02', 13: '11.02', 14: '14.7',
+    15: '14.7', 16: '22.05', 17: '22.05', 18: '44.1', 19: '44.1'
+  };
+  const srSecondLayer = srPlayTab === 'sum' ? SR_SUM_LAYER : SR_POSITIONS;
+  const srActivePosObj = SR_POSITIONS.find(p => p.key === srActivePos);
+  const srPosLabel = srActivePosObj?.label || '冠军';
+  const srPosNum = srActivePosObj?.num || 1;
+  const handleSrTabClick = (cat) => {
+    setSrPlayTab(cat);
+    setSrActivePos(cat === 'sum' ? 'sum' : 'p1');
+  };
+  // 依盘口分类/名称推算赔率
+  const srpOddsOf = (category, name) => {
+    if (category === '冠亚和') return SR_SUM_ODDS[name] || '9.8';
+    if (category.endsWith('两面')) return '1.96';
+    return '9.8'; // 猜球号
+  };
+  const toggleSrSimpleMode = () => {
+    setSrSimpleMode(v => !v);
+    setSelectedSR(new Set());
+    setSelectedSRP(new Set());
+  };
+  const handleSRPCardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedSRP);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedSRP(next);
+  };
+  const srpCount = selectedSRP.size;
+  const srpTotalCost = srpCount * currentBetPrice;
+  const handleSRPReset = () => {
+    setSelectedSRP(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+  const handleSRPSubmit = () => {
+    if (srpCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (srpTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedSRP).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: srpOddsOf(category, name), baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('speed_race', items);
+    setSelectedSRP(new Set());
   };
 
   // ===== 一分分分彩 (Every-Minute Lottery) embedded gameplay =====
@@ -1569,7 +1655,46 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            className="vp-sr-mode-switch"
+                            onClick={toggleSrSimpleMode}
+                            title={srSimpleMode ? '当前简易版，点击切换专业版' : '当前专业版，点击切换简易版'}
+                            style={{
+                              flexShrink: 0,
+                              position: 'relative',
+                              width: '46px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: '#eef2f6',
+                              border: '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                left: '2px',
+                                width: '18px',
+                                height: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                color: '#ffffff',
+                                background: srSimpleMode ? '#22c55e' : '#ef4444',
+                                transform: srSimpleMode ? 'translateX(22px)' : 'translateX(0)',
+                                transition: 'transform 0.18s ease, background 0.18s ease'
+                              }}
+                            >
+                              {srSimpleMode ? '简' : '专'}
+                            </span>
+                          </div>
+                          <span>第 {String(issue).slice(-5)} 期</span>
+                        </div>
                         <div className="vp-sr-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
                           {srResult.map((n, idx) => (
                             <img key={idx} src={`PK10-ball/num=${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
@@ -1579,6 +1704,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {srSimpleMode ? (
+                      <>
                       {/* Play category tabs */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -1658,6 +1785,108 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                         )}
                       </div>
+                      </>
+                      ) : (
+                      <>
+                      {/* 专业版：第一层玩法 猜球号/两面盘/冠亚和（样式同一分分分彩） */}
+                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {SR_PLAY_TABS.map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${srPlayTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => handleSrTabClick(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 第二层：名次（可左右滑动，两侧箭头） */}
+                      <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                        <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                        <div className="sr-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
+                          {srSecondLayer.map(item => {
+                            const active = srActivePos === item.key;
+                            return (
+                              <div
+                                key={item.key}
+                                onClick={() => setSrActivePos(item.key)}
+                                style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                              >
+                                {item.label}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                      </div>
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 猜球号：所选名次的号码 1~10 */}
+                        {srPlayTab === 'cai' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => {
+                              const category = `${srPosLabel}猜号`;
+                              const isSelected = selectedSRP.has(`${category}|${num}`);
+                              return (
+                                <div
+                                  key={num}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRPCardClick(category, String(num))}
+                                  style={{ height: '78px', padding: '0 4px' }}
+                                >
+                                  <img src={`PK10-ball/num=${num}.png`} alt={num} style={{ width: '26px', height: '26px', marginBottom: '2px' }} />
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.8</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 两面盘：大/小/单/双（名次 1~5 另含 龙/虎） */}
+                        {srPlayTab === 'sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {[...['大', '小', '单', '双'], ...(srPosNum <= 5 ? ['龙', '虎'] : [])].map(name => {
+                              const category = `${srPosLabel}两面`;
+                              const isSelected = selectedSRP.has(`${category}|${name}`);
+                              const color = name === '龙' ? LOTTERY_PINK : name === '虎' ? LOTTERY_BLUE : lotteryColor(name);
+                              return (
+                                <div
+                                  key={name}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRPCardClick(category, name)}
+                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color }}>{name}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color }}>1.96</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 冠亚和：和值 3~19 */}
+                        {srPlayTab === 'sum' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                            {Array.from({ length: 17 }, (_, i) => i + 3).map(sum => {
+                              const isSelected = selectedSRP.has(`冠亚和|${sum}`);
+                              return (
+                                <div
+                                  key={sum}
+                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSRPCardClick('冠亚和', String(sum))}
+                                  style={{ height: '78px', padding: '0 4px' }}
+                                >
+                                  <div className="odds-card-name" style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '4px', color: '#1e293b' }}>{sum}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>{SR_SUM_ODDS[sum]}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      </>
+                      )}
                     </div>
 
                     {/* Embedded betting console */}
@@ -1668,7 +1897,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
                         </div>
                         <div className="info-selected-box">
-                          共 <span className="console-selected-value">{srCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{srTotalCost.toFixed(2)}</span>
+                          共 <span className="console-selected-value">{srSimpleMode ? srCount : srpCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{(srSimpleMode ? srTotalCost : srpTotalCost).toFixed(2)}</span>
                         </div>
                       </div>
 
@@ -1701,10 +1930,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       <div className="bet-console-buttons-row">
-                        <button className="console-cancel-btn" onClick={handleSRReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-cancel-btn" onClick={srSimpleMode ? handleSRReset : handleSRPReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
-                        <button className="console-submit-btn active" onClick={handleSRSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-submit-btn active" onClick={srSimpleMode ? handleSRSubmit : handleSRPSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>
