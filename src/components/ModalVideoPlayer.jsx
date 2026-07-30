@@ -1483,7 +1483,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
                       {f3SimpleMode ? (
-                      <>
+                      <React.Fragment key="f3-simple">
                       {/* Play tabs */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -1525,9 +1525,9 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           })}
                         </div>
                       </div>
-                      </>
+                      </React.Fragment>
                       ) : (
-                      <>
+                      <React.Fragment key="f3-pro">
                       {/* 专业版：玩法页签（可左右滑动，样式同一分分分彩的圆角胶囊） */}
                       <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '8px 12px', borderBottom: '1px solid #e1e8ed' }}>
                         {F3_PLAY_TABS.map(tab => {
@@ -1672,7 +1672,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                         )}
                       </div>
-                      </>
+                      </React.Fragment>
                       )}
 
                       {/* Embedded game betting console */}
