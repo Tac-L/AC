@@ -119,6 +119,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [issue, setIssue] = useState(202606041274);
   const [lastDice, setLastDice] = useState([1, 3, 6]);
   const [analysis, setAnalysis] = useState({ sum: 10, size: '小', oe: '双' });
+  // 一分快三 历史开奖记录（点开奖结果区展开的弹窗；纯前端 mock）
+  const [f3HistoryOpen, setF3HistoryOpen] = useState(false);
+  const [f3History, setF3History] = useState(() => {
+    const rows = [];
+    const start = 202606041274 - 1; // 上一期起往前推
+    const rd = () => Math.floor(Math.random() * 6) + 1;
+    for (let i = 0; i < 12; i++) {
+      rows.push({ period: start - i, dice: i === 0 ? [1, 3, 6] : [rd(), rd(), rd()] });
+    }
+    return rows;
+  });
 
   // Betting states
   const [activeTab, setActiveTab] = useState('size'); // size, pair, triple, sum, single
@@ -318,6 +329,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       Math.floor(Math.random() * 6) + 1
     ];
     setLastDice(finalDice);
+    // 把本期开奖结果记入历史（最新在最上，最多保留 30 期）
+    setF3History(prev => [{ period: issue, dice: finalDice }, ...prev].slice(0, 30));
     const sumVal = finalDice[0] + finalDice[1] + finalDice[2];
     setAnalysis({ sum: sumVal, size: sumVal >= 11 ? '大' : '小', oe: sumVal % 2 === 0 ? '双' : '单' });
   };
@@ -1405,7 +1418,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                 {activeCarouselGame === 'fast3' ? (
                   // Fully interactive Fast Three Lottery console
                   <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
-                    <div className="vp-bet-header">
+                    <div className="vp-bet-header" style={{ position: 'relative', zIndex: 30 }}>
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
                           <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
@@ -1473,12 +1486,81 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {String(issue).slice(-5)} 期</span>
                         </div>
-                        <div className="fast3-draw-balls" style={{ gap: '4px' }}>
+                        <div
+                          className="fast3-draw-balls"
+                          onClick={() => setF3HistoryOpen(o => !o)}
+                          title="查看历史开奖"
+                          style={{ gap: '4px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                        >
                           {lastDice.map((val, idx) => (
                             <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: '22px', height: '22px' }} />
                           ))}
+                          <span
+                            style={{
+                              marginLeft: '3px',
+                              width: 0,
+                              height: 0,
+                              borderLeft: '4px solid transparent',
+                              borderRight: '4px solid transparent',
+                              borderTop: '5px solid #94a3b8',
+                              transform: f3HistoryOpen ? 'rotate(180deg)' : 'none',
+                              transition: 'transform 0.2s ease'
+                            }}
+                          />
                         </div>
                       </div>
+
+                      {/* 历史开奖记录弹窗（点开奖结果区展开） */}
+                      {f3HistoryOpen && (
+                      <>
+                        <div
+                          onClick={() => setF3HistoryOpen(false)}
+                          style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            zIndex: 50,
+                            background: '#ffffff',
+                            borderTop: '1px solid #e2e8f0',
+                            borderBottom: '1px solid #e2e8f0',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                            overflow: 'hidden',
+                            maxHeight: '300px',
+                            display: 'flex',
+                            flexDirection: 'column'
+                          }}
+                        >
+                          <div style={{ display: 'flex', background: '#f8fafc', borderBottom: '1px solid #eef2f6' }}>
+                            <div style={{ flex: '0 0 48%', padding: '9px 14px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>期号</div>
+                            <div style={{ flex: 1, padding: '9px 14px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>开奖号码</div>
+                          </div>
+                          <div style={{ overflowY: 'auto' }}>
+                            {f3History.map((row, i) => (
+                              <div
+                                key={row.period}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  borderBottom: '1px solid #f1f5f9',
+                                  background: i % 2 ? '#fafbfc' : '#ffffff'
+                                }}
+                              >
+                                <div style={{ flex: '0 0 48%', padding: '8px 14px', fontSize: '0.72rem', color: '#64748b' }}>{row.period}</div>
+                                <div style={{ flex: 1, padding: '6px 14px', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                                  {row.dice.map((v, idx) => (
+                                    <img key={idx} src={`K3-ball/${v}.png`} alt={v} style={{ width: '18px', height: '18px' }} />
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                      )}
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
