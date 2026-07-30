@@ -497,12 +497,14 @@ body {
   display: none;
 }
 
-/* 一分分分彩：上下两层菜单的横向滑动列，隐藏滚动条 */
-.ffc-scroll-row {
+/* 一分分分彩 / 一分极速赛车：上下两层菜单的横向滑动列，隐藏滚动条 */
+.ffc-scroll-row,
+.sr-scroll-row {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
-.ffc-scroll-row::-webkit-scrollbar {
+.ffc-scroll-row::-webkit-scrollbar,
+.sr-scroll-row::-webkit-scrollbar {
   display: none;
 }
 
