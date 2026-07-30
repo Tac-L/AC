@@ -1529,7 +1529,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       ) : (
                       <React.Fragment key="f3-pro">
                       {/* 专业版：玩法页签（可左右滑动，样式同一分分分彩的圆角胶囊） */}
-                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '8px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
                         {F3_PLAY_TABS.map(tab => {
                           const active = f3PlayTab === tab.cat;
                           return (
@@ -1542,11 +1542,13 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 textAlign: 'center',
                                 padding: '6px 16px',
                                 borderRadius: '8px',
-                                fontSize: '0.75rem',
+                                fontSize: '0.72rem',
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
                                 border: active ? '1px solid transparent' : '1px solid #e1e8ed',
                                 background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                backgroundClip: 'padding-box',
+                                WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
                                 fontWeight: active ? 700 : 500
                               }}
