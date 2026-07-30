@@ -17,6 +17,21 @@ const renderDiceOptionName = (name) => {
   return name;
 };
 
+// 快三 二同号/三不同：三颗骰子「上一下二」金字塔排列
+const renderDicePyramid = (name) => {
+  const digits = name.split('');
+  const size = 22;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+      <img src={`K3-ball/${digits[0]}.png`} alt={digits[0]} style={{ width: `${size}px`, height: `${size}px` }} />
+      <div style={{ display: 'flex', gap: '2px' }}>
+        <img src={`K3-ball/${digits[1]}.png`} alt={digits[1]} style={{ width: `${size}px`, height: `${size}px` }} />
+        <img src={`K3-ball/${digits[2]}.png`} alt={digits[2]} style={{ width: `${size}px`, height: `${size}px` }} />
+      </div>
+    </div>
+  );
+};
+
 // 彩票盘口统一配色（百家乐除外）：
 // 大/单/和大/和单 = 粉红，小/双/和小/和双 = 粉蓝，和/全豹 = 黄
 const LOTTERY_PINK = '#e6157a';
@@ -723,13 +738,15 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   };
 
   // ===== 一分快三 专业版盘面（样式同一分分分彩） =====
-  // 玩法页签（可左右滑动）——「二同号 / 三不同」待补图后开放
+  // 玩法页签（可左右滑动）
   const F3_PLAY_TABS = [
     { cat: 'army', label: '三军' },
     { cat: 'short', label: '短牌' },
     { cat: 'long', label: '长牌' },
     { cat: 'triple', label: '全骰' },
-    { cat: 'sum', label: '和值' }
+    { cat: 'sum', label: '和值' },
+    { cat: 'twosame', label: '二同号' },
+    { cat: 'threediff', label: '三不同' }
   ];
   // 三军：单骰 1~6
   const F3_ARMY = ['1', '2', '3', '4', '5', '6'];
@@ -743,6 +760,18 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   })();
   // 全骰：三同号 111~666 + 任意全骰
   const F3_TRIPLE = ['111', '222', '333', '444', '555', '666'];
+  // 二同号单选：一对 + 一颗不同（6×5=30），编码 `${p}${p}${k}`
+  const F3_TWO_SAME = (() => {
+    const list = [];
+    for (let p = 1; p <= 6; p++) for (let k = 1; k <= 6; k++) if (k !== p) list.push(`${p}${p}${k}`);
+    return list;
+  })();
+  // 三不同单选：三颗不同（C(6,3)=20），编码升序 `${a}${b}${c}`
+  const F3_THREE_DIFF = (() => {
+    const list = [];
+    for (let a = 1; a <= 6; a++) for (let b = a + 1; b <= 6; b++) for (let c = b + 1; c <= 6; c++) list.push(`${a}${b}${c}`);
+    return list;
+  })();
   // 和值 3~18 赔率（对称）
   const F3_SUM_ODDS = {
     3: '200.88', 4: '69.12', 5: '35.28', 6: '21.16', 7: '14.11', 8: '10',
@@ -755,6 +784,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     if (category === '长牌') return '7';
     if (category === '全骰') return name === '全骰' ? '35.28' : '200.88';
     if (category === '和值') return F3_SUM_ODDS[name] || '10';
+    if (category === '二同号') return '69.12';
+    if (category === '三不同') return '35.28';
     return '1.96';
   };
   const toggleF3SimpleMode = () => {
@@ -1605,6 +1636,36 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 <div key={sum} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('和值', String(sum))} style={{ height: '76px', padding: '0 4px' }}>
                                   <div className="odds-card-name" style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '4px', color: '#1e293b' }}>{sum}</div>
                                   <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>{F3_SUM_ODDS[sum]}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 二同号：一对 + 一颗不同（30 组） */}
+                        {f3PlayTab === 'twosame' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_TWO_SAME.map(name => {
+                              const isSelected = selectedF3P.has(`二同号|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('二同号', name)} style={{ height: '96px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDicePyramid(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>69.12</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* 三不同：三颗不同（20 组） */}
+                        {f3PlayTab === 'threediff' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                            {F3_THREE_DIFF.map(name => {
+                              const isSelected = selectedF3P.has(`三不同|${name}`);
+                              return (
+                                <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('三不同', name)} style={{ height: '96px', padding: '0 4px' }}>
+                                  <div style={{ marginBottom: '4px' }}>{renderDicePyramid(name)}</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>35.28</div>
                                 </div>
                               );
                             })}
