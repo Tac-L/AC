@@ -375,7 +375,7 @@ export default function PageHome() {
       setActivePage('page-games');
       setActiveGameCategory('lottery');
       setAutoOpenGameId('mark_six');
-      showToast('已为您推荐进入【一分六合彩】经典游戏房！');
+      showToast('已为您推荐进入【一分澳门六合彩】经典游戏房！');
     } else if (slideIdx === 3) {
       setActivePage('page-profile');
       showToast('欢迎查看每周首充返利特权！');
@@ -470,7 +470,7 @@ export default function PageHome() {
             >
               <div className="hero-left">
                 <div className="hero-tag"><i className="fa-solid fa-star"></i> 经典</div>
-                <h3 className="hero-title">一分六合彩</h3>
+                <h3 className="hero-title">一分澳门六合彩</h3>
                 <span className="hero-period-label">第 {lhcPeriod} 期 · 距封盘</span>
                 <div className="hero-countdown">{formatTime(lhcTimeLeft, lhcDrawing)}</div>
               </div>
@@ -677,7 +677,7 @@ export default function PageHome() {
           <HomeGameCard 
             images={['assets/chat_cover.png', 'assets/game_fast3.png', 'assets/drawing.png', 'assets/origami.png']}
             badge={<><i className="fa-solid fa-clover"></i> 经典</>}
-            title="一分六合彩"
+            title="一分澳门六合彩"
             action="立即体验 »"
             onClick={() => handleGameRoute('mark_six')}
           />
@@ -686,7 +686,7 @@ export default function PageHome() {
             badge={<><i className="fa-solid fa-circle-nodes"></i> 热门</>}
             title="加拿大28"
             action="立即体验 »"
-            onClick={() => showToast('加拿大28 正在对接中，请先体验一分快三和一分六合彩哦！')}
+            onClick={() => showToast('加拿大28 正在对接中，请先体验一分快三和一分澳门六合彩哦！')}
           />
         </div>
       </div>

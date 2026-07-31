@@ -22,7 +22,7 @@ export default function ModalBetDetails() {
   // Set game title
   let gameTitle = '一分快三 投注详情';
   if (currentActiveGame === 'mark_six') {
-    gameTitle = '一分六合彩 投注详情';
+    gameTitle = '一分澳门六合彩 投注详情';
   } else if (currentActiveGame === 'fast_three_embedded') {
     gameTitle = '一分快三(视频) 投注详情';
   } else if (currentActiveGame === 'speed_race') {
@@ -82,7 +82,7 @@ export default function ModalBetDetails() {
 
     let gameName = '一分快三';
     if (currentActiveGame === 'mark_six') {
-      gameName = '一分六合彩';
+      gameName = '一分澳门六合彩';
     } else if (currentActiveGame === 'fast_three_embedded') {
       gameName = '一分快三(视频)';
     } else if (currentActiveGame === 'speed_race') {

@@ -54,13 +54,205 @@ const getM6BallColor = (num) => {
   return 'green';
 };
 
+// ===== 一分六合彩 专业版玩法资料（依 docs/六合彩玩法结构.md） =====
+const M6P_NUMS = Array.from({ length: 49 }, (_, i) => i + 1);
+const m6pPad = (n) => String(n).padStart(2, '0');
+// §4.1 配色：成对玩法「大系」蓝、「小系」橘，波色用各自色码
+const M6P_BLUE = '#3b82f6';
+const M6P_ORANGE = '#f59e0b';
+const M6P_GRAY = '#cbd5e1';
+const M6P_BO = { 红: '#e3342f', 绿: '#16a34a', 蓝: '#2563eb' };
+const M6P_ORANGE_NAMES = ['小', '双', '合小', '合双', '小单', '小双', '尾小', '野兽', '虎', '总和小', '总和双', '总尾小', '总肖双'];
+// 只有成对的两面点位套蓝橘；总肖 2肖~7肖 之类的数量点位用深色
+const M6P_BLUE_NAMES = [
+  '大', '单', '合大', '合单', '大单', '大双', '尾大', '家禽', '龙', '总和大', '总和单', '总尾大',
+  '1-10', '11-20', '21-30', '31-40', '41-49', '总肖单'
+];
+const m6pBetColor = (name) => {
+  if (name === '红波') return M6P_BO['红'];
+  if (name === '绿波') return M6P_BO['绿'];
+  if (name === '蓝波') return M6P_BO['蓝'];
+  if (name === '和局') return '#9ca3af';
+  if (M6P_ORANGE_NAMES.includes(name)) return M6P_ORANGE;
+  if (M6P_BLUE_NAMES.includes(name)) return M6P_BLUE;
+  return '#1e293b';
+};
+
+const M6P_ZHENGTE_NAMES = ['一', '二', '三', '四', '五', '六'];
+// 第一层玩法（「长龙」为走势统计页、非投注玩法，不纳入盘面）
+// 特码A/B、正特一~六 原本是大类底下的分页，这里提到第一层，让盘面维持两层
+const M6P_PLAY_TABS = [
+  { cat: 'temaA', label: '特码A' },
+  { cat: 'temaB', label: '特码B' },
+  { cat: 'zhengma', label: '正码' },
+  ...M6P_ZHENGTE_NAMES.map((c, i) => ({ cat: `zhengte${i + 1}`, label: `正特${c}` })),
+  { cat: 'texiao', label: '特肖' },
+  { cat: 'zhengxiao', label: '正肖' },
+  { cat: 'yixiao', label: '一肖' },
+  { cat: 'yixiao-no', label: '一肖不中' },
+  { cat: 'weishu', label: '尾数' },
+  { cat: 'weishu-no', label: '尾数不中' },
+  { cat: 'tetoushu', label: '特头数' },
+  { cat: 'teweishu', label: '特尾数' },
+  { cat: 'banbo', label: '半波' },
+  { cat: 'wuxing', label: '五行' },
+  { cat: 'zongxiao', label: '总肖' },
+  { cat: 'qisebo', label: '七色波' },
+  { cat: 'hexiao', label: '合肖' },
+  { cat: 'lianma', label: '连码' },
+  { cat: 'buzhong', label: '不中' }
+];
+// 第二层小类；合肖/连码/不中 另带 n（每注需选几个）与该小类赔率
+const M6P_NUM_SIDE_TABS = [{ key: 'num', label: '数字' }, { key: 'sides', label: '两面' }];
+const M6P_SUB_TABS = {
+  temaA: M6P_NUM_SIDE_TABS,
+  temaB: M6P_NUM_SIDE_TABS,
+  zhengma: M6P_NUM_SIDE_TABS,
+  ...Object.fromEntries(M6P_ZHENGTE_NAMES.map((c, i) => [`zhengte${i + 1}`, M6P_NUM_SIDE_TABS])),
+  hexiao: [
+    { key: 'x2', label: '二肖', n: 2, odds: '6' },
+    { key: 'x3', label: '三肖', n: 3, odds: '4' },
+    { key: 'x4', label: '四肖', n: 4, odds: '3' },
+    { key: 'x5', label: '五肖', n: 5, odds: '2.4' },
+    { key: 'x6', label: '六肖', n: 6, odds: '2' },
+    { key: 'x7', label: '七肖', n: 7, odds: '1.71' },
+    { key: 'x8', label: '八肖', n: 8, odds: '1.5' },
+    { key: 'x9', label: '九肖', n: 9, odds: '1.33' },
+    { key: 'x10', label: '十肖', n: 10, odds: '1.2' },
+    { key: 'x11', label: '十一肖', n: 11, odds: '1.09' }
+  ],
+  lianma: [
+    { key: 'q4', label: '四全中', n: 4, odds: '9000' },
+    { key: 'q3', label: '三全中', n: 3, odds: '600' },
+    { key: 's32', label: '三中二', n: 3, odds: '100' },
+    { key: 'q2', label: '二全中', n: 2, odds: '65' },
+    { key: 'e2t', label: '二中特', n: 2, odds: '50' },
+    { key: 'tc', label: '特串', n: 2, odds: '150' }
+  ],
+  buzhong: [
+    { key: 'b4', label: '四不中', n: 4, odds: '1.19' },
+    { key: 'b5', label: '五不中', n: 5, odds: '1.41' },
+    { key: 'b6', label: '六不中', n: 6, odds: '1.68' },
+    { key: 'b7', label: '七不中', n: 7, odds: '2.0' },
+    { key: 'b8', label: '八不中', n: 8, odds: '2.4' },
+    { key: 'b9', label: '九不中', n: 9, odds: '2.9' },
+    { key: 'b10', label: '十不中', n: 10, odds: '3.51' },
+    { key: 'b11', label: '十一不中', n: 11, odds: '4.28' },
+    { key: 'b12', label: '十二不中', n: 12, odds: '5.25' }
+  ]
+};
+const M6P_COMBO_TABS = ['hexiao', 'lianma', 'buzhong'];
+// 走「数字 / 两面」两个小类的玩法
+const M6P_NUMBER_TABS = ['temaA', 'temaB', 'zhengma', ...M6P_ZHENGTE_NAMES.map((_, i) => `zhengte${i + 1}`)];
+const M6P_XIAO_TABS = ['texiao', 'zhengxiao', 'yixiao', 'yixiao-no'];
+const M6P_WEI_TABS = ['weishu', 'weishu-no', 'teweishu'];
+
+// §5.1 生肖 ↔ 号码（马年，01 = 马）
+const M6P_ZODIAC_NUMS = {
+  鼠: [7, 19, 31, 43], 牛: [6, 18, 30, 42], 虎: [5, 17, 29, 41], 兔: [4, 16, 28, 40],
+  龙: [3, 15, 27, 39], 蛇: [2, 14, 26, 38], 马: [1, 13, 25, 37, 49], 羊: [12, 24, 36, 48],
+  猴: [11, 23, 35, 47], 鸡: [10, 22, 34, 46], 狗: [9, 21, 33, 45], 猪: [8, 20, 32, 44]
+};
+// §5.2 / §5.3 尾数、头数
+const M6P_TAIL_GROUPS = Array.from({ length: 10 }, (_, d) => ({ name: `${d}尾`, nums: M6P_NUMS.filter(n => n % 10 === d) }));
+const M6P_HEAD_GROUPS = Array.from({ length: 5 }, (_, h) => ({ name: `${h}头`, nums: M6P_NUMS.filter(n => Math.floor(n / 10) === h) }));
+// §3.8 五行（2026 年版本）
+const M6P_WUXING = [
+  { name: '金', odds: '4.2', nums: [4, 5, 12, 13, 26, 27, 34, 35, 42, 43] },
+  { name: '木', odds: '4.2', nums: [8, 9, 16, 17, 24, 25, 38, 39, 46, 47] },
+  { name: '水', odds: '4.74', nums: [1, 14, 15, 22, 23, 30, 31, 44, 45] },
+  { name: '火', odds: '3.38', nums: [2, 3, 10, 11, 18, 19, 32, 33, 40, 41, 48, 49] },
+  { name: '土', odds: '5.42', nums: [6, 7, 20, 21, 28, 29, 36, 37] }
+];
+// §3.7 半波：3 波色 × 10 属性
+const M6P_BANBO = [
+  { name: '红大', odds: '6.15', nums: [29, 30, 34, 35, 40, 45, 46] },
+  { name: '红小', odds: '4.1', nums: [1, 2, 7, 8, 12, 13, 18, 19, 23, 24] },
+  { name: '红单', odds: '5.3', nums: [1, 7, 13, 19, 23, 29, 35, 45] },
+  { name: '红双', odds: '4.63', nums: [2, 8, 12, 18, 24, 30, 34, 40, 46] },
+  { name: '红合单', odds: '4.63', nums: [1, 7, 12, 18, 23, 29, 30, 34, 45] },
+  { name: '红合双', odds: '5.3', nums: [2, 8, 13, 19, 24, 35, 40, 46] },
+  { name: '红大单', odds: '15.3', nums: [29, 35, 45] },
+  { name: '红小单', odds: '8.9', nums: [1, 7, 13, 19, 23] },
+  { name: '红大双', odds: '11.3', nums: [30, 34, 40, 46] },
+  { name: '红小双', odds: '8.9', nums: [2, 8, 12, 18, 24] },
+  { name: '蓝大', odds: '4.63', nums: [25, 26, 31, 36, 37, 41, 42, 47, 48] },
+  { name: '蓝小', odds: '6.15', nums: [3, 4, 9, 10, 14, 15, 20] },
+  { name: '蓝单', odds: '5.3', nums: [3, 9, 15, 25, 31, 37, 41, 47] },
+  { name: '蓝双', odds: '5.3', nums: [4, 10, 14, 20, 26, 36, 42, 48] },
+  { name: '蓝合单', odds: '5.3', nums: [3, 9, 10, 14, 25, 36, 41, 47] },
+  { name: '蓝合双', odds: '5.3', nums: [4, 15, 20, 26, 31, 37, 42, 48] },
+  { name: '蓝大单', odds: '8.9', nums: [25, 31, 37, 41, 47] },
+  { name: '蓝小单', odds: '15.3', nums: [3, 9, 15] },
+  { name: '蓝大双', odds: '11.3', nums: [26, 36, 42, 48] },
+  { name: '蓝小双', odds: '11.3', nums: [4, 10, 14, 20] },
+  { name: '绿大', odds: '5.3', nums: [27, 28, 32, 33, 38, 39, 43, 44] },
+  { name: '绿小', odds: '6.15', nums: [5, 6, 11, 16, 17, 21, 22] },
+  { name: '绿单', odds: '5.3', nums: [5, 11, 17, 21, 27, 33, 39, 43] },
+  { name: '绿双', odds: '6.15', nums: [6, 16, 22, 28, 32, 38, 44] },
+  { name: '绿合单', odds: '5.3', nums: [5, 16, 21, 27, 32, 38, 43] },
+  { name: '绿合双', odds: '5.3', nums: [6, 11, 17, 22, 28, 33, 39, 44] },
+  { name: '绿大单', odds: '11.3', nums: [27, 33, 39, 43] },
+  { name: '绿小单', odds: '11.3', nums: [5, 11, 17, 21] },
+  { name: '绿大双', odds: '11.3', nums: [28, 32, 38, 44] },
+  { name: '绿小双', odds: '15.3', nums: [6, 16, 22] }
+];
+// §3.9 / §3.10 总肖、七色波
+const M6P_ZONGXIAO = [
+  { name: '2肖', odds: '900' }, { name: '3肖', odds: '350' }, { name: '4肖', odds: '16.49' },
+  { name: '5肖', odds: '2.56' }, { name: '6肖', odds: '1.47' }, { name: '7肖', odds: '5.07' },
+  { name: '总肖单', odds: '1.37' }, { name: '总肖双', odds: '1.23' }
+];
+const M6P_QISEBO = [
+  { name: '红波', odds: '2.13' }, { name: '绿波', odds: '2.53' },
+  { name: '蓝波', odds: '2.53' }, { name: '和局', odds: '30.62' }
+];
+// §3.1 特码两面（A/B 两套赔率；合大、合小永久停用）
+const M6P_TEMA_SIDES = [
+  { name: '大', a: '1.3', b: '1.25' }, { name: '小', a: '1.3', b: '1.25' },
+  { name: '单', a: '1.3', b: '1.25' }, { name: '双', a: '1.3', b: '1.25' },
+  { name: '合大', a: null, b: null }, { name: '合小', a: null, b: null },
+  { name: '合单', a: '1.3', b: '1.25' }, { name: '合双', a: '1.3', b: '1.25' },
+  { name: '大单', a: '3.3', b: '3.2' }, { name: '小单', a: '3.3', b: '3.2' },
+  { name: '大双', a: '3.3', b: '3.2' }, { name: '小双', a: '3.3', b: '3.2' },
+  { name: '尾大', a: '1.3', b: '1.25' }, { name: '尾小', a: '1.3', b: '1.25' },
+  { name: '家禽', a: '1.3', b: '1.25' }, { name: '野兽', a: '1.3', b: '1.25' },
+  { name: '红波', a: '2.18', b: '2.1' }, { name: '绿波', a: '2.36', b: '2.28' }, { name: '蓝波', a: '2.36', b: '2.28' },
+  { name: '1-10', a: '4.2', b: '4.1' }, { name: '11-20', a: '4.2', b: '4.1' },
+  { name: '21-30', a: '4.2', b: '4.1' }, { name: '31-40', a: '4.2', b: '4.1' }, { name: '41-49', a: '4.74', b: '4.6' }
+];
+// §3.2 正码两面（一律 1.3）
+const M6P_ZHENGMA_SIDES = ['总和大', '总和小', '总和单', '总和双', '总尾大', '总尾小', '龙', '虎'].map(name => ({ name, odds: '1.3' }));
+// §3.3 正特两面
+const M6P_ZHENGTE_SIDES = [
+  ...['大', '小', '单', '双', '合大', '合小', '合单', '合双', '尾大', '尾小'].map(name => ({ name, odds: '1.3' })),
+  { name: '红波', odds: '2.18' }, { name: '绿波', odds: '2.36' }, { name: '蓝波', odds: '2.36' }
+];
+// C(m, n)
+const m6pNck = (m, n) => {
+  if (n <= 0 || m < n) return 0;
+  let r = 1;
+  for (let i = 0; i < n; i++) r = (r * (m - i)) / (i + 1);
+  return Math.round(r);
+};
+const m6pCombinations = (arr, n) => {
+  const out = [];
+  const walk = (start, cur) => {
+    if (cur.length === n) { out.push([...cur]); return; }
+    for (let i = start; i < arr.length; i++) { cur.push(arr[i]); walk(i + 1, cur); cur.pop(); }
+  };
+  walk(0, []);
+  return out;
+};
+
 // 鱼虾蟹（魚蝦蟹）六面图案 —— 图标来自 public/鱼虾蟹/
+// 盘面顺序：鱼 虾 葫芦 / 金钱 蟹 鸡
 const FISH_CRAB_SYMBOLS = [
   { key: 'fish', label: '鱼', icon: '鱼虾蟹/鱼.svg', color: '#e03131' },
   { key: 'prawn', label: '虾', icon: '鱼虾蟹/虾.svg', color: '#2f9e44' },
-  { key: 'crab', label: '蟹', icon: '鱼虾蟹/蟹.svg', color: '#2f9e44' },
   { key: 'gourd', label: '葫芦', icon: '鱼虾蟹/葫芦.svg', color: '#1971c2' },
   { key: 'coin', label: '金钱', icon: '鱼虾蟹/金钱.svg', color: '#1971c2' },
+  { key: 'crab', label: '蟹', icon: '鱼虾蟹/蟹.svg', color: '#2f9e44' },
   { key: 'rooster', label: '鸡', icon: '鱼虾蟹/鸡.svg', color: '#c2255c' }
 ];
 
@@ -145,6 +337,16 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // Mark Six (六合彩) embedded selections: each entry is { name, odds, category }
   const [selectedM6, setSelectedM6] = useState(new Set());
   const [m6ActiveTab, setM6ActiveTab] = useState('two-sides'); // two-sides, color, zodiac, special
+  // 六合彩 专业版盘面（依 docs/六合彩玩法结构.md）
+  const [m6SimpleMode, setM6SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [selectedM6P, setSelectedM6P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
+  const [m6PlayTab, setM6PlayTab] = useState('temaA'); // 第一层玩法
+  const [m6SubTab, setM6SubTab] = useState('num'); // 第二层小类
+  // 六合彩盘口（A~D 只整体缩放赔率，不改变任何玩法）
+  const [lhcPan, setLhcPan] = useState('A');
+  const [lhcPanOpen, setLhcPanOpen] = useState(false);
+  // 澳门六合彩（每日一开）用的墙上时钟
+  const [nowTs, setNowTs] = useState(() => Date.now());
   // Mark Six last draw result: 6 regular + 1 special number
   const [m6Result, setM6Result] = useState([23, 41, 24, 26, 33, 7, 32]);
 
@@ -175,6 +377,11 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedL28, setSelectedL28] = useState(new Set());
   const [l28ActiveTab, setL28ActiveTab] = useState('sides'); // sides(总和两面), dragon(龙虎豹), triple(三球), sum(总和)
   const [l28Result] = useState([9, 8, 0]);
+  // 一分幸运28 专业版盘面（样式同一分快三专业版）
+  const [l28SimpleMode, setL28SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [selectedL28P, setSelectedL28P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
+  const [l28PlayTab, setL28PlayTab] = useState('sum'); // 第一层玩法：sum(总和) side(边球) tail(尾球) dragon(龙虎豹) extreme(极值) triple(三球)
+  const [l28SubTab, setL28SubTab] = useState('num'); // 第二层：num(数字) / sides(两面)，仅总和与尾球有
 
   // 鱼虾蟹 (Fish-Prawn-Crab) embedded selections: key encoded as `${category}|${symbolKey}`
   const [selectedFC, setSelectedFC] = useState(new Set());
@@ -243,6 +450,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const chatEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const gameCarouselRef = useRef(null);
+  const m6pBodyRef = useRef(null); // 六合彩专业版盘面滚动容器
 
   // 打开游戏选单时（仅在开合切换那一刻），把当前选中的游戏滚动到可视中央；
   // 打开期间的重渲染（如倒计时每秒跳动）不再触发，手动滚动不会被弹回。
@@ -278,11 +486,13 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setSelectedOdds(new Set());
     setSelectedF3P(new Set());
     setSelectedM6(new Set());
+    setSelectedM6P(new Set());
     setSelectedSR(new Set());
     setSelectedSRP(new Set());
     setSelectedFFC(new Set());
     setSelectedFFC2(new Set());
     setSelectedL28(new Set());
+    setSelectedL28P(new Set());
     setSelectedFC(new Set());
     setSelectedBac(new Set());
     setSelectedAnimal(new Set());
@@ -292,11 +502,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedOdds(new Set()); }, [activeTab]);
   useEffect(() => { setSelectedF3P(new Set()); }, [f3PlayTab]);
   useEffect(() => { setSelectedM6(new Set()); }, [m6ActiveTab]);
+  useEffect(() => {
+    setSelectedM6P(new Set());
+    // 六合彩专业版内容较长，换玩法时把盘面卷回顶端
+    if (m6pBodyRef.current) m6pBodyRef.current.scrollTop = 0;
+  }, [m6PlayTab, m6SubTab]);
   useEffect(() => { setSelectedSR(new Set()); }, [srActiveTab]);
   useEffect(() => { setSelectedSRP(new Set()); }, [srPlayTab]);
   useEffect(() => { setSelectedFFC(new Set()); }, [ffcActiveTab]);
   useEffect(() => { setSelectedFFC2(new Set()); }, [ffc2ActiveTab]);
   useEffect(() => { setSelectedL28(new Set()); }, [l28ActiveTab]);
+  useEffect(() => { setSelectedL28P(new Set()); }, [l28PlayTab, l28SubTab]);
   useEffect(() => { setSelectedFC(new Set()); }, [fcActiveTab]);
   useEffect(() => { setSelectedBac(new Set()); }, [bacActiveTab]);
   useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
@@ -321,6 +537,15 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     return () => clearTimeout(timer);
   }, [countdown, phase, videoPlayerActive, activeCarouselGame]);
 
+  // 澳门六合彩是每日一开，倒计时跟着墙上时钟走，只在该游戏开着时才计时
+  useEffect(() => {
+    if (activeCarouselGame !== 'lhcday') return;
+    if (!videoPlayerActive && !embedded) return;
+    setNowTs(Date.now());
+    const timer = setInterval(() => setNowTs(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [activeCarouselGame, videoPlayerActive, embedded]);
+
   // 开奖：更新快三骰子/分析结果（不再重置倒计时，由状态机负责）
   const performDrawing = () => {
     const finalDice = [
@@ -335,13 +560,14 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setAnalysis({ sum: sumVal, size: sumVal >= 11 ? '大' : '小', oe: sumVal % 2 === 0 ? '双' : '单' });
   };
 
-  // 倒计时显示：投注中(数字) → 已封盘
-  const renderCountdown = () => {
+  // 倒计时显示：投注中(数字) → 已封盘；label 可在数字前加「开奖：」之类的抬头
+  const renderCountdown = (label) => {
     if (phase === 'sealed') {
       return <span className="vp-phase-tag vp-phase-sealed">已封盘</span>;
     }
     return (
-      <div className="vp-bet-countdown-box">
+      <div className={`vp-bet-countdown-box${label ? ' is-compact' : ''}`}>
+        {label && <span className="vp-countdown-label">{label}</span>}
         <span className="vp-digit-box">0</span>
         <span className="vp-digit-box">0</span>
         <span className="vp-digit-colon">:</span>
@@ -350,6 +576,116 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       </div>
     );
   };
+
+  // ===== 澳门六合彩：每天 14:00 开盘、16:00 封盘、16:30 开奖（纯前端模拟） =====
+  const isLhcDay = activeCarouselGame === 'lhcday';
+  const isLhcGame = activeCarouselGame === 'marksix' || isLhcDay;
+  const lhcDayClock = (() => {
+    const now = new Date(nowTs);
+    const at = (h, m) => { const d = new Date(now); d.setHours(h, m, 0, 0); return d.getTime(); };
+    const open = at(14, 0);
+    const close = at(16, 0);
+    const draw = at(16, 30);
+    if (nowTs < open) return { phase: 'waiting', label: '开盘：', target: open };
+    if (nowTs < close) return { phase: 'betting', label: '开奖：', target: draw };
+    if (nowTs < draw) return { phase: 'sealed' };
+    return { phase: 'waiting', label: '开盘：', target: open + 86400000 };
+  })();
+  // 期号：每天一期，用当天日期
+  const lhcDayIssue = (() => {
+    const d = new Date(nowTs);
+    return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+  })();
+  const renderLhcDayCountdown = () => {
+    if (lhcDayClock.phase === 'sealed') {
+      return <span className="vp-phase-tag vp-phase-sealed">已封盘</span>;
+    }
+    const left = Math.max(0, Math.floor((lhcDayClock.target - nowTs) / 1000));
+    const parts = [Math.floor(left / 3600), Math.floor((left % 3600) / 60), left % 60];
+    return (
+      <div className="vp-bet-countdown-box is-compact">
+        <span className="vp-countdown-label">{lhcDayClock.label}</span>
+        <span className="vp-digit-box is-clock">{parts.map(v => String(v).padStart(2, '0')).join(':')}</span>
+      </div>
+    );
+  };
+
+  // 盘口：只整体缩放赔率，显示值 = round(基准 × 系数 × 100) / 100
+  const LHC_PAN_OPTIONS = [
+    { key: 'A', factor: 1 },
+    { key: 'B', factor: 0.985 },
+    { key: 'C', factor: 0.97 },
+    { key: 'D', factor: 0.955 }
+  ];
+  const lhcPanFactor = LHC_PAN_OPTIONS.find(p => p.key === lhcPan)?.factor ?? 1;
+  const lhcOdds = (base) => {
+    const n = Number(base);
+    if (!Number.isFinite(n)) return base;
+    return String(Math.round(n * lhcPanFactor * 100) / 100);
+  };
+  const renderLhcPanPicker = () => (
+    <div className="vp-pan-picker" style={{ position: 'relative', flexShrink: 0 }}>
+      <div
+        onClick={(e) => { e.stopPropagation(); setLhcPanOpen(o => !o); }}
+        title="切换盘口"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1px',
+          width: '36px',
+          height: '24px',
+          boxSizing: 'border-box',
+          borderRadius: '6px',
+          border: '1px solid #d5dbe4',
+          background: '#ffffff',
+          fontSize: '0.48rem',
+          color: '#64748b',
+          cursor: 'pointer',
+          whiteSpace: 'nowrap'
+        }}
+      >
+        {lhcPan}盘
+        <i className="fa-solid fa-chevron-down" style={{ fontSize: '0.38rem' }}></i>
+      </div>
+      {lhcPanOpen && (
+        <>
+          <div onClick={() => setLhcPanOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 60 }} />
+          <div
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 4px)',
+              left: 0,
+              zIndex: 61,
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px',
+              boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+              overflow: 'hidden'
+            }}
+          >
+            {LHC_PAN_OPTIONS.map(opt => (
+              <div
+                key={opt.key}
+                onClick={() => { setLhcPan(opt.key); setLhcPanOpen(false); }}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.7rem',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  color: opt.key === lhcPan ? '#3b82f6' : '#57606f',
+                  fontWeight: opt.key === lhcPan ? 700 : 500,
+                  background: opt.key === lhcPan ? '#eff6ff' : '#ffffff'
+                }}
+              >
+                {opt.key}盘
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
 
   // Rotating banner announcements configuration
   const winningAnnouncements = [
@@ -459,7 +795,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'speedrace', 'ffc', 'ffc2', 'lucky28', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
+  const playableCarouselGames = ['fast3', 'marksix', 'lhcday', 'speedrace', 'ffc', 'ffc2', 'lucky28', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -605,7 +941,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     ],
     lottery: [
       { key: 'fast3', label: '一分快三', img: 'assets/game_fast3.png' },
-      { key: 'marksix', label: '一分六合彩', img: 'assets/mo_mark_six.png' },
+      { key: 'marksix', label: '一分澳门六合彩', img: 'assets/mo_mark_six.png' },
       { key: 'racing', label: '一分赛车', img: 'assets/speed_race.png' }
     ],
     fish: [
@@ -635,7 +971,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // Games carousel items
   const carouselGameItems = [
     { key: 'fast3', label: '一分快三', img: '游戏图标/701010.png' },
-    { key: 'marksix', label: '一分六合彩', img: '游戏图标/1070110.png' },
+    { key: 'marksix', label: '一分澳门六合彩', img: '游戏图标/1070110.png' },
+    { key: 'lhcday', label: '澳门六合彩', img: '游戏图标/1070110.png' },
     { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
     { key: 'ffc', label: '一分分分彩', img: '游戏图标/601010.png' },
     { key: 'ffc2', label: '一分分分彩2', img: '游戏图标/601010.png' },
@@ -873,12 +1210,148 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     }
     const items = Array.from(selectedM6).map(key => {
       const [category, name] = key.split('|');
-      return { name, odds: '9.75', baseVal: currentBetPrice, category };
+      return { name, odds: lhcOdds('9.75'), baseVal: currentBetPrice, category };
     });
     openBetDetailsModal('mark_six', items);
     setSelectedM6(new Set());
   };
 
+  // ===== 一分六合彩 专业版盘面（依 docs/六合彩玩法结构.md） =====
+  const m6pSubList = M6P_SUB_TABS[m6PlayTab] || null;
+  const m6pSub = m6pSubList?.find(s => s.key === m6SubTab) || m6pSubList?.[0] || null;
+  const m6pIsCombo = M6P_COMBO_TABS.includes(m6PlayTab);
+  // 下注单显示用的玩法名称（玩法名已在第一层，直接用页签文字）
+  const m6pCategory = M6P_PLAY_TABS.find(t => t.cat === m6PlayTab)?.label || '六合彩';
+  // 数字（01~49）赔率：特码A 47.3 / 特码B 46.5 / 正码 7.46 / 正特 47.3
+  const m6pNumOdds = m6PlayTab === 'zhengma' ? '7.46' : m6PlayTab === 'temaB' ? '46.5' : '47.3';
+  // 当前玩法的两面点位
+  const m6pSideBets = m6PlayTab === 'temaA' || m6PlayTab === 'temaB'
+    ? M6P_TEMA_SIDES.map(b => ({ name: b.name, odds: m6PlayTab === 'temaB' ? b.b : b.a }))
+    : m6PlayTab === 'zhengma' ? M6P_ZHENGMA_SIDES : M6P_ZHENGTE_SIDES;
+  // 生肖 / 尾数 四兄弟的赔率差异（马、0尾 为特例，见 §3.4 §3.5）
+  const M6P_XIAO_ODDS = { texiao: ['9.1', '11.55'], zhengxiao: ['1.1245', '1.4891'], yixiao: ['1.1', '1.41'], 'yixiao-no': ['1.54', '1.19'] };
+  const M6P_WEI_ODDS = { weishu: ['1.41', '1.1'], 'weishu-no': ['1.19', '1.54'], teweishu: ['11.55', '9.1'] };
+  const m6pOddsOf = (category, name) => {
+    const isNum = /^\d{2}$/.test(name);
+    if (category === '特码A') return isNum ? '47.3' : (M6P_TEMA_SIDES.find(b => b.name === name)?.a || '1.3');
+    if (category === '特码B') return isNum ? '46.5' : (M6P_TEMA_SIDES.find(b => b.name === name)?.b || '1.25');
+    if (category === '正码') return isNum ? '7.46' : '1.3';
+    if (category.startsWith('正特')) return isNum ? '47.3' : (M6P_ZHENGTE_SIDES.find(b => b.name === name)?.odds || '1.3');
+    if (category === '特肖') return name === '马' ? M6P_XIAO_ODDS.texiao[0] : M6P_XIAO_ODDS.texiao[1];
+    if (category === '正肖') return name === '马' ? M6P_XIAO_ODDS.zhengxiao[0] : M6P_XIAO_ODDS.zhengxiao[1];
+    if (category === '一肖') return name === '马' ? M6P_XIAO_ODDS.yixiao[0] : M6P_XIAO_ODDS.yixiao[1];
+    if (category === '一肖不中') return name === '马' ? M6P_XIAO_ODDS['yixiao-no'][0] : M6P_XIAO_ODDS['yixiao-no'][1];
+    if (category === '尾数') return name === '0尾' ? M6P_WEI_ODDS.weishu[0] : M6P_WEI_ODDS.weishu[1];
+    if (category === '尾数不中') return name === '0尾' ? M6P_WEI_ODDS['weishu-no'][0] : M6P_WEI_ODDS['weishu-no'][1];
+    if (category === '特尾数') return name === '0尾' ? M6P_WEI_ODDS.teweishu[0] : M6P_WEI_ODDS.teweishu[1];
+    if (category === '特头数') return name === '0头' ? '4.74' : '4.2';
+    if (category === '半波') return M6P_BANBO.find(b => b.name === name)?.odds || '5.3';
+    if (category === '五行') return M6P_WUXING.find(b => b.name === name)?.odds || '4.2';
+    if (category === '总肖') return M6P_ZONGXIAO.find(b => b.name === name)?.odds || '1.37';
+    if (category === '七色波') return M6P_QISEBO.find(b => b.name === name)?.odds || '2.13';
+    return '1.3';
+  };
+  // 生肖 / 尾数卡的赔率（依大类）
+  const m6pXiaoOddsOf = (zodiac) => m6pOddsOf(m6pCategory, zodiac);
+  const m6pWeiOddsOf = (tail) => m6pOddsOf(m6pCategory, tail);
+
+  const toggleM6SimpleMode = () => {
+    setM6SimpleMode(v => !v);
+    setSelectedM6(new Set());
+    setSelectedM6P(new Set());
+  };
+  const handleM6PlayTabClick = (cat) => {
+    setM6PlayTab(cat);
+    setM6SubTab(M6P_SUB_TABS[cat]?.[0].key || '');
+  };
+  const handleM6PCardClick = (name) => {
+    const key = `${m6pCategory}|${name}`;
+    const next = new Set(selectedM6P);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedM6P(next);
+  };
+  const m6pIsSelected = (name) => selectedM6P.has(`${m6pCategory}|${name}`);
+  // 合肖／连码／不中：随机凑满一注
+  const handleM6PQuickPick = () => {
+    const n = m6pSub?.n || 0;
+    const pool = m6PlayTab === 'hexiao' ? [...M6_ZODIACS] : M6P_NUMS.map(m6pPad);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    setSelectedM6P(new Set(pool.slice(0, n).map(v => `${m6pCategory}|${v}`)));
+  };
+  // 组合玩法的注数 = C(已选, 每注需选)；其余玩法一个点位一注
+  const m6pPicked = selectedM6P.size;
+  const m6pCount = m6pIsCombo ? m6pNck(m6pPicked, m6pSub?.n || 0) : m6pPicked;
+  const m6pTotalCost = m6pCount * currentBetPrice;
+  const handleM6PReset = () => {
+    setSelectedM6P(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+  const handleM6PSubmit = () => {
+    if (m6pCount === 0) {
+      showToast(m6pIsCombo ? `请至少选满 ${m6pSub?.n} 个组成一注！` : '请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (m6pTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    let items;
+    if (m6pIsCombo) {
+      const picked = Array.from(selectedM6P).map(k => k.split('|')[1]);
+      items = m6pCombinations(picked, m6pSub.n).map(combo => ({
+        name: combo.join(' '), odds: lhcOdds(m6pSub.odds), baseVal: currentBetPrice, category: m6pSub.label
+      }));
+    } else {
+      items = Array.from(selectedM6P).map(key => {
+        const [category, name] = key.split('|');
+        return { name, odds: lhcOdds(m6pOddsOf(category, name)), baseVal: currentBetPrice, category };
+      });
+    }
+    openBetDetailsModal('mark_six', items);
+    setSelectedM6P(new Set());
+  };
+
+  // 型态 C：号码球按钮
+  const renderM6PNumBall = (n, odds) => {
+    const name = m6pPad(n);
+    const isSelected = m6pIsSelected(name);
+    return (
+      <div
+        key={name}
+        className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+        onClick={() => handleM6PCardClick(name)}
+        style={{ height: '58px', padding: '2px' }}
+      >
+        <img src={`lhc-ball/num=${name}.png`} alt={name} style={{ width: '30px', height: '30px', marginBottom: '3px' }} />
+        <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>{lhcOdds(odds)}</div>
+      </div>
+    );
+  };
+  // 文字点位按钮：上面名称、下面赔率（样式同简易版）；odds 为 null 代表永久停用，灰底 + 显示 --
+  const renderM6PBetBtn = (name, odds, colorOverride) => {
+    const disabled = odds === null || odds === undefined;
+    const isSelected = !disabled && m6pIsSelected(name);
+    const color = disabled ? M6P_GRAY : (colorOverride || m6pBetColor(name));
+    return (
+      <div
+        key={name}
+        className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+        onClick={() => { if (!disabled) handleM6PCardClick(name); }}
+        style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px', cursor: disabled ? 'not-allowed' : 'pointer', background: disabled ? '#f1f5f9' : undefined }}
+      >
+        <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color }}>{name}</div>
+        <div className="odds-card-val" style={{ fontSize: '0.7rem', color }}>{disabled ? '--' : lhcOdds(odds)}</div>
+      </div>
+    );
+  };
   // ===== Speed Race (一分极速赛车) embedded gameplay =====
   const handleSRCardClick = (category, name) => {
     const key = `${category}|${name}`;
@@ -1211,6 +1684,155 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     });
     openBetDetailsModal('lucky28', items);
     setSelectedL28(new Set());
+  };
+
+  // ===== 一分幸运28 专业版盘面（样式同一分快三专业版） =====
+  // 第一层玩法（可左右滑动的胶囊）
+  const L28P_PLAY_TABS = [
+    { cat: 'sum', label: '总和' },
+    { cat: 'side', label: '边球' },
+    { cat: 'tail', label: '尾球' },
+    { cat: 'dragon', label: '龙虎豹' },
+    { cat: 'extreme', label: '极值' },
+    { cat: 'triple', label: '三球' }
+  ];
+  // 第二层：仅「总和」「尾球」有数字/两面之分
+  const L28P_SUB_TABS = {
+    sum: [{ key: 'num', label: '总和' }, { key: 'sides', label: '两面' }],
+    tail: [{ key: 'num', label: '数字' }, { key: 'sides', label: '两面' }]
+  };
+  // 总和 0~27 赔率（对称：n 与 27-n 相同）
+  const L28P_SUM_ODDS = ['900', '309.99', '154.99', '96', '63.99', '46.65', '34.99', '27.21', '21.77', '17.81', '15.55', '14.2', '13.41', '13.06'];
+  const l28pSumOddsOf = (n) => L28P_SUM_ODDS[n <= 13 ? n : 27 - n];
+  // 总和两面
+  const L28P_SUM_SIDES = [
+    { name: '大', odds: '1.96' }, { name: '小', odds: '1.96' }, { name: '单', odds: '1.96' }, { name: '双', odds: '1.96' },
+    { name: '大单', odds: '4.23' }, { name: '小单', odds: '3.63' }, { name: '大双', odds: '3.63' }, { name: '小双', odds: '4.23' }
+  ];
+  // 边球
+  const L28P_SIDE = [
+    { name: '边', odds: '2.22' }, { name: '中', odds: '1.74' }, { name: '大边', odds: '4.44' }, { name: '小边', odds: '4.44' }
+  ];
+  // 尾球数字（总和末位）：仅 1~8，末位为 0 或 9 一律不中奖，故不开放这两个点位
+  const L28P_TAIL_NUMS = ['1', '2', '3', '4', '5', '6', '7', '8'];
+  // 尾球两面
+  const L28P_TAIL_SIDES = [
+    { name: '大', odds: '2.45' }, { name: '小', odds: '2.45' }, { name: '单', odds: '2.45' }, { name: '双', odds: '2.45' },
+    { name: '大单', odds: '4.9' }, { name: '小单', odds: '4.9' }, { name: '大双', odds: '4.9' }, { name: '小双', odds: '4.9' }
+  ];
+  const L28P_DRAGON = [
+    { name: '龙', odds: '2.93', color: LOTTERY_PINK },
+    { name: '虎', odds: '2.93', color: LOTTERY_BLUE },
+    { name: '豹', odds: '2.93', color: LOTTERY_YELLOW }
+  ];
+  const L28P_EXTREME = [{ name: '极大', odds: '17.49' }, { name: '极小', odds: '17.49' }];
+  const L28P_TRIPLE = [
+    { name: '顺子', odds: '16.32', color: LOTTERY_PINK },
+    { name: '豹子', odds: '96', color: LOTTERY_YELLOW },
+    { name: '对子', odds: '3.62', color: LOTTERY_BLUE }
+  ];
+  const l28pOddsOf = (category, name) => {
+    if (category === '总和') return l28pSumOddsOf(Number(name));
+    if (category === '总和两面') return L28P_SUM_SIDES.find(b => b.name === name)?.odds || '1.96';
+    if (category === '边球') return L28P_SIDE.find(b => b.name === name)?.odds || '2.22';
+    if (category === '尾球') return '9.8';
+    if (category === '尾球两面') return L28P_TAIL_SIDES.find(b => b.name === name)?.odds || '2.45';
+    if (category === '龙虎豹') return '2.93';
+    if (category === '极值') return '17.49';
+    if (category === '三球') return L28P_TRIPLE.find(b => b.name === name)?.odds || '3.62';
+    return '1.96';
+  };
+  // 两面/边球点位配色：大系粉、小系蓝，其余深色
+  const l28pSideColor = (name) => (
+    name.startsWith('大') ? LOTTERY_PINK : name.startsWith('小') ? LOTTERY_BLUE : (lotteryColor(name) || '#1e293b')
+  );
+  const toggleL28SimpleMode = () => {
+    setL28SimpleMode(v => !v);
+    setSelectedL28(new Set());
+    setSelectedL28P(new Set());
+  };
+  const handleL28PlayTabClick = (cat) => {
+    setL28PlayTab(cat);
+    setL28SubTab('num');
+  };
+  const handleL28PCardClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedL28P);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedL28P(next);
+  };
+  // 数字点位（圆圈内号码 + 下方赔率）
+  const renderL28PNumCard = (category, name, odds) => {
+    const isSelected = selectedL28P.has(`${category}|${name}`);
+    return (
+      <div
+        key={name}
+        className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+        onClick={() => handleL28PCardClick(category, name)}
+        style={{ height: '80px', padding: '0 4px' }}
+      >
+        <div
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            border: `1px solid ${isSelected ? '#1e90ff' : '#cbd5e1'}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            color: isSelected ? '#1e90ff' : '#1e293b',
+            marginBottom: '4px'
+          }}
+        >
+          {name}
+        </div>
+        <div className="odds-card-val" style={{ fontSize: '0.62rem' }}>{odds}</div>
+      </div>
+    );
+  };
+  // 文字点位（大小单双 / 龙虎豹 等）
+  const renderL28PTextCard = (category, name, odds, color) => {
+    const isSelected = selectedL28P.has(`${category}|${name}`);
+    return (
+      <div
+        key={name}
+        className={`live-odds-card ${isSelected ? 'selected' : ''}`}
+        onClick={() => handleL28PCardClick(category, name)}
+        style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
+      >
+        <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color }}>{name}</div>
+        <div className="odds-card-val" style={{ fontSize: '0.7rem', color }}>{odds}</div>
+      </div>
+    );
+  };
+  const l28pCount = selectedL28P.size;
+  const l28pTotalCost = l28pCount * currentBetPrice;
+  const handleL28PReset = () => {
+    setSelectedL28P(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+  const handleL28PSubmit = () => {
+    if (l28pCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (l28pTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedL28P).map(key => {
+      const [category, name] = key.split('|');
+      return { name, odds: l28pOddsOf(category, name), baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('lucky28', items);
+    setSelectedL28P(new Set());
   };
 
   // ===== 鱼虾蟹 (Fish-Prawn-Crab) embedded gameplay =====
@@ -1816,17 +2438,18 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
                   </div>
-                ) : activeCarouselGame === 'marksix' ? (
-                  // Mark Six (一分六合彩) lottery console
+                ) : isLhcGame ? (
+                  // Mark Six (一分澳门六合彩 / 澳门六合彩) lottery console —— 两者盘面完全相同，只差开奖节奏
                   <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
-                        <div className="vp-bet-title-box">
+                        <div className="vp-bet-title-box is-compact">
                           <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
-                          <span>一分六合彩</span>
+                          <span>{isLhcDay ? '澳门六合彩' : '一分澳门六合彩'}</span>
                         </div>
-                        {renderCountdown()}
-                        <div className="vp-bet-header-right">
+                        {isLhcDay ? renderLhcDayCountdown() : renderCountdown('开奖：')}
+                        <div className="vp-bet-header-right is-compact">
+                          {renderLhcPanPicker()}
                           <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
@@ -1846,7 +2469,46 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            className="vp-m6-mode-switch"
+                            onClick={toggleM6SimpleMode}
+                            title={m6SimpleMode ? '当前简易版，点击切换专业版' : '当前专业版，点击切换简易版'}
+                            style={{
+                              flexShrink: 0,
+                              position: 'relative',
+                              width: '46px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: '#eef2f6',
+                              border: '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                left: '2px',
+                                width: '18px',
+                                height: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                color: '#ffffff',
+                                background: m6SimpleMode ? '#22c55e' : '#ef4444',
+                                transform: m6SimpleMode ? 'translateX(22px)' : 'translateX(0)',
+                                transition: 'transform 0.18s ease, background 0.18s ease'
+                              }}
+                            >
+                              {m6SimpleMode ? '简' : '专'}
+                            </span>
+                          </div>
+                          <span>第 {isLhcDay ? lhcDayIssue : String(issue).slice(-5)} 期</span>
+                        </div>
                         <div className="vp-m6-result-balls">
                           {m6Result.slice(0, 6).map((n, idx) => (
                             <img key={idx} className="vp-m6-result-ball-img" src={`lhc-ball/num=${n.toString().padStart(2, '0')}.png`} alt={n.toString().padStart(2, '0')} />
@@ -1858,6 +2520,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {m6SimpleMode ? (
+                      <React.Fragment key="m6-simple">
                       {/* Play category tabs */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -1890,7 +2554,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
                                   <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: lotteryColor(name) }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: lotteryColor(name) }}>9.75</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: lotteryColor(name) }}>{lhcOdds('9.75')}</div>
                                 </div>
                               );
                             })}
@@ -1910,7 +2574,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
                                   <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: opt.color }}>{opt.name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>{lhcOdds('9.75')}</div>
                                 </div>
                               );
                             })}
@@ -1930,7 +2594,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
                                 >
                                   <div className="odds-card-name" style={{ fontSize: '0.9rem', marginBottom: '2px' }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.75</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>{lhcOdds('9.75')}</div>
                                 </div>
                               );
                             })}
@@ -1951,13 +2615,161 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                   style={{ height: '58px', padding: '2px' }}
                                 >
                                   <img className="vp-m6-num-ball-img" src={`lhc-ball/num=${name}.png`} alt={name} style={{ width: '30px', height: '30px', marginBottom: '3px' }} />
-                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>9.75</div>
+                                  <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>{lhcOdds('9.75')}</div>
                                 </div>
                               );
                             })}
                           </div>
                         )}
                       </div>
+                      </React.Fragment>
+                      ) : (
+                      <React.Fragment key="m6-pro">
+                      {/* 专业版：第一层玩法大类（可左右滑动的胶囊） */}
+                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                        {M6P_PLAY_TABS.map(tab => {
+                          const active = m6PlayTab === tab.cat;
+                          return (
+                            <div
+                              key={tab.cat}
+                              onClick={() => handleM6PlayTabClick(tab.cat)}
+                              style={{
+                                flexShrink: 0,
+                                minWidth: '58px',
+                                textAlign: 'center',
+                                padding: '6px 16px',
+                                borderRadius: '8px',
+                                fontSize: '0.72rem',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                border: active ? '1px solid transparent' : '1px solid #e1e8ed',
+                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                backgroundClip: 'padding-box',
+                                WebkitBackgroundClip: 'padding-box',
+                                color: active ? '#ffffff' : '#57606f',
+                                fontWeight: active ? 700 : 500
+                              }}
+                            >
+                              {tab.label}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* 第二层小类：特码A/B、特一~特六、合肖/连码/不中 的组合类别 */}
+                      {m6pSubList && (
+                        <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                          <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                          <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
+                            {m6pSubList.map(item => {
+                              const active = m6pSub?.key === item.key;
+                              return (
+                                <div
+                                  key={item.key}
+                                  onClick={() => setM6SubTab(item.key)}
+                                  style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                >
+                                  {item.label}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                        </div>
+                      )}
+
+                      <div ref={m6pBodyRef} style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 特码A/B、正码、正特一~六：数字 或 两面 */}
+                        {M6P_NUMBER_TABS.includes(m6PlayTab) && (
+                          m6SubTab === 'sides' ? (
+                            <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                              {m6pSideBets.map(bet => renderM6PBetBtn(bet.name, bet.odds))}
+                            </div>
+                          ) : (
+                            <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                              {M6P_NUMS.map(n => renderM6PNumBall(n, m6pNumOdds))}
+                            </div>
+                          )
+                        )}
+
+                        {/* 特肖 / 正肖 / 一肖 / 一肖不中：12 个生肖点位 */}
+                        {M6P_XIAO_TABS.includes(m6PlayTab) && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {/* 生肖的龙／虎不套两面盘的蓝橘配色，一律深色 */}
+                            {M6_ZODIACS.map(z => renderM6PBetBtn(z, m6pXiaoOddsOf(z), '#1e293b'))}
+                          </div>
+                        )}
+
+                        {/* 尾数 / 尾数不中 / 特尾数：10 个尾数点位 */}
+                        {M6P_WEI_TABS.includes(m6PlayTab) && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_TAIL_GROUPS.map(g => renderM6PBetBtn(g.name, m6pWeiOddsOf(g.name)))}
+                          </div>
+                        )}
+
+                        {/* 特头数：5 个头数点位 */}
+                        {m6PlayTab === 'tetoushu' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_HEAD_GROUPS.map(g => renderM6PBetBtn(g.name, g.name === '0头' ? '4.74' : '4.2'))}
+                          </div>
+                        )}
+
+                        {/* 半波：30 个组合点位（红 → 蓝 → 绿） */}
+                        {m6PlayTab === 'banbo' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_BANBO.map(b => renderM6PBetBtn(b.name, b.odds, M6P_BO[b.name[0]]))}
+                          </div>
+                        )}
+
+                        {/* 五行：5 个点位 */}
+                        {m6PlayTab === 'wuxing' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_WUXING.map(b => renderM6PBetBtn(b.name, b.odds))}
+                          </div>
+                        )}
+
+                        {/* 总肖：8 颗 */}
+                        {m6PlayTab === 'zongxiao' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_ZONGXIAO.map(b => renderM6PBetBtn(b.name, b.odds))}
+                          </div>
+                        )}
+
+                        {/* 七色波：4 颗 */}
+                        {m6PlayTab === 'qisebo' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                            {M6P_QISEBO.map(b => renderM6PBetBtn(b.name, b.odds))}
+                          </div>
+                        )}
+
+                        {/* 合肖 / 连码 / 不中：复选后自动展开成 C(M,N) 注 */}
+                        {m6pIsCombo && (
+                          <>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', background: '#eff6ff', border: '1px solid #dbeafe', borderRadius: '8px', padding: '6px 10px', marginBottom: '8px' }}>
+                              <span style={{ fontSize: '0.68rem', color: '#2563eb' }}>
+                                已选 {m6pPicked} {m6PlayTab === 'hexiao' ? '生肖' : '号码'}（{m6pSub?.label}，共 {m6pCount} 注）· 赔率 {lhcOdds(m6pSub?.odds)}
+                              </span>
+                              <span
+                                onClick={handleM6PQuickPick}
+                                style={{ flexShrink: 0, fontSize: '0.68rem', color: '#ffffff', background: '#3b82f6', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}
+                              >
+                                快选
+                              </span>
+                            </div>
+                            {m6PlayTab === 'hexiao' ? (
+                              <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                                {M6_ZODIACS.map(z => renderM6PBetBtn(z, m6pSub?.odds, '#1e293b'))}
+                              </div>
+                            ) : (
+                              <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                                {M6P_NUMS.map(n => renderM6PNumBall(n, m6pSub?.odds))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                      </React.Fragment>
+                      )}
                     </div>
 
                     {/* Embedded betting console */}
@@ -1968,7 +2780,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
                         </div>
                         <div className="info-selected-box">
-                          共 <span className="console-selected-value">{m6Count}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{m6TotalCost.toFixed(2)}</span>
+                          共 <span className="console-selected-value">{m6SimpleMode ? m6Count : m6pCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{(m6SimpleMode ? m6TotalCost : m6pTotalCost).toFixed(2)}</span>
                         </div>
                       </div>
 
@@ -2001,10 +2813,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       <div className="bet-console-buttons-row">
-                        <button className="console-cancel-btn" onClick={handleM6Reset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-cancel-btn" onClick={m6SimpleMode ? handleM6Reset : handleM6PReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
-                        <button className="console-submit-btn active" onClick={handleM6Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-submit-btn active" onClick={m6SimpleMode ? handleM6Submit : handleM6PSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>
@@ -2829,7 +3641,46 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div
+                            className="vp-l28-mode-switch"
+                            onClick={toggleL28SimpleMode}
+                            title={l28SimpleMode ? '当前简易版，点击切换专业版' : '当前专业版，点击切换简易版'}
+                            style={{
+                              flexShrink: 0,
+                              position: 'relative',
+                              width: '46px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: '#eef2f6',
+                              border: '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                left: '2px',
+                                width: '18px',
+                                height: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                color: '#ffffff',
+                                background: l28SimpleMode ? '#22c55e' : '#ef4444',
+                                transform: l28SimpleMode ? 'translateX(22px)' : 'translateX(0)',
+                                transition: 'transform 0.18s ease, background 0.18s ease'
+                              }}
+                            >
+                              {l28SimpleMode ? '简' : '专'}
+                            </span>
+                          </div>
+                          <span>第 {String(issue).slice(-5)} 期</span>
+                        </div>
                         <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                           {l28Result.map((n, idx) => (
                             <React.Fragment key={idx}>
@@ -2844,6 +3695,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
 
                     <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                      {l28SimpleMode ? (
+                      <React.Fragment key="l28-simple">
                       {/* Play category tabs：总和两面 / 龙虎豹 / 三球 / 总和 */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {L28_TABS.map(tab => (
@@ -2938,6 +3791,121 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                         )}
                       </div>
+                      </React.Fragment>
+                      ) : (
+                      <React.Fragment key="l28-pro">
+                      {/* 专业版：第一层玩法（可左右滑动的胶囊，样式同一分快三专业版） */}
+                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                        {L28P_PLAY_TABS.map(tab => {
+                          const active = l28PlayTab === tab.cat;
+                          return (
+                            <div
+                              key={tab.cat}
+                              onClick={() => handleL28PlayTabClick(tab.cat)}
+                              style={{
+                                flexShrink: 0,
+                                minWidth: '58px',
+                                textAlign: 'center',
+                                padding: '6px 16px',
+                                borderRadius: '8px',
+                                fontSize: '0.72rem',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                border: active ? '1px solid transparent' : '1px solid #e1e8ed',
+                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                backgroundClip: 'padding-box',
+                                WebkitBackgroundClip: 'padding-box',
+                                color: active ? '#ffffff' : '#57606f',
+                                fontWeight: active ? 700 : 500
+                              }}
+                            >
+                              {tab.label}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* 第二层：数字 / 两面（仅总和、尾球有） */}
+                      {L28P_SUB_TABS[l28PlayTab] && (
+                        <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                          <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                          <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
+                            {L28P_SUB_TABS[l28PlayTab].map(item => {
+                              const active = l28SubTab === item.key;
+                              return (
+                                <div
+                                  key={item.key}
+                                  onClick={() => setL28SubTab(item.key)}
+                                  style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                >
+                                  {item.label}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
+                        </div>
+                      )}
+
+                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        {/* 总和 - 数字：0 ~ 27 */}
+                        {l28PlayTab === 'sum' && l28SubTab === 'num' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {Array.from({ length: 28 }, (_, i) => String(i)).map(n => renderL28PNumCard('总和', n, l28pSumOddsOf(Number(n))))}
+                          </div>
+                        )}
+
+                        {/* 总和 - 两面：大小单双 + 大单/小单/大双/小双 */}
+                        {l28PlayTab === 'sum' && l28SubTab === 'sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_SUM_SIDES.map(bet => renderL28PTextCard('总和两面', bet.name, bet.odds, l28pSideColor(bet.name)))}
+                          </div>
+                        )}
+
+                        {/* 边球：边 / 中 / 大边 / 小边 */}
+                        {l28PlayTab === 'side' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_SIDE.map(bet => renderL28PTextCard('边球', bet.name, bet.odds, l28pSideColor(bet.name)))}
+                          </div>
+                        )}
+
+                        {/* 尾球 - 数字：1~9 + 0 */}
+                        {l28PlayTab === 'tail' && l28SubTab === 'num' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_TAIL_NUMS.map(n => renderL28PNumCard('尾球', n, '9.8'))}
+                          </div>
+                        )}
+
+                        {/* 尾球 - 两面 */}
+                        {l28PlayTab === 'tail' && l28SubTab === 'sides' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_TAIL_SIDES.map(bet => renderL28PTextCard('尾球两面', bet.name, bet.odds, l28pSideColor(bet.name)))}
+                          </div>
+                        )}
+
+                        {/* 龙虎豹 */}
+                        {l28PlayTab === 'dragon' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_DRAGON.map(bet => renderL28PTextCard('龙虎豹', bet.name, bet.odds, bet.color))}
+                          </div>
+                        )}
+
+                        {/* 极值：极大 / 极小 */}
+                        {l28PlayTab === 'extreme' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_EXTREME.map(bet => renderL28PTextCard('极值', bet.name, bet.odds, l28pSideColor(bet.name)))}
+                          </div>
+                        )}
+
+                        {/* 三球：顺子 / 豹子 / 对子 */}
+                        {l28PlayTab === 'triple' && (
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            {L28P_TRIPLE.map(bet => renderL28PTextCard('三球', bet.name, bet.odds, bet.color))}
+                          </div>
+                        )}
+                      </div>
+                      </React.Fragment>
+                      )}
                     </div>
 
                     {/* Embedded betting console */}
@@ -2948,7 +3916,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
                         </div>
                         <div className="info-selected-box">
-                          共 <span className="console-selected-value">{l28Count}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{l28TotalCost.toFixed(2)}</span>
+                          共 <span className="console-selected-value">{l28SimpleMode ? l28Count : l28pCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{(l28SimpleMode ? l28TotalCost : l28pTotalCost).toFixed(2)}</span>
                         </div>
                       </div>
 
@@ -2981,10 +3949,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       <div className="bet-console-buttons-row">
-                        <button className="console-cancel-btn" onClick={handleL28Reset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-cancel-btn" onClick={l28SimpleMode ? handleL28Reset : handleL28PReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
-                        <button className="console-submit-btn active" onClick={handleL28Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                        <button className="console-submit-btn active" onClick={l28SimpleMode ? handleL28Submit : handleL28PSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>

@@ -11870,6 +11870,8 @@ body {
   font-size: 0.8rem;
   font-weight: 700;
   color: #1e293b;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .vp-bet-title-icon {
@@ -11900,6 +11902,68 @@ body {
 .vp-digit-colon {
   font-weight: bold;
   color: #1e293b;
+}
+
+/* 倒计时抬头（开盘：／开奖：） */
+.vp-countdown-label {
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+/* 带抬头（甚至到时:分:秒）的倒计时整体收窄，免得挤爆抬头列 */
+.vp-bet-countdown-box.is-compact {
+  gap: 1px;
+}
+
+.vp-bet-countdown-box.is-compact .vp-countdown-label {
+  font-size: 0.65rem;
+  /* 全角冒号自带右侧留白，用负 margin 抵掉，让抬头贴住倒计时格 */
+  margin-right: -5px;
+}
+
+.vp-bet-countdown-box.is-compact .vp-digit-box {
+  font-size: 0.66rem;
+  padding: 2px 1px;
+  min-width: 11px;
+  border-radius: 3px;
+}
+
+/* 时:分:秒 整组放同一格，高度对齐旁边的盘口／菜单按钮 */
+.vp-bet-countdown-box.is-compact .vp-digit-box.is-clock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  min-width: 0;
+  box-sizing: border-box;
+  border-radius: 5px;
+  letter-spacing: 1px;
+}
+
+.vp-bet-countdown-box.is-compact .vp-digit-colon {
+  font-size: 0.66rem;
+}
+
+/* 抬头列还要塞盘口选择时，游戏名与右侧图标群收紧一点 */
+.vp-bet-title-box.is-compact {
+  font-size: 0.72rem;
+}
+
+.vp-bet-header-right.is-compact {
+  gap: 5px;
+}
+
+/* 盘口按钮里的小箭头不要套用抬头列图标那套 30px 方框 */
+.vp-bet-header-right .vp-pan-picker i {
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }
 
 /* 倒计时阶段标签 */

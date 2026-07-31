@@ -178,7 +178,7 @@ export default function PageChats() {
     { id: 11, name: '深夜暖心歌会', category: 'naked', sub: ['recommend', 'voice'], img: 'assets/science.png', viewer: 398104, label: 'BL 语音厅', badge: '99' },
     { id: 12, name: '户外野营生活', category: 'naked', sub: ['worldcup'], img: 'assets/sports_cover.png', viewer: 148202, label: 'BL 体育赛事', badge: '72' },
     // 各已完成游戏各开一间「玩同款」直播间，gameKey 决定进房后打开的游戏
-    { id: 13, name: '澳门六合彩厅', category: 'chatroom', sub: ['recommend', 'game'], img: 'assets/mo_mark_six.png', viewer: 188206, label: 'BL 一分六合彩', badge: '66', gameKey: 'marksix' },
+    { id: 13, name: '澳门六合彩厅', category: 'chatroom', sub: ['recommend', 'game'], img: 'assets/mo_mark_six.png', viewer: 188206, label: 'BL 一分澳门六合彩', badge: '66', gameKey: 'marksix' },
     { id: 14, name: '极速赛车竞技场', category: 'chatroom', sub: ['game'], img: '游戏图标/1062010.png', viewer: 176540, label: 'BL 极速赛车', badge: '48', gameKey: 'speedrace' },
     { id: 15, name: '分分彩鑫运厅', category: 'chatroom', sub: ['recommend', 'game'], img: '游戏图标/601010.png', viewer: 165330, label: 'BL 一分分分彩', badge: '37', gameKey: 'ffc' },
     { id: 16, name: '分分彩2简约厅', category: 'chatroom', sub: ['game'], img: '游戏图标/601010.png', viewer: 152118, label: 'BL 一分分分彩2', badge: '29', gameKey: 'ffc2' },
