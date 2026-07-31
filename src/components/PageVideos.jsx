@@ -25,7 +25,7 @@ const allVideos = [
     views: '2,891,854', 
     rating: '98%', 
     duration: '28分钟', 
-    img: 'assets/drama_still1.png', 
+    img: 'assets/video_travel_snowlake.png', 
     isFree: true,
     tags: ['#旅行', '#自驾', '#Vlog'],
     description: '自驾川西环线，沿途经过折多山、新都桥、理塘等地。用镜头记录下巍峨的雪山、碧绿的海子以及纯朴的藏区风情，带你足不出户感受大自然的鬼斧神工与心灵洗礼。'
@@ -87,7 +87,7 @@ const allVideos = [
     views: '5,123,040', 
     rating: '99%', 
     duration: '122分钟', 
-    img: 'assets/lego.png',
+    img: 'assets/video_anime_hero.png',
     tags: ['#动画', '#奇幻', '#冒险'],
     description: '生活在九州小镇的17岁少女铃芽，遇到了寻找“门”的年轻闭门师草太。为了阻止灾难在全国蔓延，铃芽踏上了关闭废墟中一扇扇“灾难之门”的旅程，并在途中获得爱与成长。'
   },
@@ -147,7 +147,7 @@ const allVideos = [
     views: '3,110,482', 
     rating: '94%', 
     duration: '45分钟', 
-    img: 'assets/sports_cover.png',
+    img: 'assets/video_travel_sunset.png',
     tags: ['#户外', '#露营', '#探险'],
     description: '独自深入原始森林，开启两天一夜的无电野外露营挑战。从寻找水源、搭建防风帐篷、用柴火烹饪热腾腾的野外晚餐，到深夜聆听虫鸣鸟叫，体验真正回归自然的极简生活方式。'
   },
