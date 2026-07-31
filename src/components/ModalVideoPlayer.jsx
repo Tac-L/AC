@@ -560,19 +560,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setAnalysis({ sum: sumVal, size: sumVal >= 11 ? '大' : '小', oe: sumVal % 2 === 0 ? '双' : '单' });
   };
 
-  // 倒计时显示：投注中(数字) → 已封盘；label 可在数字前加「开奖：」之类的抬头
-  const renderCountdown = (label) => {
+  // 倒计时显示：投注中(抬头 + 整组时间同一格) → 已封盘；label 预设「开奖：」，各游戏通用
+  const renderCountdown = (label = '开奖：') => {
     if (phase === 'sealed') {
       return <span className="vp-phase-tag vp-phase-sealed">已封盘</span>;
     }
     return (
-      <div className={`vp-bet-countdown-box${label ? ' is-compact' : ''}`}>
-        {label && <span className="vp-countdown-label">{label}</span>}
-        <span className="vp-digit-box">0</span>
-        <span className="vp-digit-box">0</span>
-        <span className="vp-digit-colon">:</span>
-        <span className="vp-digit-box">{Math.floor(countdown / 10)}</span>
-        <span className="vp-digit-box">{countdown % 10}</span>
+      <div className="vp-bet-countdown-box">
+        <span className="vp-countdown-label">{label}</span>
+        <span className="vp-digit-box is-clock">
+          {`00:${String(countdown).padStart(2, '0')}`}
+        </span>
       </div>
     );
   };
@@ -603,7 +601,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     const left = Math.max(0, Math.floor((lhcDayClock.target - nowTs) / 1000));
     const parts = [Math.floor(left / 3600), Math.floor((left % 3600) / 60), left % 60];
     return (
-      <div className="vp-bet-countdown-box is-compact">
+      <div className="vp-bet-countdown-box">
         <span className="vp-countdown-label">{lhcDayClock.label}</span>
         <span className="vp-digit-box is-clock">{parts.map(v => String(v).padStart(2, '0')).join(':')}</span>
       </div>
@@ -2185,7 +2183,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       )}
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {f3SimpleMode ? (
                       <React.Fragment key="f3-simple">
                       {/* Play tabs */}
@@ -2254,7 +2252,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
-                                fontWeight: active ? 700 : 500
+                                fontWeight: 500
                               }}
                             >
                               {tab.label}
@@ -2519,7 +2517,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {m6SimpleMode ? (
                       <React.Fragment key="m6-simple">
                       {/* Play category tabs */}
@@ -2647,7 +2645,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
-                                fontWeight: active ? 700 : 500
+                                fontWeight: 500
                               }}
                             >
                               {tab.label}
@@ -2667,7 +2665,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 <div
                                   key={item.key}
                                   onClick={() => setM6SubTab(item.key)}
-                                  style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                  className={`vp-sub-tab${active ? ' is-active' : ''}`}
                                 >
                                   {item.label}
                                 </div>
@@ -2900,7 +2898,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {srSimpleMode ? (
                       <>
                       {/* Play category tabs */}
@@ -3008,7 +3006,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               <div
                                 key={item.key}
                                 onClick={() => setSrActivePos(item.key)}
-                                style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                className={`vp-sub-tab${active ? ' is-active' : ''}`}
                               >
                                 {item.label}
                               </div>
@@ -3214,7 +3212,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {ffcSimpleMode ? (
                       <>
                       {/* 简易版：万位 / 龙虎 / 佰位（盘面同一分分分彩2） */}
@@ -3317,7 +3315,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               <div
                                 key={item.key}
                                 onClick={() => setFfcActivePos(item.key)}
-                                style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                className={`vp-sub-tab${active ? ' is-active' : ''}`}
                               >
                                 {item.label}
                               </div>
@@ -3484,7 +3482,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {/* Play category tabs：万位 / 龙虎 / 佰位 */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {FFC2_TABS.map(tab => (
@@ -3694,7 +3692,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {l28SimpleMode ? (
                       <React.Fragment key="l28-simple">
                       {/* Play category tabs：总和两面 / 龙虎豹 / 三球 / 总和 */}
@@ -3816,7 +3814,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
-                                fontWeight: active ? 700 : 500
+                                fontWeight: 500
                               }}
                             >
                               {tab.label}
@@ -3836,7 +3834,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 <div
                                   key={item.key}
                                   onClick={() => setL28SubTab(item.key)}
-                                  style={{ flexShrink: 0, padding: '6px 18px', fontSize: '0.8rem', fontWeight: active ? 700 : 500, cursor: 'pointer', color: active ? '#3b82f6' : '#64748b', borderBottom: `2px solid ${active ? '#3b82f6' : 'transparent'}`, whiteSpace: 'nowrap' }}
+                                  className={`vp-sub-tab${active ? ' is-active' : ''}`}
                                 >
                                   {item.label}
                                 </div>
@@ -4001,7 +3999,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {/* Play tabs: 单骰 / 全围 */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -4165,7 +4163,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {/* Play tabs: 庄闲 / 对子 / 两面 */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[
@@ -4340,7 +4338,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    <div className="embedded-game-body" style={{ backgroundColor: '#f8fafc' }}>
+                    <div className="embedded-game-body">
                       {/* Play tabs: 冠军两面 / 冠军单码 */}
                       <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
                         {[

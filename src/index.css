@@ -1448,7 +1448,7 @@ body {
   background: #ffffff;
   color: #3b82f6;
   font-size: 0.8rem;
-  margin-right: 8px;
+  margin-right: 4px;
   cursor: pointer;
   flex-shrink: 0;
   object-fit: contain;
@@ -4869,6 +4869,8 @@ input:checked + .slider:before {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  /* 点位区底色：与简易／专业切换开关的底灰同色，整体更和谐 */
+  background-color: #eef2f6;
 }
 
 /* Fast Three components styling */
@@ -7820,7 +7822,7 @@ input:checked + .slider:before {
   -webkit-background-clip: padding-box;
   border-color: transparent;
   color: #ffffff;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .live-betting-options-container {
@@ -7895,17 +7897,14 @@ input:checked + .slider:before {
   color: #7f8c8d;
 }
 
+/* 选中点位：浅橘色系（原本蓝色） */
 .live-odds-card.selected {
-  border-color: #1e90ff;
-  background-color: #e8f0fe;
+  border-color: #fb923c;
+  background-color: #fff4e6;
 }
 
 .live-odds-card.selected .odds-card-name {
-  color: #1e90ff;
-}
-
-.live-odds-card.selected .odds-card-val {
-  color: #1e90ff;
+  color: #f97316;
 }
 
 .live-bet-console {
@@ -11866,7 +11865,7 @@ body {
 .vp-bet-title-box {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   font-size: 0.8rem;
   font-weight: 700;
   color: #1e293b;
@@ -11884,7 +11883,7 @@ body {
 .vp-bet-countdown-box {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .vp-digit-box {
@@ -11899,52 +11898,55 @@ body {
   text-align: center;
 }
 
-.vp-digit-colon {
-  font-weight: bold;
-  color: #1e293b;
-}
-
-/* 倒计时抬头（开盘：／开奖：） */
+/* 倒计时抬头（开盘：／开奖：），字级对齐盘口按钮的 0.48rem */
 .vp-countdown-label {
-  font-size: 0.72rem;
+  font-size: 0.48rem;
   color: #64748b;
   white-space: nowrap;
-  margin-right: 2px;
-}
-
-/* 带抬头（甚至到时:分:秒）的倒计时整体收窄，免得挤爆抬头列 */
-.vp-bet-countdown-box.is-compact {
-  gap: 1px;
-}
-
-.vp-bet-countdown-box.is-compact .vp-countdown-label {
-  font-size: 0.65rem;
   /* 全角冒号自带右侧留白，用负 margin 抵掉，让抬头贴住倒计时格 */
-  margin-right: -5px;
+  margin-right: -3px;
 }
 
-.vp-bet-countdown-box.is-compact .vp-digit-box {
-  font-size: 0.66rem;
-  padding: 2px 1px;
-  min-width: 11px;
-  border-radius: 3px;
-}
-
-/* 时:分:秒 整组放同一格，高度对齐旁边的盘口／菜单按钮 */
-.vp-bet-countdown-box.is-compact .vp-digit-box.is-clock {
+/* 倒计时时间框：整组时间放同一格，高度对齐旁边的盘口／菜单按钮（所有游戏通用） */
+.vp-bet-countdown-box .vp-digit-box.is-clock {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   height: 24px;
-  padding: 0 8px;
+  padding: 0 4px;
   min-width: 0;
   box-sizing: border-box;
   border-radius: 5px;
+  font-size: 0.66rem;
   letter-spacing: 1px;
+  /* 数字与冒号用红字，抬头维持灰字 */
+  color: #ef4444;
+  /* 中间白、四周很浅红的圆形渐层，配内阴影做出凹陷的立体感 */
+  background: radial-gradient(circle at 50% 50%, #ffffff 0%, #ffffff 48%, #fdecec 82%, #f8d8d8 100%);
+  box-shadow: inset 0 1px 3px rgba(153, 27, 27, 0.12);
+  /* 边框改浅红，跟面色与红字统一 */
+  border-color: #f3bfbf;
 }
 
-.vp-bet-countdown-box.is-compact .vp-digit-colon {
-  font-size: 0.66rem;
+/* 第二层玩法小类（数字／两面、名次、球号…）：选中时铺上点位区底色 + 上方圆角，像贴着内容区的标签 */
+.vp-sub-tab {
+  position: relative;
+  flex-shrink: 0;
+  padding: 6px 18px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+}
+
+/* 底色＝点位区底色（简易／专业开关的底灰），顶部再叠一层蓝色渐层，到 3/4 高度淡出 */
+.vp-sub-tab.is-active {
+  background:
+    linear-gradient(to bottom, #dceeff 0, rgba(220, 238, 255, 0) 75%),
+    #eef2f6;
+  color: #3b82f6;
 }
 
 /* 抬头列还要塞盘口选择时，游戏名与右侧图标群收紧一点 */
@@ -11966,11 +11968,16 @@ body {
   background: none;
 }
 
-/* 倒计时阶段标签 */
+/* 倒计时阶段标签：高度对齐倒计时时间框 */
 .vp-phase-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
   font-size: 0.74rem;
   font-weight: bold;
-  padding: 4px 14px;
+  padding: 0 14px;
+  box-sizing: border-box;
   border-radius: 12px;
   white-space: nowrap;
 }
