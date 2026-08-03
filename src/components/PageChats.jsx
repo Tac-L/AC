@@ -915,8 +915,8 @@ export default function PageChats() {
             </button>
           </div>
 
-          {/* Live Chat View Container */}
-          {!showBetPanel ? (
+          {/* 播放器下方的房间主体：聊天/跟注/更多，加上叠在上面的投注弹窗 */}
+          <div className="live-room-body">
             <div className="live-chat-view-container" id="live-chat-view-container" style={{ display: 'flex' }}>
               {activeLiveTab === 'chat' && (
                 <>
@@ -1061,18 +1061,20 @@ export default function PageChats() {
                 </div>
               )}
             </div>
-          ) : (
-            /* 直播「玩同款」投注页：复用视频里的游戏控制台，依直播间游戏切换 */
-            <div className="live-betting-panel" id="live-betting-panel" style={{ display: 'flex', padding: 0 }}>
-              <ModalVideoPlayer
-                embedded
-                initialGame={roomToGameKey(currentRoom)}
-                matchTitle={roomToMatchTitle(currentRoom)}
-                sportsBoard={currentRoom?.board}
-                onClose={() => setShowBetPanel(false)}
-              />
-            </div>
-          )}
+
+            {/* 直播「玩同款」投注弹窗：叠在聊天上方、贴齐底部，复用视频里的游戏控制台 */}
+            {showBetPanel && (
+              <div className="live-bet-sheet" id="live-betting-panel">
+                <ModalVideoPlayer
+                  embedded
+                  initialGame={roomToGameKey(currentRoom)}
+                  matchTitle={roomToMatchTitle(currentRoom)}
+                  sportsBoard={currentRoom?.board}
+                  onClose={() => setShowBetPanel(false)}
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

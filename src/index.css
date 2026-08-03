@@ -6,7 +6,15 @@
 :root {
   --font-system: 'Noto Sans SC', sans-serif;
   --font-display: 'Fredoka', sans-serif;
-  
+
+  /* 模拟真手机浏览器上下 chrome 的高度（只在本机 dev + ≤500px 的真机宽度下生效）。
+     数字取 iOS 实际尺寸：47px = 刘海机 safe-area-inset-top，34px = safe-area-inset-bottom，
+     44px = Safari 底部工具列。四条合计 173px。 */
+  --mobile-status-bar-h: 47px;
+  --mobile-url-bar-h: 48px;
+  --mobile-bottom-bar-h: 44px;
+  --mobile-home-indicator-h: 34px;
+
   /* Color Palette - Premium Light Theme (White & Blue-Grey Accents) */
   --bg-dark: #ffffff;          /* White background for headers/footers */
   --bg-body: #f5f6f8;          /* Light grey-blue background for body */
@@ -312,6 +320,14 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+}
+
+/* 模拟真手机浏览器上下 chrome（系统列 / 网址列 / 底部工具列 / home indicator）：
+   桌机预览时不显示，只在 Responsive Real Mobile Viewport Override（≤500px）里开启并占位 */
+.mobile-status-bar,
+.mobile-url-bar,
+.mobile-bottom-chrome {
+  display: none;
 }
 
 /* iPhone Status Bar */
@@ -1280,10 +1296,12 @@ body {
   transform: translateY(0);
 }
 
-/* Betting drawer：嵌入视频游戏控制台，使用固定高度的底部抽屉（较低，露出上方短剧） */
+/* Betting drawer：嵌入视频游戏控制台的底部抽屉。
+   高度改由内容决定（点位区默认 160px），不再固定 56%，否则点位区拿不到 160；
+   仍用 max-height 压住，上方短剧画面不会被吃光。 */
 .drama-betting-sheet {
-  height: 56%;
-  max-height: 56%;
+  height: auto;
+  max-height: 78%;
 }
 
 /* 短剧剧集选择抽屉 */
@@ -4881,6 +4899,65 @@ input:checked + .slider:before {
   background-color: #eef2f6;
 }
 
+/* ==========================================================================
+   投注弹窗（直播间「玩同款」／视频「边看边玩」／短剧玩游戏 共用）
+   ------------------------------------------------------------------------
+   控制台不再吃满播放器下方整块，改成贴着底部、由内容决定高度的弹窗：
+     弹窗高 = 抬头 + 玩法页签 + 点位区(默认 160px) + 下注列
+   弹窗最高只到容器顶（容器本身就从播放器下缘开始），所以永远遮不到播放器；
+   一旦内容超过可用高度，只有点位区会被压缩（其余列都 flex-shrink: 0）。
+   用 :has(.vp-odds-area) 限定：Slot 类游戏画面没有点位区，仍旧铺满不受影响。
+   ========================================================================== */
+
+/* 点位区：默认 160px，空间不够时优先压缩这里 */
+.vp-odds-area {
+  flex: 0 1 160px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* 点位区行高（简易版／专业版都套用）：由 ModalVideoPlayer 的 layoutOddsRows 量测后
+   写进 --vp-odds-row-h（只有一行 → 该行撑满点位区；超过一行 → 两行各半，撑满点位区）。
+   各游戏卡片的高度／比例是写在 inline style 上的，所以这里要 !important 才盖得掉。 */
+.live-betting-options-grid.is-fill-rows > .live-odds-card {
+  height: var(--vp-odds-row-h) !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+}
+
+/* 控制台靠底部对齐 */
+.vp-play-panel:has(.vp-odds-area) {
+  justify-content: flex-end;
+}
+
+/* 高度改由内容决定（覆盖 JSX 上的 inline flex: 1，以及基底那条 height: 100%） */
+.player-embedded-game-panel:has(.vp-odds-area) {
+  flex: 0 1 auto !important;
+  height: auto;
+  max-height: 100%;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.18);
+}
+
+/* 抬头、玩法页签、下注列一律不压缩，压缩只发生在点位区。
+   各游戏的页签／下注列 class 不一致（fast3 的下注列还在 body 里面），
+   所以直接对所有子层下手，再把点位区的 shrink 加回来。 */
+.player-embedded-game-panel:has(.vp-odds-area) > *,
+.player-embedded-game-panel:has(.vp-odds-area) > .embedded-game-body > * {
+  flex-shrink: 0;
+}
+
+.player-embedded-game-panel:has(.vp-odds-area) > .embedded-game-body {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.player-embedded-game-panel:has(.vp-odds-area) .vp-odds-area {
+  flex-shrink: 1;
+}
+
 /* Fast Three components styling */
 .fast3-result-row {
   display: flex;
@@ -6632,8 +6709,132 @@ input:checked + .slider:before {
     display: none !important;
   }
 
+  /* 模拟手机系统列：最上方一条，时间 + 讯号/wifi/电量 */
+  .mobile-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    height: var(--mobile-status-bar-h);
+    padding: 0 20px 0 24px;
+    box-sizing: border-box;
+    background: #f1f3f4;
+    color: #202124;
+    user-select: none;
+  }
+
+  .mobile-status-time {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+  }
+
+  /* 模拟手机浏览器网址栏：占掉顶部一条固定高度，app 本体只吃剩下的空间 */
+  .mobile-url-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    height: var(--mobile-url-bar-h);
+    padding: 0 12px;
+    box-sizing: border-box;
+    background: #f1f3f4;
+    border-bottom: 1px solid #d5d8dc;
+    user-select: none;
+  }
+
+  .mobile-url-pill {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 17px;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px #dcdfe3;
+  }
+
+  .mobile-url-lock {
+    font-size: 0.6rem;
+    color: #5f6368;
+    flex-shrink: 0;
+  }
+
+  .mobile-url-text {
+    font-size: 0.78rem;
+    color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-url-reload {
+    font-size: 0.85rem;
+    color: #5f6368;
+    flex-shrink: 0;
+  }
+
+  /* 模拟浏览器底部工具列 + iOS home indicator（那条横线），一样占掉高度 */
+  .mobile-bottom-chrome {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    background: #f1f3f4;
+    border-top: 1px solid #d5d8dc;
+    user-select: none;
+  }
+
+  .mobile-bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: var(--mobile-bottom-bar-h);
+    padding: 0 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    color: #1a73e8;
+  }
+
+  .mobile-bottom-bar .is-dim {
+    color: #b0b4b9;
+  }
+
+  .mobile-home-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--mobile-home-indicator-h);
+  }
+
+  .mobile-home-indicator-pill {
+    width: 140px;
+    height: 5px;
+    border-radius: 3px;
+    background: #202124;
+  }
+
   .app-body {
     height: 100% !important;
+  }
+
+  /* 只有真的挂上 mock chrome 时才让出那四条高度；真手机上没有这个 class，版面完全不变 */
+  .phone-screen.has-mock-chrome .app-body {
+    height: calc(
+      100%
+      - var(--mobile-status-bar-h)
+      - var(--mobile-url-bar-h)
+      - var(--mobile-bottom-bar-h)
+      - var(--mobile-home-indicator-h)
+    ) !important;
   }
 
   /* Keep the bottom nav clear of the iOS home indicator / browser chrome */
@@ -7464,12 +7665,46 @@ input:checked + .slider:before {
   opacity: 0.9;
 }
 
+/* 播放器下方的房间主体：投注弹窗的定位容器，所以弹窗最高只到这里的顶端，
+   永远遮不到上面的播放器 */
+.live-room-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .live-chat-view-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background-color: #f1f2f6;
+}
+
+/* 「玩同款」弹窗层：只有弹窗本体吃点击，上方聊天照样可看可滑 */
+.live-bet-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.live-bet-sheet > * {
+  pointer-events: auto;
+}
+
+/* 弹窗内的控制台链路改成由内容决定高度（原本是 height: 100% 铺满） */
+.live-bet-sheet .drama-embedded-games,
+.live-bet-sheet .drama-embedded-games .vp-play-panel {
+  height: auto;
+  max-height: 100%;
+  min-height: 0;
 }
 
 .live-chat-view-container .split-chat-messages {
@@ -7915,7 +8150,11 @@ input:checked + .slider:before {
   justify-content: center;
   height: 105px;
   cursor: pointer;
-  transition: all 0.2s;
+  /* 只过渡选中态的颜色，不要过渡尺寸 —— 否则切换玩法时（一行 144px ↔ 两行 69px）
+     会看到卡片延展的过程 */
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  /* 选中时右上角的勾勾徽章要靠这个定位 */
+  position: relative;
 }
 
 .live-odds-card .odds-card-name {
@@ -7938,6 +8177,30 @@ input:checked + .slider:before {
 
 .live-odds-card.selected .odds-card-name {
   color: #f97316;
+}
+
+/* 选中点位：右上角橘底白勾。稍微溢出卡片边角，靠点位区的 padding 吃掉溢出量，
+   不会被 .vp-odds-area 的 overflow 裁掉 */
+.live-odds-card.selected::after {
+  content: '\f00c'; /* FontAwesome check */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background-color: #f97316;
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
+  font-size: 0.52rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .live-bet-console {
@@ -11453,6 +11716,24 @@ body {
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
   animation: vpDetailsUp 0.25s ease;
+}
+
+/* 边看边玩：弹窗改成叠在简介上方的浮层（原本是简介的兄弟节点，会被简介挤掉高度，
+   点位区拿不到 160px）。容器 .player-scroll-content 本身就从播放器下缘开始，
+   所以弹窗最高只到播放器下缘，遮不到播放器；圆角阴影交给里面的控制台画。 */
+.vp-tab-content.vp-play-sheet:has(.vp-odds-area) {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  justify-content: flex-end;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.vp-tab-content.vp-play-sheet:has(.vp-odds-area) > * {
+  pointer-events: auto;
 }
 
 /* Chatroom sub-page */

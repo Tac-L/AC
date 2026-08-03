@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
 // 快三点位：用 public/K3-ball/{1-6}.png 骰子图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
     const digits = name.split('');
-    const size = digits.length === 1 ? 42 : digits.length === 2 ? 32 : 24;
+    // 点位区改成两行撑满后卡片只有 ~69px，原本 42/32/24 的骰子会顶到卡片上缘，
+    // 所以整体缩一级，留出上下留白
+    const size = digits.length === 1 ? 30 : digits.length === 2 ? 26 : 20;
     return (
       <div style={{ display: 'flex', gap: '3px', justifyContent: 'center', alignItems: 'center' }}>
         {digits.map((val, idx) => (
@@ -475,7 +477,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [activeTab, setActiveTab] = useState('size'); // size, pair, triple, sum, single
   const [selectedOdds, setSelectedOdds] = useState(new Set());
   // 一分快三 专业版盘面（样式同一分分分彩）
-  const [f3SimpleMode, setF3SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [f3SimpleMode, setF3SimpleMode] = useState(true); // false=专业版, true=简易版（彩票一律预设简易版）
   const [selectedF3P, setSelectedF3P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
   const [f3PlayTab, setF3PlayTab] = useState('army'); // 玩法：army(三军) short(短牌) long(长牌) triple(全骰) sum(和值) ...
   const [betAmount, setBetAmount] = useState(50);
@@ -486,7 +488,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedM6, setSelectedM6] = useState(new Set());
   const [m6ActiveTab, setM6ActiveTab] = useState('two-sides'); // two-sides, color, zodiac, special
   // 六合彩 专业版盘面（依 docs/六合彩玩法结构.md）
-  const [m6SimpleMode, setM6SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [m6SimpleMode, setM6SimpleMode] = useState(true); // false=专业版, true=简易版（彩票一律预设简易版）
   const [selectedM6P, setSelectedM6P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
   const [m6PlayTab, setM6PlayTab] = useState('temaA'); // 第一层玩法
   const [m6SubTab, setM6SubTab] = useState('num'); // 第二层小类
@@ -504,7 +506,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedSR, setSelectedSR] = useState(new Set());
   const [srActiveTab, setSrActiveTab] = useState('two-sides'); // two-sides, sum, single
   // 专业版盘面（样式同一分分分彩）
-  const [srSimpleMode, setSrSimpleMode] = useState(false); // false=专业版, true=简易版
+  const [srSimpleMode, setSrSimpleMode] = useState(true); // false=专业版, true=简易版（彩票一律预设简易版）
   const [selectedSRP, setSelectedSRP] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
   const [srPlayTab, setSrPlayTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), sum(冠亚和)
   const [srActivePos, setSrActivePos] = useState('p1'); // 第二层名次：p1~p10 或 sum
@@ -515,7 +517,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedFFC, setSelectedFFC] = useState(new Set());
   const [ffcActiveTab, setFfcActiveTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), position(前中后)
   const [ffcActivePos, setFfcActivePos] = useState('ball1'); // 第二层：球号(ball1~ball5) 或 区段(front/mid/back)
-  const [ffcSimpleMode, setFfcSimpleMode] = useState(false); // 简易版盘面开关：true 时改用一分分分彩2 的盘面
+  const [ffcSimpleMode, setFfcSimpleMode] = useState(true); // 简易版盘面开关：true 时改用一分分分彩2 的盘面（彩票一律预设简易版）
   // 一分分分彩开奖结果：5 颗球 0~9（图标取自 public/分分-ball/）
   const [ffcResult, setFfcResult] = useState(INITIAL_DRAW.ffc);
 
@@ -528,7 +530,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [l28ActiveTab, setL28ActiveTab] = useState('sides'); // sides(总和两面), dragon(龙虎豹), triple(三球), sum(总和)
   const [l28Result, setL28Result] = useState(INITIAL_DRAW.lucky28);
   // 一分幸运28 专业版盘面（样式同一分快三专业版）
-  const [l28SimpleMode, setL28SimpleMode] = useState(false); // false=专业版, true=简易版
+  const [l28SimpleMode, setL28SimpleMode] = useState(true); // false=专业版, true=简易版（彩票一律预设简易版）
   const [selectedL28P, setSelectedL28P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
   const [l28PlayTab, setL28PlayTab] = useState('sum'); // 第一层玩法：sum(总和) side(边球) tail(尾球) dragon(龙虎豹) extreme(极值) triple(三球)
   const [l28SubTab, setL28SubTab] = useState('num'); // 第二层：num(数字) / sides(两面)，仅总和与尾球有
@@ -676,6 +678,47 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedBac(new Set()); }, [bacActiveTab]);
   useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
   useEffect(() => { setSelectedSp(new Set()); }, [spActiveTab, spSimpleMode]);
+
+  // 点位区行高（简易版／专业版都套用）：玩法只有一行点位时，该行撑满整个点位区；
+  // 超过一行时改用两行撑满（第三行以后照旧滚动）。
+  // 各游戏的栏数与间距都写在 inline style 里、彼此不一致，
+  // 所以这里直接量测实际布局再回写行高，不逐个游戏硬编码。
+  // 没有依赖数组：本组件本来就每秒因倒计时重渲染，切游戏／切玩法后一定会跟着重算。
+  // 用 useLayoutEffect 而非 useEffect：要在浏览器 paint 前就把行高写好，
+  // 否则切换玩法时会先画一帧旧行高再跳到新行高。
+  useLayoutEffect(() => {
+    const layoutOddsRows = () => {
+      document.querySelectorAll('.vp-odds-area').forEach(area => {
+        const areaStyle = getComputedStyle(area);
+        const inner = area.clientHeight
+          - parseFloat(areaStyle.paddingTop)
+          - parseFloat(areaStyle.paddingBottom);
+        if (!(inner > 0)) return;
+
+        const grids = [...area.querySelectorAll('.live-betting-options-grid')];
+        if (!grids.length) return;
+
+        // 这个点位区一共几行（多段盘面就把每段的行数加起来）
+        let totalRows = 0;
+        grids.forEach(grid => {
+          const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+          totalRows += Math.ceil(grid.children.length / cols);
+        });
+
+        const gap = parseFloat(getComputedStyle(grids[0]).rowGap) || 0;
+        const rowH = totalRows <= 1 ? inner : (inner - gap) / 2;
+
+        grids.forEach(grid => {
+          grid.classList.add('is-fill-rows');
+          grid.style.setProperty('--vp-odds-row-h', `${Math.max(0, Math.round(rowH * 10) / 10)}px`);
+        });
+      });
+    };
+
+    layoutOddsRows();
+    window.addEventListener('resize', layoutOddsRows);
+    return () => window.removeEventListener('resize', layoutOddsRows);
+  });
 
   // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期
   useEffect(() => {
@@ -2549,7 +2592,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       {/* Betting Options Grid（点位样式与一分六合彩一致） */}
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                           {oddsData[activeTab]?.map(card => {
                             const isSelected = selectedOdds.has(card.name);
@@ -2588,7 +2631,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
                                 border: active ? '1px solid transparent' : '1px solid #e1e8ed',
-                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                // 一律用长写，不要用 background 简写：简写会把 background-clip 重设成
+                                // border-box，而切换页签时 React 的 style diff 只更新有变动的属性、
+                                // 不会重新写入 backgroundClip，于是渐层渗进 1px 透明边框，
+                                // 左缘露出渐层深色端 = 一条深蓝色细线
+                                backgroundColor: active ? 'transparent' : '#ffffff',
+                                backgroundImage: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : 'none',
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
@@ -2601,7 +2649,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         })}
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {/* 三军：单骰 1~6 */}
                         {f3PlayTab === 'army' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
@@ -2874,7 +2922,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {/* 两面 */}
                         {m6ActiveTab === 'two-sides' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -2977,7 +3025,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
                                 border: active ? '1px solid transparent' : '1px solid #e1e8ed',
-                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                // 一律用长写，不要用 background 简写：简写会把 background-clip 重设成
+                                // border-box，而切换页签时 React 的 style diff 只更新有变动的属性、
+                                // 不会重新写入 backgroundClip，于是渐层渗进 1px 透明边框，
+                                // 左缘露出渐层深色端 = 一条深蓝色细线
+                                backgroundColor: active ? 'transparent' : '#ffffff',
+                                backgroundImage: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : 'none',
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
@@ -3012,7 +3065,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
 
-                      <div ref={m6pBodyRef} style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div ref={m6pBodyRef} className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {/* 特码A/B、正码、正特一~六：数字 或 两面 */}
                         {M6P_NUMBER_TABS.includes(m6PlayTab) && (
                           m6SubTab === 'sides' ? (
@@ -3252,7 +3305,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {/* 冠军两面 */}
                         {srActiveTab === 'two-sides' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -3350,7 +3403,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {/* 猜球号：所选名次的号码 1~10 */}
                         {srPlayTab === 'cai' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
@@ -3560,7 +3613,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {/* 万位：大 / 小 / 单 / 双 */}
                         {ffc2ActiveTab === 'wan' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -3657,7 +3710,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         <i className="fa-solid fa-chevron-right" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {/* 猜球号：所选球号的 0~9 */}
                         {ffcActiveTab === 'cai' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
@@ -3826,7 +3879,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {/* 万位：大 / 小 / 单 / 双 */}
                         {ffc2ActiveTab === 'wan' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -4031,7 +4084,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {/* 总和两面：大 / 小 / 单 / 双 */}
                         {l28ActiveTab === 'sides' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -4133,7 +4186,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
                                 border: active ? '1px solid transparent' : '1px solid #e1e8ed',
-                                background: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : '#ffffff',
+                                // 一律用长写，不要用 background 简写：简写会把 background-clip 重设成
+                                // border-box，而切换页签时 React 的 style diff 只更新有变动的属性、
+                                // 不会重新写入 backgroundClip，于是渐层渗进 1px 透明边框，
+                                // 左缘露出渐层深色端 = 一条深蓝色细线
+                                backgroundColor: active ? 'transparent' : '#ffffff',
+                                backgroundImage: active ? 'linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%)' : 'none',
                                 backgroundClip: 'padding-box',
                                 WebkitBackgroundClip: 'padding-box',
                                 color: active ? '#ffffff' : '#57606f',
@@ -4168,7 +4226,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {/* 总和 - 数字：0 ~ 27 */}
                         {l28PlayTab === 'sum' && l28SubTab === 'num' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
@@ -4334,7 +4392,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                           {FISH_CRAB_SYMBOLS.map(sym => {
                             const category = fcActiveTab === 'all' ? '全围' : '单骰';
@@ -4489,7 +4547,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '10px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '10px 12px' }}>
                         {bacActiveTab === 'main' && (
                           <div className="bac-main-grid">
                             {BAC_MAIN.map(bet => {
@@ -4661,7 +4719,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         ))}
                       </div>
 
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         {animalActiveTab === 'twosides' && (
                           <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                             {ANIMAL_TWOSIDES.map(bet => {
@@ -4832,7 +4890,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       {/* 点位：大 / 小，各占一半宽 */}
-                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
                         <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
                           {spCurrentTab.options.map(opt => {
                             const isSel = selectedSp.has(`${spCurrentTab.label}|${opt.name}`);

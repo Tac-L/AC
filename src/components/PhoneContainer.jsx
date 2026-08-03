@@ -34,7 +34,10 @@ export default function PhoneContainer({ children }) {
         <div className="phone-btn phone-btn-power" onClick={() => handleHardwareBtn('电源键')}></div>
         
         {/* Screen Content Container */}
-        <div className="phone-screen" id="phone-screen-container">
+        <div
+          className={`phone-screen ${SHOW_MOCK_PHONE_CHROME ? 'has-mock-chrome' : ''}`}
+          id="phone-screen-container"
+        >
           
           {/* Status Bar */}
           <div className="status-bar">
@@ -47,7 +50,15 @@ export default function PhoneContainer({ children }) {
               <i className="fa-solid fa-battery-full"></i>
             </div>
           </div>
-          
+
+          {/* 模拟手机系统列 + 浏览器网址列：只在本机 dev 预览 + 手机宽度（≤500px）下显示并占位 */}
+          {SHOW_MOCK_PHONE_CHROME && (
+            <>
+              <MobileStatusBar time={systemTime} />
+              <MobileUrlBar />
+            </>
+          )}
+
           {/* Web App Body Inside Phone */}
           <div className={`app-body skin-${selectedSkin} ${immersiveMode ? 'immersive' : ''}`} id="app-root">
             {children}
@@ -60,11 +71,84 @@ export default function PhoneContainer({ children }) {
             ))}
           </div>
 
+          {/* 模拟手机浏览器底部工具列 + iOS home indicator（同一个开关，同样只在本机预览） */}
+          {SHOW_MOCK_PHONE_CHROME && <MobileBottomChrome />}
+
           {/* Floating Immersive Widget */}
           {immersiveMode && !activeSubGame && (
             <ImmersiveWidget />
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// 模拟真手机浏览器上下的 chrome（合称 mock chrome），由上到下四条：
+//   系统列 47px + 网址列 48px + [app 本体] + 底部工具列 44px + home indicator 34px
+// 共 173px，让本机预览剩下的中间高度贴近真机（iPhone 13/14 Safari 实测约 663px，
+// 这里 844 - 173 = 671px）。每个数字都是 iOS 的实际尺寸：47px = 刘海机 safe-area-inset-top，
+// 34px = safe-area-inset-bottom，44px = Safari 底部工具列。
+//
+// 这四条只给「PC 上把浏览器缩成手机尺寸」的本机预览用，绝不能出现在真手机上
+// —— 真手机开的是 build 后部署的版本（import.meta.env.DEV 为 false），
+// 而 dev server 没开 --host，只有本机连得到。
+// 显示条件还要再叠一层：index.css 里的 Responsive Real Mobile Viewport Override
+// （≤500px）才会把它们从 display:none 打开。
+// 需要临时开/关可加 ?mock=1 / ?mock=0。
+const SHOW_MOCK_PHONE_CHROME = (() => {
+  const flag = new URLSearchParams(window.location.search).get('mock');
+  if (flag === '1') return true;
+  if (flag === '0') return false;
+  return import.meta.env.DEV;
+})();
+
+// 模拟手机系统列：左边时间（沿用 context 里每 30 秒更新的 systemTime），右边讯号/wifi/电量
+function MobileStatusBar({ time }) {
+  return (
+    <div className="mobile-status-bar" aria-hidden="true">
+      <span className="mobile-status-time">{time}</span>
+      <span className="mobile-status-icons">
+        <i className="fa-solid fa-signal"></i>
+        <i className="fa-solid fa-wifi"></i>
+        <i className="fa-solid fa-battery-full"></i>
+      </span>
+    </div>
+  );
+}
+
+// 本站是单页 SPA，网址不会变，模块载入时算一次就够（不放在 render 里读 location）
+const BROWSER_URL_TEXT = (() => {
+  const { host, pathname } = window.location;
+  return pathname === '/' ? host : `${host}${pathname}`;
+})();
+
+function MobileUrlBar() {
+  return (
+    <div className="mobile-url-bar" aria-hidden="true">
+      <div className="mobile-url-pill">
+        <i className="fa-solid fa-lock mobile-url-lock"></i>
+        <span className="mobile-url-text">{BROWSER_URL_TEXT}</span>
+      </div>
+      <i className="fa-solid fa-rotate-right mobile-url-reload"></i>
+    </div>
+  );
+}
+
+// 模拟浏览器底部工具列 + iOS home indicator（那条横线）。
+// 真机上这两段一样吃掉高度，补上后本机预览剩下的中间空间才跟真机对得上。
+function MobileBottomChrome() {
+  return (
+    <div className="mobile-bottom-chrome" aria-hidden="true">
+      <div className="mobile-bottom-bar">
+        <i className="fa-solid fa-chevron-left"></i>
+        <i className="fa-solid fa-chevron-right is-dim"></i>
+        <i className="fa-solid fa-arrow-up-from-bracket"></i>
+        <i className="fa-regular fa-bookmark"></i>
+        <i className="fa-regular fa-clone"></i>
+      </div>
+      <div className="mobile-home-indicator">
+        <span className="mobile-home-indicator-pill"></span>
       </div>
     </div>
   );
