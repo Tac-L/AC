@@ -7816,6 +7816,23 @@ input:checked + .slider:before {
   transition: all 0.2s;
 }
 
+/* 玩法页签数量不固定时（体育大小盘）：可左右滑动，页签不压缩；数量少时仍平分整列 */
+.live-play-tabs-row.is-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.live-play-tabs-row.is-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.live-play-tabs-row.is-scroll .live-play-tab {
+  flex: 1 0 auto;
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+
 .live-play-tab.active {
   background: linear-gradient(135deg, #4aa3f7 0%, #2f6fe0 100%);
   background-clip: padding-box;
@@ -11623,6 +11640,12 @@ body {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
 }
 
+/* 历史开奖弹窗内再缩一号 */
+.bac-mini-card-sm {
+  width: 14px;
+  height: 19px;
+}
+
 /* 补牌（第三张）横放 */
 .bac-mini-card-h {
   transform: rotate(90deg);
@@ -11721,7 +11744,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  z-index: 40; /* 需盖住抬头（含历史开奖弹窗）*/
   padding: 16px;
   box-sizing: border-box;
 }
@@ -11854,6 +11877,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* 历史开奖弹窗挂在抬头下缘，需定位基准并压在盘面之上 */
+  position: relative;
+  z-index: 30;
 }
 
 .vp-bet-header-row1 {
@@ -11952,6 +11978,44 @@ body {
 /* 抬头列还要塞盘口选择时，游戏名与右侧图标群收紧一点 */
 .vp-bet-title-box.is-compact {
   font-size: 0.72rem;
+}
+
+/* 体育赛事直播间：抬头左侧是比赛名称（不切换游戏，所以吃满剩余宽度，太长就截断） */
+.vp-bet-title-box.vp-sp-title {
+  /* 用 block 而非 flex，太长的比赛名才会带出「…」而不是硬切 */
+  display: block;
+  flex: 1;
+  min-width: 0;
+  margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.78rem;
+}
+
+/* 体育专业版盘面：底色对齐「体育」页更多玩法的浅灰，筛选列固定、盘口卡可卷动 */
+.vp-sp-pro-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background-color: #f5f6fa;
+}
+
+.vp-sp-pro-wrap .moreplay-filter-row {
+  flex-shrink: 0;
+}
+
+.vp-sp-pro-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.vp-sp-pro-empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #94a3b8;
 }
 
 .vp-bet-header-right.is-compact {

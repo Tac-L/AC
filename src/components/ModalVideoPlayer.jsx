@@ -289,7 +289,145 @@ const ANIMAL_TWOSIDES = [
   { name: '龙', color: ANIMAL_C.blue }, { name: '虎', color: ANIMAL_C.orange }
 ];
 
-export default function ModalVideoPlayer({ embedded = false, onClose, initialGame } = {}) {
+// ===== 体育赛事直播间（滚球盘）=====
+// 专属直播间：只有这场比赛的盘口，不提供切换到其他游戏
+// 简易版玩法页签：每种底下都是「大／小」两个点位（各占一半宽）
+// 实际盘口方给的大小玩法数量不一定，页签列可左右滑动，房间用 board 指定要开哪一组
+const spOU = (cat, label, line, overOdds, underOdds) => ({
+  cat,
+  label,
+  options: [
+    { name: '大', line, odds: overOdds },
+    { name: '小', line, odds: underOdds }
+  ]
+});
+
+const SPORTS_BOARDS = {
+  // 基本盘：只开全场三种大小
+  default: [
+    spOU('total', '总分大小', '139.5', '1.84', '1.74'),
+    spOU('home', '主队总分大小', '76.5', '1.74', '1.84'),
+    spOU('away', '客队总分大小', '62.5', '1.83', '1.75')
+  ],
+  // 全盘口：全场 + 上下半场 + 各节，页签需要横向滑动
+  full: [
+    spOU('total', '总分大小', '172.5', '1.81', '1.85'),
+    spOU('home', '主队总分大小', '92.5', '1.81', '1.83'),
+    spOU('away', '客队总分大小', '80.5', '1.83', '1.81'),
+    spOU('half1', '上半场总分大小', '86.5', '1.82', '1.84'),
+    spOU('half2', '下半场总分大小', '85.5', '1.85', '1.81'),
+    spOU('q1', '第一节总分大小', '43.5', '1.80', '1.86'),
+    spOU('q2', '第二节总分大小', '42.5', '1.84', '1.82'),
+    spOU('q3', '第三节总分大小', '43.5', '1.79', '1.87'),
+    spOU('q4', '第四节总分大小', '44.5', '1.87', '1.77'),
+    spOU('q4home', '第四节主队总分大小', '25.5', '1.76', '1.88'),
+    spOU('q4away', '第四节客队总分大小', '19.5', '1.83', '1.81')
+  ]
+};
+
+// 专业版盘面：内容比照「体育」页里的更多玩法（PageSportsMorePlay）
+const SPORTS_PRO_FILTERS = [
+  { id: 'hot', label: '热门' },
+  { id: 'all', label: '全部' },
+  { id: 'handicap_ou', label: '让球&大小' },
+  { id: 'half', label: '半场' },
+  { id: 'full', label: '全场' },
+  { id: 'correct_score', label: '波胆' }
+];
+
+const SPORTS_PRO_MARKETS = [
+  {
+    key: 'handicap',
+    title: '全场让球',
+    filters: ['hot', 'all', 'handicap_ou', 'full'],
+    options: [
+      { name: '主队 -1', odds: '1.77' },
+      { name: '客队 +1', odds: '2.01' },
+      { name: '主队 -1/1.5', odds: '2.04' },
+      { name: '客队 +1/1.5', odds: '1.74' }
+    ]
+  },
+  {
+    key: 'ou',
+    title: '全场大小',
+    filters: ['hot', 'all', 'handicap_ou', 'full'],
+    options: [
+      { name: '大 3', odds: '1.96' },
+      { name: '小 3', odds: '1.82' },
+      { name: '大 2.5/3', odds: '1.72' },
+      { name: '小 2.5/3', odds: '2.06' }
+    ]
+  },
+  {
+    key: 'half_ou',
+    title: '上半场大小',
+    filters: ['hot', 'all', 'half'],
+    options: [
+      { name: '大 1', odds: '2.01' },
+      { name: '小 1', odds: '1.77' }
+    ]
+  }
+];
+
+// ===== 历史开奖：各游戏共用的开奖号产生器（纯前端 mock）=====
+// 有历史开奖记录的分钟彩（澳门六合彩每天一开，另外处理）
+const DRAW_HISTORY_GAMES = ['fast3', 'marksix', 'speedrace', 'ffc', 'lucky28', 'fishcrab', 'baccarat', 'animal'];
+// 各游戏进场时画面上显示的开奖号（同时作为历史记录的第一笔）
+const INITIAL_DRAW = {
+  fast3: [1, 3, 6],
+  marksix: [23, 41, 24, 26, 33, 7, 32],
+  lhcday: [23, 41, 24, 26, 33, 7, 32],
+  speedrace: [1, 2, 7, 9, 4, 10, 6, 5, 8, 3],
+  ffc: [3, 8, 1, 6, 0],
+  lucky28: [9, 8, 0],
+  fishcrab: ['fish', 'coin', 'rooster'],
+  // 补牌示例：闲 2♠3♦=5点→补 4♣=9点；庄 4♥A♠=5点，闲三张为4→补 2♦=7点
+  baccarat: {
+    player: [{ suit: 'spade', rank: '2' }, { suit: 'diamond', rank: '3' }, { suit: 'club', rank: '4' }],
+    banker: [{ suit: 'heart', rank: '4' }, { suit: 'spade', rank: 'A' }, { suit: 'diamond', rank: '2' }]
+  },
+  animal: [3, 1, 5, 2, 6, 4]
+};
+const rndInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+// 1~n 洗牌（赛车名次、六合彩不重复号码用）
+const rndShuffle = (n) => {
+  const arr = Array.from({ length: n }, (_, i) => i + 1);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = rndInt(0, i);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+const BAC_SUITS = ['spade', 'heart', 'diamond', 'club'];
+const BAC_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+const rndBacCard = () => ({ suit: BAC_SUITS[rndInt(0, 3)], rank: BAC_RANKS[rndInt(0, 12)] });
+// 百家乐简化补牌：双方各两张，无例牌(8/9)且点数 ≤5 时补第三张
+const rndBacDeal = () => {
+  const player = [rndBacCard(), rndBacCard()];
+  const banker = [rndBacCard(), rndBacCard()];
+  if (bacHandPoints(player) < 8 && bacHandPoints(banker) < 8) {
+    if (bacHandPoints(player) <= 5) player.push(rndBacCard());
+    if (bacHandPoints(banker) <= 5) banker.push(rndBacCard());
+  }
+  return { player, banker };
+};
+// 产生某游戏一期的开奖号
+const randomDrawResult = (gameKey) => {
+  switch (gameKey) {
+    case 'fast3': return [rndInt(1, 6), rndInt(1, 6), rndInt(1, 6)];
+    case 'marksix':
+    case 'lhcday': return rndShuffle(49).slice(0, 7);
+    case 'speedrace': return rndShuffle(10);
+    case 'ffc': return Array.from({ length: 5 }, () => rndInt(0, 9));
+    case 'lucky28': return Array.from({ length: 3 }, () => rndInt(0, 9));
+    case 'fishcrab': return Array.from({ length: 3 }, () => FISH_CRAB_SYMBOLS[rndInt(0, 5)].key);
+    case 'baccarat': return rndBacDeal();
+    case 'animal': return rndShuffle(6);
+    default: return [];
+  }
+};
+
+export default function ModalVideoPlayer({ embedded = false, onClose, initialGame, matchTitle, sportsBoard } = {}) {
   const {
     balance,
     updateBalance,
@@ -309,18 +447,28 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [countdown, setCountdown] = useState(55);
   const [phase, setPhase] = useState('betting'); // 'betting' | 'sealed'（封盘含开奖）
   const [issue, setIssue] = useState(202606041274);
-  const [lastDice, setLastDice] = useState([1, 3, 6]);
+  const [lastDice, setLastDice] = useState(INITIAL_DRAW.fast3);
   const [analysis, setAnalysis] = useState({ sum: 10, size: '小', oe: '双' });
-  // 一分快三 历史开奖记录（点开奖结果区展开的弹窗；纯前端 mock）
-  const [f3HistoryOpen, setF3HistoryOpen] = useState(false);
-  const [f3History, setF3History] = useState(() => {
-    const rows = [];
+  // 各彩票游戏的历史开奖记录（点抬头开奖结果区展开的弹窗；纯前端 mock）
+  const [drawHistoryOpen, setDrawHistoryOpen] = useState(false);
+  const [drawHistory, setDrawHistory] = useState(() => {
     const start = 202606041274 - 1; // 上一期起往前推
-    const rd = () => Math.floor(Math.random() * 6) + 1;
-    for (let i = 0; i < 12; i++) {
-      rows.push({ period: start - i, dice: i === 0 ? [1, 3, 6] : [rd(), rd(), rd()] });
-    }
-    return rows;
+    const store = {};
+    DRAW_HISTORY_GAMES.forEach(key => {
+      store[key] = Array.from({ length: 12 }, (_, i) => ({
+        period: start - i,
+        result: i === 0 ? INITIAL_DRAW[key] : randomDrawResult(key)
+      }));
+    });
+    // 澳门六合彩每天一开，期号用日期往前推
+    store.lhcday = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(Date.now() - (i + 1) * 86400000);
+      return {
+        period: `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`,
+        result: i === 0 ? INITIAL_DRAW.lhcday : randomDrawResult('lhcday')
+      };
+    });
+    return store;
   });
 
   // Betting states
@@ -348,7 +496,9 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // 澳门六合彩（每日一开）用的墙上时钟
   const [nowTs, setNowTs] = useState(() => Date.now());
   // Mark Six last draw result: 6 regular + 1 special number
-  const [m6Result, setM6Result] = useState([23, 41, 24, 26, 33, 7, 32]);
+  const [m6Result, setM6Result] = useState(INITIAL_DRAW.marksix);
+  // 澳门六合彩（每天一开）另存一份开奖号，不跟着分钟彩的开奖节奏跳动
+  const [lhcDayResult] = useState(INITIAL_DRAW.lhcday);
 
   // Speed Race (一分极速赛车) embedded selections: key encoded as `${category}|${name}`
   const [selectedSR, setSelectedSR] = useState(new Set());
@@ -359,7 +509,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [srPlayTab, setSrPlayTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), sum(冠亚和)
   const [srActivePos, setSrActivePos] = useState('p1'); // 第二层名次：p1~p10 或 sum
   // Speed Race last draw result:排列 1~10
-  const [srResult, setSrResult] = useState([1, 2, 7, 9, 4, 10, 6, 5, 8, 3]);
+  const [srResult, setSrResult] = useState(INITIAL_DRAW.speedrace);
 
   // 一分分分彩 (Every-Minute Lottery) selections: key `${category}|${name}`
   const [selectedFFC, setSelectedFFC] = useState(new Set());
@@ -367,7 +517,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [ffcActivePos, setFfcActivePos] = useState('ball1'); // 第二层：球号(ball1~ball5) 或 区段(front/mid/back)
   const [ffcSimpleMode, setFfcSimpleMode] = useState(false); // 简易版盘面开关：true 时改用一分分分彩2 的盘面
   // 一分分分彩开奖结果：5 颗球 0~9（图标取自 public/分分-ball/）
-  const [ffcResult] = useState([3, 8, 1, 6, 0]);
+  const [ffcResult, setFfcResult] = useState(INITIAL_DRAW.ffc);
 
   // 一分分分彩2 (简易版) selections: key `${category}|${name}`；开奖球与「一分分分彩」相同
   const [selectedFFC2, setSelectedFFC2] = useState(new Set());
@@ -376,7 +526,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // 一分幸运28 (Lucky 28) selections: key `${category}|${name}`；开奖 3 颗球 0~9，取自 public/分分-ball/
   const [selectedL28, setSelectedL28] = useState(new Set());
   const [l28ActiveTab, setL28ActiveTab] = useState('sides'); // sides(总和两面), dragon(龙虎豹), triple(三球), sum(总和)
-  const [l28Result] = useState([9, 8, 0]);
+  const [l28Result, setL28Result] = useState(INITIAL_DRAW.lucky28);
   // 一分幸运28 专业版盘面（样式同一分快三专业版）
   const [l28SimpleMode, setL28SimpleMode] = useState(false); // false=专业版, true=简易版
   const [selectedL28P, setSelectedL28P] = useState(new Set()); // 专业版选中点位 key `${category}|${name}`
@@ -388,21 +538,28 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [fcActiveTab, setFcActiveTab] = useState('single'); // single(单骰), all(全围)
   const [showFcRules, setShowFcRules] = useState(false);
   // 鱼虾蟹 last draw result: three symbol keys
-  const [fcResult, setFcResult] = useState(['fish', 'coin', 'rooster']);
+  const [fcResult, setFcResult] = useState(INITIAL_DRAW.fishcrab);
 
   // 百家乐 (Baccarat) selections: key `${category}|${name}`
   const [selectedBac, setSelectedBac] = useState(new Set());
   const [bacActiveTab, setBacActiveTab] = useState('main'); // main(庄闲), pair(对子), sides(两面)
   const [showBacRules, setShowBacRules] = useState(false);
-  // 百家乐当前牌局（补牌示例：闲 2♠3♦=5点→补 4♣=9点；庄 4♥A♠=5点，闲三张为4→补 2♦=7点）
-  const [bacPlayer] = useState([{ suit: 'spade', rank: '2' }, { suit: 'diamond', rank: '3' }, { suit: 'club', rank: '4' }]);
-  const [bacBanker] = useState([{ suit: 'heart', rank: '4' }, { suit: 'spade', rank: 'A' }, { suit: 'diamond', rank: '2' }]);
+  // 百家乐当前牌局（初始牌局见 INITIAL_DRAW.baccarat）
+  const [bacPlayer, setBacPlayer] = useState(INITIAL_DRAW.baccarat.player);
+  const [bacBanker, setBacBanker] = useState(INITIAL_DRAW.baccarat.banker);
+
+  // 体育赛事直播间 selections: key `${category}|${name}`（体育间不切换游戏，无开奖号）
+  const [selectedSp, setSelectedSp] = useState(new Set());
+  const [spActiveTab, setSpActiveTab] = useState('total'); // total(总分大小), home(主队总分大小), away(客队总分大小)
+  const [spSimpleMode, setSpSimpleMode] = useState(true); // true=简易版（大小盘），false=专业版（同体育更多玩法）
+  const [spProFilter, setSpProFilter] = useState('hot'); // 专业版筛选：热门/全部/让球&大小/半场/全场/波胆
+  const [spExpanded, setSpExpanded] = useState({ handicap: true, ou: true, half_ou: true });
 
   // 动物运动会 (Animal Sports) selections: key `${category}|${name}`
   const [selectedAnimal, setSelectedAnimal] = useState(new Set());
   const [animalActiveTab, setAnimalActiveTab] = useState('twosides'); // twosides(冠军两面), single(冠军单码)
   // 动物运动会开奖结果：名次排列（T-ball 1~6）
-  const [animalResult] = useState([3, 1, 5, 2, 6, 4]);
+  const [animalResult, setAnimalResult] = useState(INITIAL_DRAW.animal);
 
   // Restructured Layout States
   const [vpActiveTab, setVpActiveTab] = useState('chatroom'); // chatroom, play, recommend, more-games
@@ -483,6 +640,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => {
     setPhase('betting');
     setCountdown(activeCarouselGame === 'baccarat' ? 25 : 55);
+    setDrawHistoryOpen(false);
     setSelectedOdds(new Set());
     setSelectedF3P(new Set());
     setSelectedM6(new Set());
@@ -496,6 +654,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setSelectedFC(new Set());
     setSelectedBac(new Set());
     setSelectedAnimal(new Set());
+    setSelectedSp(new Set());
   }, [activeCarouselGame]);
 
   // 切换游戏内上方玩法 tab 时，清空该游戏的选中点位
@@ -516,6 +675,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedFC(new Set()); }, [fcActiveTab]);
   useEffect(() => { setSelectedBac(new Set()); }, [bacActiveTab]);
   useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
+  useEffect(() => { setSelectedSp(new Set()); }, [spActiveTab, spSimpleMode]);
 
   // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期
   useEffect(() => {
@@ -546,17 +706,28 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     return () => clearInterval(timer);
   }, [activeCarouselGame, videoPlayerActive, embedded]);
 
-  // 开奖：更新快三骰子/分析结果（不再重置倒计时，由状态机负责）
+  // 开奖：一次更新所有分钟彩的开奖号（各游戏共用同一期号，切过去时期号才不会断层）
   const performDrawing = () => {
-    const finalDice = [
-      Math.floor(Math.random() * 6) + 1,
-      Math.floor(Math.random() * 6) + 1,
-      Math.floor(Math.random() * 6) + 1
-    ];
-    setLastDice(finalDice);
+    const draw = {};
+    DRAW_HISTORY_GAMES.forEach(key => { draw[key] = randomDrawResult(key); });
+    setLastDice(draw.fast3);
+    setM6Result(draw.marksix);
+    setSrResult(draw.speedrace);
+    setFfcResult(draw.ffc);
+    setL28Result(draw.lucky28);
+    setFcResult(draw.fishcrab);
+    setBacPlayer(draw.baccarat.player);
+    setBacBanker(draw.baccarat.banker);
+    setAnimalResult(draw.animal);
     // 把本期开奖结果记入历史（最新在最上，最多保留 30 期）
-    setF3History(prev => [{ period: issue, dice: finalDice }, ...prev].slice(0, 30));
-    const sumVal = finalDice[0] + finalDice[1] + finalDice[2];
+    setDrawHistory(prev => {
+      const next = { ...prev };
+      DRAW_HISTORY_GAMES.forEach(key => {
+        next[key] = [{ period: issue, result: draw[key] }, ...prev[key]].slice(0, 30);
+      });
+      return next;
+    });
+    const sumVal = draw.fast3[0] + draw.fast3[1] + draw.fast3[2];
     setAnalysis({ sum: sumVal, size: sumVal >= 11 ? '大' : '小', oe: sumVal % 2 === 0 ? '双' : '单' });
   };
 
@@ -605,6 +776,193 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
         <span className="vp-countdown-label">{lhcDayClock.label}</span>
         <span className="vp-digit-box is-clock">{parts.map(v => String(v).padStart(2, '0')).join(':')}</span>
       </div>
+    );
+  };
+
+  // ===== 开奖号渲染：抬头（header）与历史弹窗（row）共用一份，各游戏号码样式不变 =====
+  const renderDrawBalls = (gameKey, res, size = 'header') => {
+    if (!res) return null;
+    const big = size === 'header';
+    switch (gameKey) {
+      case 'fast3': {
+        const px = big ? '22px' : '18px';
+        return (
+          <div className="fast3-draw-balls" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {res.map((v, i) => <img key={i} src={`K3-ball/${v}.png`} alt={v} style={{ width: px, height: px }} />)}
+          </div>
+        );
+      }
+      case 'marksix':
+      case 'lhcday': {
+        const px = big ? '20px' : '17px';
+        const ball = (n, key) => (
+          <img
+            key={key}
+            className="vp-m6-result-ball-img"
+            style={{ width: px, height: px }}
+            src={`lhc-ball/num=${String(n).padStart(2, '0')}.png`}
+            alt={String(n).padStart(2, '0')}
+          />
+        );
+        return (
+          <div className="vp-m6-result-balls">
+            {res.slice(0, 6).map((n, i) => ball(n, i))}
+            <span className="vp-m6-result-plus">+</span>
+            {ball(res[6], 'sp')}
+          </div>
+        );
+      }
+      case 'speedrace': {
+        // 10 颗球较占位，抬头略缩一号，期号才不会被挤到换行
+        const px = big ? '17px' : '15px';
+        return (
+          <div className="vp-sr-result-balls" style={{ display: 'flex', gap: big ? '2px' : '3px', alignItems: 'center' }}>
+            {res.map((n, i) => <img key={i} src={`PK10-ball/num=${n}.png`} alt={n} style={{ width: px, height: px, flexShrink: 0 }} />)}
+          </div>
+        );
+      }
+      case 'ffc': {
+        const px = big ? '18px' : '16px';
+        return (
+          <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+            {res.map((n, i) => <img key={i} src={`分分-ball/${n}.png`} alt={n} style={{ width: px, height: px }} />)}
+          </div>
+        );
+      }
+      case 'lucky28': {
+        const px = big ? '20px' : '18px';
+        const sum = res.reduce((a, b) => a + b, 0);
+        return (
+          <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+            {res.map((n, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <span style={{ fontWeight: 700, color: '#64748b' }}>+</span>}
+                <span style={{ width: px, height: px, borderRadius: '50%', background: '#ef4444', color: '#fff', fontWeight: 700, fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{n}</span>
+              </React.Fragment>
+            ))}
+            <span style={{ fontWeight: 700, color: '#64748b' }}>=</span>
+            <span style={{ minWidth: '22px', height: px, lineHeight: px, textAlign: 'center', padding: '0 5px', borderRadius: '4px', background: '#2563eb', color: '#fff', fontWeight: 700, fontSize: '0.72rem' }}>{sum}</span>
+          </div>
+        );
+      }
+      case 'fishcrab': {
+        const px = big ? '20px' : '18px';
+        return (
+          <div className="vp-fc-result-row" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+            {res.map((symKey, i) => {
+              const sym = FISH_CRAB_SYMBOLS.find(s => s.key === symKey);
+              return sym ? (
+                <img key={i} src={sym.icon} alt={sym.label} className="vp-fc-result-img" style={{ width: px, height: px }} />
+              ) : null;
+            })}
+          </div>
+        );
+      }
+      case 'baccarat': {
+        const { player = [], banker = [] } = res;
+        const cardCls = big ? 'bac-mini-card' : 'bac-mini-card bac-mini-card-sm';
+        return (
+          <div className="bac-mini-result">
+            <span className="bac-mini-pts" style={{ color: BAC_C.player }}>闲{bacHandPoints(player)}</span>
+            {/* 闲家：补牌（第三张）放在最左侧，横放 */}
+            {(player.length === 3 ? [player[2], player[0], player[1]] : player).map((c, i) => (
+              <img key={`p${i}`} className={`${cardCls} ${player.length === 3 && i === 0 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
+            ))}
+            <span className="bac-mini-sep">|</span>
+            {/* 庄家：补牌（第三张）放在最右侧，横放 */}
+            {banker.map((c, i) => (
+              <img key={`b${i}`} className={`${cardCls} ${banker.length === 3 && i === 2 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
+            ))}
+            <span className="bac-mini-pts" style={{ color: BAC_C.banker }}>庄{bacHandPoints(banker)}</span>
+          </div>
+        );
+      }
+      case 'animal': {
+        const w = big ? '22px' : '19px';
+        const h = big ? '18px' : '15px';
+        return (
+          <div className="animal-mini-result">
+            {res.map((n, i) => <img key={i} className="animal-mini-ball" style={{ width: w, height: h }} src={`T-ball/T${n}.svg`} alt={`T${n}`} />)}
+          </div>
+        );
+      }
+      default:
+        return null;
+    }
+  };
+
+  // 抬头右侧的开奖结果：点一下展开／收合历史开奖弹窗
+  const renderDrawResultTrigger = (gameKey, res) => (
+    <div
+      onClick={() => { setMenuOpen(false); setDrawHistoryOpen(o => !o); }}
+      title="查看历史开奖"
+      style={{ display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer', minWidth: 0 }}
+    >
+      {renderDrawBalls(gameKey, res, 'header')}
+      <span
+        style={{
+          marginLeft: '3px',
+          flexShrink: 0,
+          width: 0,
+          height: 0,
+          borderLeft: '4px solid transparent',
+          borderRight: '4px solid transparent',
+          borderTop: '5px solid #94a3b8',
+          transform: drawHistoryOpen ? 'rotate(180deg)' : 'none',
+          transition: 'transform 0.2s ease'
+        }}
+      />
+    </div>
+  );
+
+  // 历史开奖记录弹窗：挂在 .vp-bet-header 下缘，点空白处收合
+  const renderDrawHistoryPanel = (gameKey) => {
+    if (!drawHistoryOpen) return null;
+    const rows = drawHistory[gameKey] || [];
+    return (
+      <>
+        <div onClick={() => setDrawHistoryOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            background: '#ffffff',
+            borderTop: '1px solid #e2e8f0',
+            borderBottom: '1px solid #e2e8f0',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+            overflow: 'hidden',
+            maxHeight: '300px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <div style={{ display: 'flex', background: '#f8fafc', borderBottom: '1px solid #eef2f6' }}>
+            <div style={{ flex: '0 0 42%', padding: '9px 12px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>期号</div>
+            <div style={{ flex: 1, padding: '9px 10px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>开奖号码</div>
+          </div>
+          <div style={{ overflowY: 'auto' }}>
+            {rows.map((row, i) => (
+              <div
+                key={row.period}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderBottom: '1px solid #f1f5f9',
+                  background: i % 2 ? '#fafbfc' : '#ffffff'
+                }}
+              >
+                <div style={{ flex: '0 0 42%', padding: '8px 12px', fontSize: '0.72rem', color: '#64748b' }}>{row.period}</div>
+                <div style={{ flex: 1, padding: '6px 10px', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+                  {renderDrawBalls(gameKey, row.result, 'row')}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
     );
   };
 
@@ -1645,7 +2003,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     if (category === '三球') return L28_TRIPLE.find(t => t.name === name)?.color;
     return lotteryColor(name) || '#1e293b';
   };
-  const l28Sum = l28Result.reduce((a, b) => a + b, 0);
 
   const handleL28CardClick = (category, name) => {
     const key = `${category}|${name}`;
@@ -1972,8 +2329,62 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setSelectedAnimal(new Set());
   };
 
+  // ===== 体育赛事直播间 gameplay（纯前端，盘口固定）=====
+  // 本房间开的大小盘（房间用 sportsBoard 指定，预设只开全场三种）
+  const spTabs = SPORTS_BOARDS[sportsBoard] || SPORTS_BOARDS.default;
+  const spCurrentTab = spTabs.find(t => t.cat === spActiveTab) || spTabs[0];
+  // 赔率查询：简易版看玩法页签，专业版看盘口卡（两边玩法名不重复）
+  const spOptionOf = (label, name) =>
+    spTabs.find(t => t.label === label)?.options.find(o => o.name === name)
+    || SPORTS_PRO_MARKETS.find(m => m.title === label)?.options.find(o => o.name === name);
+
+  // 专业版：依筛选显示的盘口卡
+  const spProMarkets = SPORTS_PRO_MARKETS.filter(m => m.filters.includes(spProFilter));
+  const toggleSpSection = (key) => setSpExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const handleSpBetClick = (category, name) => {
+    const key = `${category}|${name}`;
+    const next = new Set(selectedSp);
+    next.has(key) ? next.delete(key) : next.add(key);
+    setSelectedSp(next);
+  };
+  const handleSpCardClick = (name) => handleSpBetClick(spCurrentTab.label, name);
+
+  const spCount = selectedSp.size;
+  const spTotalCost = spCount * currentBetPrice;
+
+  const handleSpReset = () => {
+    setSelectedSp(new Set());
+    setManualAmount('');
+    setBetAmount(50);
+  };
+
+  const handleSpSubmit = () => {
+    if (spCount === 0) {
+      showToast('请选择投注盘口！');
+      return;
+    }
+    if (currentBetPrice <= 0) {
+      showToast('请输入或选择有效的投注金额！');
+      return;
+    }
+    if (spTotalCost > balance) {
+      showToast('余额不足，请先充值！');
+      return;
+    }
+    const items = Array.from(selectedSp).map(key => {
+      const [category, name] = key.split('|');
+      const opt = spOptionOf(category, name);
+      // 注单上带出盘口数（大 139.5），跟盘面看到的一致
+      return { name: `${name} ${opt?.line || ''}`.trim(), odds: opt?.odds || '1.80', baseVal: currentBetPrice, category };
+    });
+    openBetDetailsModal('sports_live', items);
+    setSelectedSp(new Set());
+  };
+
   const toggleDropdownMenu = () => {
     setMenuOpen(!menuOpen);
+    setDrawHistoryOpen(false); // 菜单与历史开奖弹窗不同时展开
   };
 
   const handleMenuDropdownItemClick = (label) => {
@@ -2038,7 +2449,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                 {activeCarouselGame === 'fast3' ? (
                   // Fully interactive Fast Three Lottery console
                   <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
-                    <div className="vp-bet-header" style={{ position: 'relative', zIndex: 30 }}>
+                    <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
                         <div className="vp-bet-title-box">
                           <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
@@ -2106,81 +2517,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {String(issue).slice(-5)} 期</span>
                         </div>
-                        <div
-                          className="fast3-draw-balls"
-                          onClick={() => setF3HistoryOpen(o => !o)}
-                          title="查看历史开奖"
-                          style={{ gap: '4px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                        >
-                          {lastDice.map((val, idx) => (
-                            <img key={idx} src={`K3-ball/${val}.png`} alt={val} style={{ width: '22px', height: '22px' }} />
-                          ))}
-                          <span
-                            style={{
-                              marginLeft: '3px',
-                              width: 0,
-                              height: 0,
-                              borderLeft: '4px solid transparent',
-                              borderRight: '4px solid transparent',
-                              borderTop: '5px solid #94a3b8',
-                              transform: f3HistoryOpen ? 'rotate(180deg)' : 'none',
-                              transition: 'transform 0.2s ease'
-                            }}
-                          />
-                        </div>
+                        {renderDrawResultTrigger('fast3', lastDice)}
                       </div>
 
-                      {/* 历史开奖记录弹窗（点开奖结果区展开） */}
-                      {f3HistoryOpen && (
-                      <>
-                        <div
-                          onClick={() => setF3HistoryOpen(false)}
-                          style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-                        />
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            right: 0,
-                            zIndex: 50,
-                            background: '#ffffff',
-                            borderTop: '1px solid #e2e8f0',
-                            borderBottom: '1px solid #e2e8f0',
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                            overflow: 'hidden',
-                            maxHeight: '300px',
-                            display: 'flex',
-                            flexDirection: 'column'
-                          }}
-                        >
-                          <div style={{ display: 'flex', background: '#f8fafc', borderBottom: '1px solid #eef2f6' }}>
-                            <div style={{ flex: '0 0 48%', padding: '9px 14px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>期号</div>
-                            <div style={{ flex: 1, padding: '9px 14px', fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8' }}>开奖号码</div>
-                          </div>
-                          <div style={{ overflowY: 'auto' }}>
-                            {f3History.map((row, i) => (
-                              <div
-                                key={row.period}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  borderBottom: '1px solid #f1f5f9',
-                                  background: i % 2 ? '#fafbfc' : '#ffffff'
-                                }}
-                              >
-                                <div style={{ flex: '0 0 48%', padding: '8px 14px', fontSize: '0.72rem', color: '#64748b' }}>{row.period}</div>
-                                <div style={{ flex: 1, padding: '6px 14px', display: 'flex', gap: '4px', alignItems: 'center' }}>
-                                  {row.dice.map((v, idx) => (
-                                    <img key={idx} src={`K3-ball/${v}.png`} alt={v} style={{ width: '18px', height: '18px' }} />
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                      )}
+                      {renderDrawHistoryPanel('fast3')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -2507,14 +2847,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {isLhcDay ? lhcDayIssue : String(issue).slice(-5)} 期</span>
                         </div>
-                        <div className="vp-m6-result-balls">
-                          {m6Result.slice(0, 6).map((n, idx) => (
-                            <img key={idx} className="vp-m6-result-ball-img" src={`lhc-ball/num=${n.toString().padStart(2, '0')}.png`} alt={n.toString().padStart(2, '0')} />
-                          ))}
-                          <span className="vp-m6-result-plus">+</span>
-                          <img className="vp-m6-result-ball-img" src={`lhc-ball/num=${m6Result[6].toString().padStart(2, '0')}.png`} alt={m6Result[6].toString().padStart(2, '0')} />
-                        </div>
+                        {renderDrawResultTrigger(isLhcDay ? 'lhcday' : 'marksix', isLhcDay ? lhcDayResult : m6Result)}
                       </div>
+
+                      {renderDrawHistoryPanel(isLhcDay ? 'lhcday' : 'marksix')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -2890,12 +3226,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {String(issue).slice(-5)} 期</span>
                         </div>
-                        <div className="vp-sr-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                          {srResult.map((n, idx) => (
-                            <img key={idx} src={`PK10-ball/num=${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
-                          ))}
-                        </div>
+                        {renderDrawResultTrigger('speedrace', srResult)}
                       </div>
+
+                      {renderDrawHistoryPanel('speedrace')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -3204,12 +3538,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {String(issue).slice(-5)} 期</span>
                         </div>
-                        <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                          {ffcResult.map((n, idx) => (
-                            <img key={idx} src={`分分-ball/${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
-                          ))}
-                        </div>
+                        {renderDrawResultTrigger('ffc', ffcResult)}
                       </div>
+
+                      {renderDrawHistoryPanel('ffc')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -3474,12 +3806,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       )}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
-                        <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
-                          {ffcResult.map((n, idx) => (
-                            <img key={idx} src={`分分-ball/${n}.png`} alt={n} style={{ width: '18px', height: '18px' }} />
-                          ))}
-                        </div>
+                        {renderDrawResultTrigger('ffc', ffcResult)}
                       </div>
+
+                      {renderDrawHistoryPanel('ffc')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -3679,17 +4009,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           </div>
                           <span>第 {String(issue).slice(-5)} 期</span>
                         </div>
-                        <div className="vp-ffc-result-balls" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                          {l28Result.map((n, idx) => (
-                            <React.Fragment key={idx}>
-                              {idx > 0 && <span style={{ fontWeight: 700, color: '#64748b' }}>+</span>}
-                              <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#ef4444', color: '#fff', fontWeight: 700, fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{n}</span>
-                            </React.Fragment>
-                          ))}
-                          <span style={{ fontWeight: 700, color: '#64748b' }}>=</span>
-                          <span style={{ minWidth: '22px', height: '20px', lineHeight: '20px', textAlign: 'center', padding: '0 5px', borderRadius: '4px', background: '#2563eb', color: '#fff', fontWeight: 700, fontSize: '0.72rem' }}>{l28Sum}</span>
-                        </div>
+                        {renderDrawResultTrigger('lucky28', l28Result)}
                       </div>
+
+                      {renderDrawHistoryPanel('lucky28')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -3988,15 +4311,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
-                        <div className="vp-fc-result-row" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
-                          {fcResult.map((symKey, idx) => {
-                            const sym = FISH_CRAB_SYMBOLS.find(s => s.key === symKey);
-                            return sym ? (
-                              <img key={idx} src={sym.icon} alt={sym.label} className="vp-fc-result-img" />
-                            ) : null;
-                          })}
-                        </div>
+                        {renderDrawResultTrigger('fishcrab', fcResult)}
                       </div>
+
+                      {renderDrawHistoryPanel('fishcrab')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -4147,20 +4465,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       {/* 开奖结果：缩小置于右上角，比照其他游戏 */}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
-                        <div className="bac-mini-result">
-                          <span className="bac-mini-pts" style={{ color: BAC_C.player }}>闲{bacHandPoints(bacPlayer)}</span>
-                          {/* 闲家：补牌（第三张）放在最左侧，横放 */}
-                          {(bacPlayer.length === 3 ? [bacPlayer[2], bacPlayer[0], bacPlayer[1]] : bacPlayer).map((c, i) => (
-                            <img key={`p${i}`} className={`bac-mini-card ${bacPlayer.length === 3 && i === 0 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
-                          ))}
-                          <span className="bac-mini-sep">|</span>
-                          {/* 庄家：补牌（第三张）放在最右侧，横放 */}
-                          {bacBanker.map((c, i) => (
-                            <img key={`b${i}`} className={`bac-mini-card ${bacBanker.length === 3 && i === 2 ? 'bac-mini-card-h' : ''}`} src={`poker/${c.suit}/${c.rank}.svg`} alt={`${c.suit}-${c.rank}`} />
-                          ))}
-                          <span className="bac-mini-pts" style={{ color: BAC_C.banker }}>庄{bacHandPoints(bacBanker)}</span>
-                        </div>
+                        {renderDrawResultTrigger('baccarat', { player: bacPlayer, banker: bacBanker })}
                       </div>
+
+                      {renderDrawHistoryPanel('baccarat')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -4330,12 +4638,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       {/* 开奖结果：T-ball 名次排列 */}
                       <div className="vp-bet-header-row2">
                         <span>第 {issue} 期</span>
-                        <div className="animal-mini-result">
-                          {animalResult.map((n, i) => (
-                            <img key={i} className="animal-mini-ball" src={`T-ball/T${n}.svg`} alt={`T${n}`} />
-                          ))}
-                        </div>
+                        {renderDrawResultTrigger('animal', animalResult)}
                       </div>
+
+                      {renderDrawHistoryPanel('animal')}
                     </div>
 
                     <div className="embedded-game-body">
@@ -4439,6 +4745,223 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
                         <button className="console-submit-btn active" onClick={handleAnimalSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          提交下注
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : activeCarouselGame === 'sports' ? (
+                  // 体育赛事直播间：专属房间，不提供切换游戏（抬头只有比赛名 + 选单 + 关闭）
+                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
+                    <div className="vp-bet-header">
+                      <div className="vp-bet-header-row1">
+                        <div className="vp-bet-title-box vp-sp-title">{matchTitle || '安库德 VS 瓦尔迪维亚'}</div>
+                        <div className="vp-bet-header-right is-compact">
+                          {/* 简易／专业切换：样式同视频里各彩票游戏的那颗开关 */}
+                          <div
+                            className="vp-f3-mode-switch"
+                            onClick={() => setSpSimpleMode(v => !v)}
+                            title={spSimpleMode ? '当前简易版，点击切换专业版' : '当前专业版，点击切换简易版'}
+                            style={{
+                              flexShrink: 0,
+                              position: 'relative',
+                              width: '46px',
+                              height: '24px',
+                              borderRadius: '4px',
+                              background: '#eef2f6',
+                              border: '1px solid #e2e8f0',
+                              cursor: 'pointer',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '2px',
+                                left: '2px',
+                                width: '18px',
+                                height: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                color: '#ffffff',
+                                background: spSimpleMode ? '#22c55e' : '#ef4444',
+                                transform: spSimpleMode ? 'translateX(22px)' : 'translateX(0)',
+                                transition: 'transform 0.18s ease, background 0.18s ease'
+                              }}
+                            >
+                              {spSimpleMode ? '简' : '专'}
+                            </span>
+                          </div>
+                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
+                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
+                        </div>
+                      </div>
+
+                      {menuOpen && (
+                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
+                          {['未结明细', '今日已结', '报表查询', '赛事规则'].map(opt => (
+                            <div
+                              key={opt}
+                              className="feg-dropdown-item"
+                              onClick={() => handleMenuDropdownItemClick(opt)}
+                            >
+                              {opt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="embedded-game-body">
+                      {spSimpleMode ? (
+                      <React.Fragment key="sp-simple">
+                      {/* 玩法页签：盘口多时可左右滑动（少的时候仍撑满整列） */}
+                      <div className="live-play-tabs-row is-scroll" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
+                        {spTabs.map(tab => (
+                          <div
+                            key={tab.cat}
+                            className={`live-play-tab ${spActiveTab === tab.cat ? 'active' : ''}`}
+                            onClick={() => setSpActiveTab(tab.cat)}
+                          >
+                            {tab.label}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 点位：大 / 小，各占一半宽 */}
+                      <div style={{ padding: '8px 12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                        <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                          {spCurrentTab.options.map(opt => {
+                            const isSel = selectedSp.has(`${spCurrentTab.label}|${opt.name}`);
+                            return (
+                              <div
+                                key={opt.name}
+                                className={`live-odds-card ${isSel ? 'selected' : ''}`}
+                                onClick={() => handleSpCardClick(opt.name)}
+                                style={{ height: '112px', padding: '0 4px' }}
+                              >
+                                {/* 「大 139.5」整串就是玩法名，字级颜色一致 */}
+                                <div className="odds-card-name" style={{ color: lotteryColor(opt.name) }}>{`${opt.name} ${opt.line}`}</div>
+                                <div className="odds-card-val" style={{ fontSize: '0.78rem', color: lotteryColor(opt.name) }}>{opt.odds}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      </React.Fragment>
+                      ) : (
+                      <React.Fragment key="sp-pro">
+                      {/* 专业版：盘面同「体育」页的更多玩法（筛选列 + 折叠盘口卡） */}
+                      <div className="vp-sp-pro-wrap">
+                        <div className="moreplay-filter-row">
+                          <button className="filter-collapse-btn" onClick={() => setSpProFilter('hot')} title="重置筛选">
+                            <i className="fa-solid fa-chevron-up filter-up-icon"></i>
+                          </button>
+                          <div className="filter-divider"></div>
+                          <div className="filter-pills-scroll">
+                            {SPORTS_PRO_FILTERS.map(item => (
+                              <button
+                                key={item.id}
+                                className={`filter-pill-item ${spProFilter === item.id ? 'active' : ''}`}
+                                onClick={() => setSpProFilter(item.id)}
+                              >
+                                {item.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="vp-sp-pro-scroll">
+                          <div className="moreplay-accordions-container">
+                            {spProMarkets.map(market => (
+                              <div key={market.key} className={`accordion-card ${spExpanded[market.key] ? 'expanded' : ''}`}>
+                                <div className="accordion-header" onClick={() => toggleSpSection(market.key)}>
+                                  <div className="accordion-title">
+                                    <i className="fa-solid fa-chevron-down accordion-arrow"></i>
+                                    <span>{market.title}</span>
+                                  </div>
+                                  <button
+                                    className="accordion-header-action"
+                                    onClick={(e) => { e.stopPropagation(); showToast(`已置顶【${market.title}】`); }}
+                                  >
+                                    <i className="fa-solid fa-arrow-up-from-bracket"></i>
+                                  </button>
+                                </div>
+                                <div className="accordion-content">
+                                  <div className="odds-grid-two-cols">
+                                    {market.options.map(opt => {
+                                      const isSel = selectedSp.has(`${market.title}|${opt.name}`);
+                                      return (
+                                        <button
+                                          key={opt.name}
+                                          className={`odds-option-btn ${isSel ? 'selected' : ''}`}
+                                          onClick={() => handleSpBetClick(market.title, opt.name)}
+                                        >
+                                          <span className="odds-option-label">{opt.name}</span>
+                                          <span className="odds-option-value">{opt.odds}</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {spProMarkets.length === 0 && (
+                              <div className="vp-sp-pro-empty">该筛选暂无可投注盘口</div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      </React.Fragment>
+                      )}
+                    </div>
+
+                    {/* Embedded betting console */}
+                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
+                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
+                        <div className="info-balance-box">
+                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
+                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
+                        </div>
+                        <div className="info-selected-box">
+                          共 <span className="console-selected-value">{spCount}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{spTotalCost.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
+                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
+                          {quickAmounts.map(val => (
+                            <div
+                              key={val}
+                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
+                              onClick={() => handleQuickAmountClick(val)}
+                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
+                            >
+                              {val}
+                            </div>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          className="manual-amount-input"
+                          placeholder="输入金额"
+                          value={manualAmount}
+                          onChange={(e) => setManualAmount(e.target.value)}
+                          onFocus={() => setManualFocused(true)}
+                          onBlur={() => setManualFocused(false)}
+                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                        />
+                      </div>
+                      <div className="bet-console-buttons-row">
+                        <button className="console-cancel-btn" onClick={handleSpReset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
+                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
+                        </button>
+                        <button className="console-submit-btn active" onClick={handleSpSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>

@@ -39,6 +39,8 @@ export default function ModalBetDetails() {
     gameTitle = '一分分分彩2 投注详情';
   } else if (currentActiveGame === 'lucky28') {
     gameTitle = '一分幸运28 投注详情';
+  } else if (currentActiveGame === 'sports_live') {
+    gameTitle = '体育赛事 投注详情';
   }
 
   // Handle amount change for specific staged item.
@@ -99,6 +101,8 @@ export default function ModalBetDetails() {
       gameName = '一分分分彩2';
     } else if (currentActiveGame === 'lucky28') {
       gameName = '一分幸运28';
+    } else if (currentActiveGame === 'sports_live') {
+      gameName = '体育赛事';
     }
 
     showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);

@@ -15,8 +15,14 @@ const roomToGameKey = (room) => {
   if (s.includes('分分彩')) return 'ffc';
   if (s.includes('极速') || s.includes('赛车')) return 'speedrace';
   if (s.includes('动物')) return 'animal';
+  // 体育赛事房：专属滚球盘直播间，不提供切换到其他游戏
+  if (s.includes('体育') || /\bvs\b/i.test(s)) return 'sports';
   return 'fast3'; // 默认一分快三
 };
+
+// 体育直播间抬头显示的比赛名称（房间没带 match 时，房名本身就是比赛名）
+const roomToMatchTitle = (room) =>
+  room?.match || (/\bvs\b/i.test(room?.name || '') ? room.name : '安库德 VS 瓦尔迪维亚');
 
 // Helper to render points as dice
 const renderDiceOptionName = (name) => {
@@ -98,7 +104,9 @@ export default function PageChats() {
       img: room.img,
       viewer: Math.floor(Math.random() * 50000) + 120000,
       label: room.category === 'sports' ? 'BL 体育赛事' : 'BL 彩票预测',
-      badge: '99'
+      badge: '99',
+      // 体育搜索结果本身就是一场比赛，进房直接开这场的盘口
+      ...(room.category === 'sports' ? { gameKey: 'sports', match: room.title } : {})
     };
     handleEnterRoom(targetRoom);
     setShowSearchPage(false);
@@ -186,7 +194,12 @@ export default function PageChats() {
     { id: 18, name: '鱼虾蟹财神殿', category: 'chatroom', sub: ['game'], img: '游戏图标/鱼虾蟹.png', viewer: 138771, label: 'BL 一分鱼虾蟹', badge: '41', gameKey: 'fishcrab' },
     { id: 19, name: '百家乐尊爵厅', category: 'vip', sub: ['recommend', 'game'], img: '游戏图标/百家乐.png', viewer: 231044, label: 'BL 百家乐', badge: '88', gameKey: 'baccarat' },
     { id: 20, name: '糖果派对乐园', category: 'chatroom', sub: ['game'], img: '糖果slot示意.png', viewer: 121885, label: 'BL 糖果派对', badge: '35', gameKey: 'candy' },
-    { id: 21, name: '麻将胡了2嗨房', category: 'chatroom', sub: ['game'], img: '麻胡2示意.png', viewer: 119327, label: 'BL 麻将胡了2', badge: '33', gameKey: 'mahjong' }
+    { id: 21, name: '麻将胡了2嗨房', category: 'chatroom', sub: ['game'], img: '麻胡2示意.png', viewer: 119327, label: 'BL 麻将胡了2', badge: '33', gameKey: 'mahjong' },
+    // 体育赛事直播间：一间一场比赛，进房只玩这场的盘口
+    { id: 22, name: '安库德 VS 瓦尔迪维亚', category: 'chatroom', sub: ['recommend', 'worldcup'], img: 'assets/basketball_live1.png', viewer: 205618, label: 'BL 体育赛事', badge: '61', gameKey: 'sports', match: '安库德 VS 瓦尔迪维亚' },
+    { id: 23, name: '金纳西亚 VS 圣地亚哥奎姆萨', category: 'chatroom', sub: ['worldcup'], img: 'assets/basketball_live2.png', viewer: 183472, label: 'BL 体育赛事', badge: '45', gameKey: 'sports', match: '金纳西亚 VS 圣地亚哥奎姆萨' },
+    // 盘口方开满大小玩法的赛事（全场 + 上下半场 + 各节），简易版页签需要左右滑动
+    { id: 24, name: '金州瓦尔基里 (女) VS 多伦多节奏报 (女)', category: 'chatroom', sub: ['recommend', 'worldcup'], img: 'assets/basketball_live5.png', viewer: 196845, label: 'BL 体育赛事', badge: '73', gameKey: 'sports', match: '金州瓦尔基里 (女) VS 多伦多节奏报 (女)', board: 'full' }
   ];
 
   const chatTemplates = [
@@ -1047,6 +1060,8 @@ export default function PageChats() {
               <ModalVideoPlayer
                 embedded
                 initialGame={roomToGameKey(currentRoom)}
+                matchTitle={roomToMatchTitle(currentRoom)}
+                sportsBoard={currentRoom?.board}
                 onClose={() => setShowBetPanel(false)}
               />
             </div>
