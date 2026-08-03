@@ -4487,9 +4487,12 @@ input:checked + .slider:before {
   height: 100%;
 }
 
+/* 视讯播放器：固定 1920x1080（16:9）比例，不随下方内容高度被压缩 */
 .mock-player-box {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1920 / 1080;
+  height: auto;
+  flex-shrink: 0;
   background-color: #000;
   position: relative;
   overflow: hidden;
@@ -7360,9 +7363,12 @@ input:checked + .slider:before {
 }
 
 /* Redesigned Entered Live Room & Play Same Game Betting Panel */
+/* 直播间播放器：固定 1920x1080（16:9）比例，不随房间内容高度浮动 */
 .live-stream-player-box {
   width: 100%;
-  height: 28%;
+  aspect-ratio: 1920 / 1080;
+  height: auto;
+  flex-shrink: 0;
   background-color: #000;
   position: relative;
   overflow: hidden;
