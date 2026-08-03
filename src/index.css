@@ -391,6 +391,11 @@ body {
   overflow: hidden;
 }
 
+/* 已进入具体直播间：底部导览入口隐藏，房间铺满整个可视区 */
+.app-page.is-live-room {
+  height: 100%;
+}
+
 .app-page.active {
   display: flex;
 }
@@ -6639,6 +6644,11 @@ input:checked + .slider:before {
 
   .app-page {
     height: calc(100% - 52px - env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* 已进入具体直播间：底部导览入口隐藏，房间铺满整个可视区 */
+  .app-page.is-live-room {
+    height: 100% !important;
   }
 }
 

@@ -58,7 +58,8 @@ export default function PageChats() {
     setEditQuickAmountsActive,
     showToast,
     immersiveMode,
-    setImmersiveMode
+    setImmersiveMode,
+    setInLiveRoom
   } = useApp();
 
   // Redesigned Custom Top Nav states
@@ -293,6 +294,12 @@ export default function PageChats() {
     }, 15000);
     return () => clearInterval(interval);
   }, [currentRoom]);
+
+  // 进入具体直播间时隐藏底部导览入口（离开房间或切走本页时自动还原）
+  useEffect(() => {
+    setInLiveRoom(!!currentRoom);
+    return () => setInLiveRoom(false);
+  }, [currentRoom, setInLiveRoom]);
 
   // Redesigned Custom Filters
   const getCustomFilteredRooms = () => {
@@ -529,7 +536,7 @@ export default function PageChats() {
   };
 
   return (
-    <div className="app-page active" id="page-chats">
+    <div className={`app-page active ${currentRoom ? 'is-live-room' : ''}`} id="page-chats">
       {!currentRoom && !immersiveMode && (
         <div className="lobby-header-bar">
           <div className="lobby-logo-pill">

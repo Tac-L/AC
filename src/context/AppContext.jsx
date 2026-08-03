@@ -80,6 +80,8 @@ export const AppProvider = ({ children }) => {
   const [pgGameActive, setPgGameActive] = useState(false);
   const [pgGameData, setPgGameData] = useState(null); // { name, img }
   const [immersiveMode, setImmersiveMode] = useState(false);
+  // 已进入具体直播间：底部导览入口隐藏，房间铺满整个可视区
+  const [inLiveRoom, setInLiveRoom] = useState(false);
 
   // Clock Update Effect
   useEffect(() => {
@@ -359,6 +361,8 @@ export const AppProvider = ({ children }) => {
       closePgGame,
       immersiveMode,
       setImmersiveMode,
+      inLiveRoom,
+      setInLiveRoom,
       activeRoomId,
       setActiveRoomId,
       activeGameName,
