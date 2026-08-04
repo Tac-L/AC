@@ -5,6 +5,10 @@ import { useApp } from '../context/AppContext';
 // layoutBetOverlay 用它算「弹窗不被压缩时该有多高」。
 const ODDS_AREA_BASE = 160;
 
+// 抬头的期号一律只显示末 5 码：内部期号是 202606041276 这种长格式，抬头列塞不下。
+// 新增游戏时抬头请一律用这个函式，不要各自 slice。
+const shortIssue = (issue) => String(issue).slice(-5);
+
 // 快三点位：用 public/K3-ball/{1-6}.png 骰子图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
@@ -2608,7 +2612,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {f3SimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {String(issue).slice(-5)} 期</span>
+                          <span>第 {shortIssue(issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger('fast3', lastDice)}
                       </div>
@@ -2943,7 +2947,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {m6SimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {isLhcDay ? lhcDayIssue : String(issue).slice(-5)} 期</span>
+                          <span>第 {isLhcDay ? lhcDayIssue : shortIssue(issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger(isLhcDay ? 'lhcday' : 'marksix', isLhcDay ? lhcDayResult : m6Result)}
                       </div>
@@ -3327,7 +3331,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {srSimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {String(issue).slice(-5)} 期</span>
+                          <span>第 {shortIssue(issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger('speedrace', srResult)}
                       </div>
@@ -3639,7 +3643,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {ffcSimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {String(issue).slice(-5)} 期</span>
+                          <span>第 {shortIssue(issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger('ffc', ffcResult)}
                       </div>
@@ -3908,7 +3912,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                         </div>
                       )}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <span>第 {shortIssue(issue)} 期</span>
                         {renderDrawResultTrigger('ffc', ffcResult)}
                       </div>
 
@@ -4110,7 +4114,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {l28SimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {String(issue).slice(-5)} 期</span>
+                          <span>第 {shortIssue(issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger('lucky28', l28Result)}
                       </div>
@@ -4418,7 +4422,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       )}
 
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <span>第 {shortIssue(issue)} 期</span>
                         {renderDrawResultTrigger('fishcrab', fcResult)}
                       </div>
 
@@ -4572,7 +4576,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                       {/* 开奖结果：缩小置于右上角，比照其他游戏 */}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <span>第 {shortIssue(issue)} 期</span>
                         {renderDrawResultTrigger('baccarat', { player: bacPlayer, banker: bacBanker })}
                       </div>
 
@@ -4745,7 +4749,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                       {/* 开奖结果：T-ball 名次排列 */}
                       <div className="vp-bet-header-row2">
-                        <span>第 {issue} 期</span>
+                        <span>第 {shortIssue(issue)} 期</span>
                         {renderDrawResultTrigger('animal', animalResult)}
                       </div>
 
