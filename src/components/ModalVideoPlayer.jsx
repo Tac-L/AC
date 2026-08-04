@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
+// 点位区的预设高度，必须跟 index.css 里 .vp-odds-area 的 flex-basis 一致。
+// layoutBetOverlay 用它算「弹窗不被压缩时该有多高」。
+const ODDS_AREA_BASE = 160;
+
 // 快三点位：用 public/K3-ball/{1-6}.png 骰子图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
@@ -687,6 +691,41 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // 用 useLayoutEffect 而非 useEffect：要在浏览器 paint 前就把行高写好，
   // 否则切换玩法时会先画一帧旧行高再跳到新行高。
   useLayoutEffect(() => {
+    // 第一趟：决定弹窗要不要往上盖住播放器。
+    // 播放器下方的空间放不下「固定段 + 160px 点位区」时，就让弹窗脱离播放器的范围
+    // 往上长，点位区才不会被挤扁。不用固定的萤幕尺寸门槛，直接量当下的实际高度
+    // —— 各游戏抬头列数不同（体育房 41px、彩票 69px），门槛本来就不一样。
+    const layoutBetOverlay = () => {
+      const appBody = document.querySelector('.app-body');
+      const hardCap = appBody ? appBody.clientHeight : window.innerHeight;
+
+      document.querySelectorAll('.vp-odds-area').forEach(area => {
+        const panel = area.closest('.player-embedded-game-panel');
+        const sheet = area.closest('.live-bet-sheet, .vp-play-sheet, .drama-betting-sheet');
+        if (!panel || !sheet) return;
+
+        // 先把上一轮的结果清掉再量，否则会量到自己写进去的高度、来回抖动。
+        // 读 clientHeight 会强制同步重排，所以下面拿到的都是「没盖住播放器」时的真实值。
+        sheet.classList.remove('is-bet-overlay');
+        sheet.style.height = '';
+        const avail = sheet.clientHeight;
+
+        const oddsH = area.getBoundingClientRect().height;
+        const panelH = panel.getBoundingClientRect().height;
+        // 抬头 + 玩法页签 + 下注列：这些都是 flex-shrink: 0，被压缩的只有点位区，
+        // 所以「面板高 − 点位区高」就是固定段的高度
+        const chrome = panelH - oddsH;
+        const natural = chrome + ODDS_AREA_BASE;
+
+        if (natural > avail + 0.5) {
+          // 弹窗本身贴底 + 写死高度，箱子就往上长盖住播放器；
+          // 里面的控制台照旧 max-height: 100%，跟着拿到完整高度
+          sheet.classList.add('is-bet-overlay');
+          sheet.style.height = `${Math.min(natural, hardCap)}px`;
+        }
+      });
+    };
+
     const layoutOddsRows = () => {
       document.querySelectorAll('.vp-odds-area').forEach(area => {
         const areaStyle = getComputedStyle(area);
@@ -718,9 +757,17 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       });
     };
 
-    layoutOddsRows();
-    window.addEventListener('resize', layoutOddsRows);
-    return () => window.removeEventListener('resize', layoutOddsRows);
+    // 顺序不能反：先决定要不要盖住播放器（会改变点位区拿到的高度），再算行高。
+    // 两趟都在 useLayoutEffect 里、paint 之前跑完，所以弹窗从下方滑上来的时候
+    // 尺寸已经是最终值，不会有先展开再伸缩的过程。
+    const relayout = () => {
+      layoutBetOverlay();
+      layoutOddsRows();
+    };
+
+    relayout();
+    window.addEventListener('resize', relayout);
+    return () => window.removeEventListener('resize', relayout);
   });
 
   // 倒计时状态机：投注(倒计时) → 封盘(含开奖, 5秒) → 下一期

@@ -1304,6 +1304,12 @@ body {
   max-height: 78%;
 }
 
+/* 矮萤幕：78% 放不下「固定段 + 160px 点位区」时，由 layoutBetOverlay 挂上
+   is-bet-overlay，放行到整个短剧容器的高度（短剧本来就是抽屉盖在影片上） */
+.drama-betting-sheet.is-bet-overlay {
+  max-height: 100%;
+}
+
 /* 短剧剧集选择抽屉 */
 .drama-episodes-sheet {
   height: auto;
@@ -7665,8 +7671,9 @@ input:checked + .slider:before {
   opacity: 0.9;
 }
 
-/* 播放器下方的房间主体：投注弹窗的定位容器，所以弹窗最高只到这里的顶端，
-   永远遮不到上面的播放器 */
+/* 播放器下方的房间主体：投注弹窗的定位容器，所以弹窗预设最高只到这里的顶端，
+   遮不到上面的播放器。空间真的放不下时由 layoutBetOverlay 加上 is-bet-overlay
+   放行（见下方 :has 规则） */
 .live-room-body {
   flex: 1;
   min-height: 0;
@@ -7705,6 +7712,28 @@ input:checked + .slider:before {
   height: auto;
   max-height: 100%;
   min-height: 0;
+}
+
+/* ==========================================================================
+   矮萤幕：投注弹窗往上盖住播放器
+   ------------------------------------------------------------------------
+   播放器下方放不下「固定段 + 160px 点位区」时，ModalVideoPlayer 的
+   layoutBetOverlay 会挂上 is-bet-overlay，并把弹窗高度写成 inline px。
+   这里配合两件事：
+   1) 清掉 inset 带来的 top: 0，让弹窗只贴着底边 —— 写死的高度超过容器时，
+      箱子就往上长出去盖在播放器上
+   2) 放开房间主体的 overflow，长出去的部分才不会被裁掉；
+      .chat-split-room 没有 overflow，所以最多长到整个房间（含播放器）为止
+
+   不能改用「内容溢出容器」的做法 —— flex 的 justify-content: flex-end 撑不住
+   溢出的项目，实测会改从起始边对齐、变成往下溢出到画面外。
+   ========================================================================== */
+.live-bet-sheet.is-bet-overlay {
+  top: auto;
+}
+
+.live-room-body:has(> .live-bet-sheet.is-bet-overlay) {
+  overflow: visible;
 }
 
 .live-chat-view-container .split-chat-messages {
@@ -11736,6 +11765,16 @@ body {
 
 .vp-tab-content.vp-play-sheet:has(.vp-odds-area) > * {
   pointer-events: auto;
+}
+
+/* 矮萤幕：同直播间的处理 —— 箱子只贴底、高度由 JS 写死，往上盖住影片。
+   .split-player-container 没有 overflow，所以最多长到播放器上缘为止 */
+.vp-tab-content.vp-play-sheet.is-bet-overlay {
+  top: auto;
+}
+
+.player-scroll-content:has(> .vp-play-sheet.is-bet-overlay) {
+  overflow: visible;
 }
 
 /* Chatroom sub-page */
