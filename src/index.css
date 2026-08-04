@@ -8180,8 +8180,10 @@ input:checked + .slider:before {
 }
 
 /* 选中点位：右上角橘底白勾。稍微溢出卡片边角，靠点位区的 padding 吃掉溢出量，
-   不会被 .vp-odds-area 的 overflow 裁掉 */
-.live-odds-card.selected::after {
+   不会被 .vp-odds-area 的 overflow 裁掉。
+   百家乐的 .bac-bet-card 也共用同一颗徽章，选中的表现全站一致 */
+.live-odds-card.selected::after,
+.bac-bet-card.selected::after {
   content: '\f00c'; /* FontAwesome check */
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;
@@ -11992,17 +11994,37 @@ body {
   text-align: center;
   line-height: 1.1;
   cursor: pointer;
-  transition: all 0.15s ease;
+  /* 选中时右上角的勾勾徽章要靠这个定位 */
+  position: relative;
+  /* 同 .live-odds-card：只过渡选中态的颜色，不过渡尺寸，
+     切换玩法（庄闲 ↔ 对子/两面）时才不会看到卡片延展 */
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .bac-2x2-grid .bac-bet-card {
   min-height: 66px;
 }
 
+/* 百家乐点位区：行高同样吃 layoutOddsRows 量测出来的 --vp-odds-row-h。
+   这里改的是 grid 的「行轨」而不是卡片高度 —— 庄/闲 是竖跨两行的，
+   给轨道定高，跨行的卡片才会自己长成两行高（两行 + gap = 整个点位区）。 */
+.bac-main-grid.is-fill-rows,
+.bac-2x2-grid.is-fill-rows {
+  min-height: 0;
+  grid-template-rows: var(--vp-odds-row-h) var(--vp-odds-row-h);
+  grid-auto-rows: var(--vp-odds-row-h);
+}
+
+.bac-main-grid.is-fill-rows .bac-bet-card,
+.bac-2x2-grid.is-fill-rows .bac-bet-card {
+  min-height: 0;
+}
+
 .bac-bet-card.selected {
   border-color: #f5a623;
   background: #fffdf5;
-  box-shadow: inset 0 0 0 2px rgba(245, 166, 35, 0.4);
+  /* 原本还多一圈 inset 2px 内阴影，加上 1px 边框会看成两层橘框；
+     选中已有右上角勾勾徽章，这里只留单层边框，跟其他游戏的点位一致 */
 }
 
 .bac-bet-name {

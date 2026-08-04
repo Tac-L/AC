@@ -695,7 +695,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
           - parseFloat(areaStyle.paddingBottom);
         if (!(inner > 0)) return;
 
-        const grids = [...area.querySelectorAll('.live-betting-options-grid')];
+        // 百家乐用自己的盘面（庄/闲 竖跨两行、和/幸运6 中间上下），一并纳入
+        const grids = [...area.querySelectorAll(
+          '.live-betting-options-grid, .bac-main-grid, .bac-2x2-grid'
+        )];
         if (!grids.length) return;
 
         // 这个点位区一共几行（多段盘面就把每段的行数加起来）
