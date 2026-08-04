@@ -2872,7 +2872,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                             onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                            style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                            style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                           />
                         </div>
 
@@ -3259,7 +3259,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
 
@@ -3571,7 +3571,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
 
@@ -3878,7 +3878,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
 
@@ -4223,7 +4223,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
 
@@ -4376,7 +4376,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
 
@@ -4550,7 +4550,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
                       <div className="bet-console-buttons-row">
@@ -4695,7 +4695,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
                       <div className="bet-console-buttons-row">
@@ -4912,7 +4912,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           onChange={(e) => setManualAmount(e.target.value)}
                           onFocus={() => setManualFocused(true)}
                           onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
+                          style={{ height: '32px', fontSize: '0.7rem', width: '70px' }}
                         />
                       </div>
                       <div className="bet-console-buttons-row">

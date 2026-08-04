@@ -5187,6 +5187,11 @@ input:checked + .slider:before {
 }
 .embedded-bet-console .console-submit-btn {
   flex: 2;
+  /* 與左側「撤回」按鈕等高 */
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #a5b1c2;
   border: none;
   border-radius: 6px;
