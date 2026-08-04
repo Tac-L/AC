@@ -4709,7 +4709,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
                   </div>
                 ) : activeCarouselGame === 'sports' ? (
-                  // 体育赛事直播间：专属房间，不提供切换游戏（抬头只有比赛名 + 选单 + 关闭）
+                  // 体育赛事直播间：专属房间，不提供切换游戏（抬头只有比赛名 + 简易／专业切换 + 关闭）
                   <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
                     <div className="vp-bet-header">
                       <div className="vp-bet-header-row1">
@@ -4753,24 +4753,9 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {spSimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
                           <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
                         </div>
                       </div>
-
-                      {menuOpen && (
-                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
-                          {['未结明细', '今日已结', '报表查询', '赛事规则'].map(opt => (
-                            <div
-                              key={opt}
-                              className="feg-dropdown-item"
-                              onClick={() => handleMenuDropdownItemClick(opt)}
-                            >
-                              {opt}
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
 
                     <div className="embedded-game-body">
