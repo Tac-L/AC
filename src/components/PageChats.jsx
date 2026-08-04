@@ -190,7 +190,8 @@ export default function PageChats() {
     { id: 13, name: '澳门六合彩厅', category: 'chatroom', sub: ['recommend', 'game'], img: 'assets/mo_mark_six.png', viewer: 188206, label: 'BL 一分澳门六合彩', badge: '66', gameKey: 'marksix' },
     { id: 14, name: '极速赛车竞技场', category: 'chatroom', sub: ['game'], img: '游戏图标/1062010.png', viewer: 176540, label: 'BL 极速赛车', badge: '48', gameKey: 'speedrace' },
     { id: 15, name: '分分彩鑫运厅', category: 'chatroom', sub: ['recommend', 'game'], img: '游戏图标/601010.png', viewer: 165330, label: 'BL 一分分分彩', badge: '37', gameKey: 'ffc' },
-    { id: 16, name: '分分彩2简约厅', category: 'chatroom', sub: ['game'], img: '游戏图标/601010.png', viewer: 152118, label: 'BL 一分分分彩2', badge: '29', gameKey: 'ffc2' },
+    // 一分分分彩2 已合併进一分分分彩（旧盘面成为它的简易版），房间改开 ffc
+    { id: 16, name: '分分彩简约厅', category: 'chatroom', sub: ['game'], img: '游戏图标/601010.png', viewer: 152118, label: 'BL 一分分分彩', badge: '29', gameKey: 'ffc' },
     { id: 17, name: '动物运动会', category: 'chatroom', sub: ['recommend', 'game'], img: '游戏图标/1001-D6CpfLEz.png', viewer: 143902, label: 'BL 动物运动会', badge: '54', gameKey: 'animal' },
     { id: 18, name: '鱼虾蟹财神殿', category: 'chatroom', sub: ['game'], img: '游戏图标/鱼虾蟹.png', viewer: 138771, label: 'BL 一分鱼虾蟹', badge: '41', gameKey: 'fishcrab' },
     { id: 19, name: '百家乐尊爵厅', category: 'vip', sub: ['recommend', 'game'], img: '游戏图标/百家乐.png', viewer: 231044, label: 'BL 百家乐', badge: '88', gameKey: 'baccarat' },

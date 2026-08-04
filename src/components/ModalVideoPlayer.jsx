@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext';
 const ODDS_AREA_BASE = 160;
 
 // 抬头的期号一律只显示末 5 码：内部期号是 202606041276 这种长格式，抬头列塞不下。
+// 日彩（每天一期、期号本身是当天日期）也照同一规则截，不另外例外。
 // 新增游戏时抬头请一律用这个函式，不要各自 slice。
 const shortIssue = (issue) => String(issue).slice(-5);
 
@@ -525,11 +526,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [selectedFFC, setSelectedFFC] = useState(new Set());
   const [ffcActiveTab, setFfcActiveTab] = useState('cai'); // 第一层玩法：cai(猜球号), sides(两面盘), position(前中后)
   const [ffcActivePos, setFfcActivePos] = useState('ball1'); // 第二层：球号(ball1~ball5) 或 区段(front/mid/back)
-  const [ffcSimpleMode, setFfcSimpleMode] = useState(true); // 简易版盘面开关：true 时改用一分分分彩2 的盘面（彩票一律预设简易版）
+  const [ffcSimpleMode, setFfcSimpleMode] = useState(true); // 简易版盘面开关（彩票一律预设简易版）
   // 一分分分彩开奖结果：5 颗球 0~9（图标取自 public/分分-ball/）
   const [ffcResult, setFfcResult] = useState(INITIAL_DRAW.ffc);
 
-  // 一分分分彩2 (简易版) selections: key `${category}|${name}`；开奖球与「一分分分彩」相同
+  // 一分分分彩「简易版」盘面的 selections: key `${category}|${name}`；开奖球与专业版共用
+  // （FFC2 命名是旧独立游戏留下的，见下方 FFC2_TABS 处的说明）
   const [selectedFFC2, setSelectedFFC2] = useState(new Set());
   const [ffc2ActiveTab, setFfc2ActiveTab] = useState('wan'); // wan(万位), dragon(龙虎), bai(佰位)
 
@@ -703,29 +705,32 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       const appBody = document.querySelector('.app-body');
       const hardCap = appBody ? appBody.clientHeight : window.innerHeight;
 
-      document.querySelectorAll('.vp-odds-area').forEach(area => {
-        const panel = area.closest('.player-embedded-game-panel');
-        const sheet = area.closest('.live-bet-sheet, .vp-play-sheet, .drama-betting-sheet');
-        if (!panel || !sheet) return;
+      // 彩票／体育的高度由内容决定（点位区 160px），Slot 类吃 CSS 的 --vp-bet-sheet-h。
+      // 两者都不自己推算，统一用「先给足空间、量出来」的方式：
+      // 中间层（.embedded-game-body）自己也有 overflow: hidden，靠相减推算固定段
+      // 会漏掉被它裁掉的部分（快三的下注列就在里面），量出来最可靠。
+      document.querySelectorAll('.player-embedded-game-panel').forEach(panel => {
+        const sheet = panel.closest('.live-bet-sheet, .vp-play-sheet, .drama-betting-sheet');
+        const hasBoard = !!panel.querySelector('.vp-odds-area, .vp-slot-stage');
+        if (!sheet || !hasBoard) return;
 
-        // 先把上一轮的结果清掉再量，否则会量到自己写进去的高度、来回抖动。
-        // 读 clientHeight 会强制同步重排，所以下面拿到的都是「没盖住播放器」时的真实值。
+        // ① 先清掉上一轮的结果，量「不盖住播放器」时的可用空间。
+        //    读 clientHeight 会强制同步重排，所以拿到的是真实值、不是自己写进去的。
         sheet.classList.remove('is-bet-overlay');
         sheet.style.height = '';
         const avail = sheet.clientHeight;
 
-        const oddsH = area.getBoundingClientRect().height;
-        const panelH = panel.getBoundingClientRect().height;
-        // 抬头 + 玩法页签 + 下注列：这些都是 flex-shrink: 0，被压缩的只有点位区，
-        // 所以「面板高 − 点位区高」就是固定段的高度
-        const chrome = panelH - oddsH;
-        const natural = chrome + ODDS_AREA_BASE;
+        // ② 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px、不被压缩）
+        sheet.classList.add('is-bet-overlay');
+        sheet.style.height = `${hardCap}px`;
+        const natural = panel.getBoundingClientRect().height;
 
+        // ③ 放得下就还原，放不下才维持盖住播放器
         if (natural > avail + 0.5) {
-          // 弹窗本身贴底 + 写死高度，箱子就往上长盖住播放器；
-          // 里面的控制台照旧 max-height: 100%，跟着拿到完整高度
-          sheet.classList.add('is-bet-overlay');
           sheet.style.height = `${Math.min(natural, hardCap)}px`;
+        } else {
+          sheet.classList.remove('is-bet-overlay');
+          sheet.style.height = '';
         }
       });
     };
@@ -1248,7 +1253,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   };
 
   // Only Fast Three, Mark Six and Speed Race are playable for now
-  const playableCarouselGames = ['fast3', 'marksix', 'lhcday', 'speedrace', 'ffc', 'ffc2', 'lucky28', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
+  const playableCarouselGames = ['fast3', 'marksix', 'lhcday', 'speedrace', 'ffc', 'lucky28', 'animal', 'fishcrab', 'baccarat', 'candy', 'mahjong'];
 
   // Switch Watch & Play Carousel Game Selector
   const handleCarouselGameClick = (item) => {
@@ -1428,7 +1433,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     { key: 'lhcday', label: '澳门六合彩', img: '游戏图标/1070110.png' },
     { key: 'speedrace', label: '一分极速赛车', img: '游戏图标/1062010.png' },
     { key: 'ffc', label: '一分分分彩', img: '游戏图标/601010.png' },
-    { key: 'ffc2', label: '一分分分彩2', img: '游戏图标/601010.png' },
     { key: 'lucky28', label: '一分幸运28', img: '游戏图标/1069010.png' },
     { key: 'animal', label: '一分动物运动会', img: '游戏图标/1001-D6CpfLEz.png' },
     { key: 'fishcrab', label: '一分鱼虾蟹', img: '游戏图标/一分鱼虾蟹.png' },
@@ -2015,7 +2019,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setSelectedFFC(new Set());
   };
 
-  // ===== 一分分分彩2 (简易版) embedded gameplay =====
+  // ===== 一分分分彩「简易版」盘面 embedded gameplay =====
+  // 原本是独立游戏「一分分分彩2」，玩法已合併进一分分分彩，这套盘面成为它的简易版
+  //（ffcSimpleMode 为 true 时使用）。FFC2_* / selectedFFC2 等命名沿用旧名没有改，
+  // 轮播选单里已经没有 ffc2 这个游戏了。
   // 三个页签：万位(大小单双) / 龙虎(龙虎和) / 佰位(数字 0~9)
   const FFC2_TABS = [
     { cat: 'wan', label: '万位' },
@@ -2062,7 +2069,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       const [category, name] = key.split('|');
       return { name, odds: ffc2OddsOf(category, name), baseVal: currentBetPrice, category };
     });
-    openBetDetailsModal('ffc2', items);
+    // 一分分分彩2 已合併进一分分分彩（这套盘面现在是它的简易版），投注详情走 'ffc'
+    openBetDetailsModal('ffc', items);
     setSelectedFFC2(new Set());
   };
 
@@ -2225,8 +2233,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
       >
         <div
           style={{
-            width: '38px',
-            height: '38px',
+            // 点位区两行撑满时卡片只有 ~66px，圆圈原本 38px 会贴到卡片上缘，
+            // 缩到 34px 才留得住上下各 4px 以上
+            width: '34px',
+            height: '34px',
             borderRadius: '50%',
             border: `1px solid ${isSelected ? '#1e90ff' : '#cbd5e1'}`,
             display: 'flex',
@@ -2947,7 +2957,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               {m6SimpleMode ? '简' : '专'}
                             </span>
                           </div>
-                          <span>第 {isLhcDay ? lhcDayIssue : shortIssue(issue)} 期</span>
+                          <span>第 {shortIssue(isLhcDay ? lhcDayIssue : issue)} 期</span>
                         </div>
                         {renderDrawResultTrigger(isLhcDay ? 'lhcday' : 'marksix', isLhcDay ? lhcDayResult : m6Result)}
                       </div>
@@ -3877,170 +3887,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                           <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
                         </button>
                         <button className="console-submit-btn active" onClick={ffcSimpleMode ? handleFFC2Submit : handleFFCSubmit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
-                          提交下注
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : activeCarouselGame === 'ffc2' ? (
-                  // 一分分分彩2 (简易版) console —— 样式沿用一分极速赛车
-                  <div className="player-embedded-game-panel" style={{ position: 'relative', display: 'flex', zIndex: 1, flex: 1, minHeight: 0 }}>
-                    <div className="vp-bet-header">
-                      <div className="vp-bet-header-row1">
-                        <div className="vp-bet-title-box">
-                          <img src="arrow-left-right.png" className="vp-switch-game" onClick={() => setCarouselOpen(o => !o)} title="切换游戏" alt="切换游戏" />
-                          <span>一分分分彩2</span>
-                        </div>
-                        {renderCountdown()}
-                        <div className="vp-bet-header-right">
-                          <img src="text-search.png" className="vp-menu-icon" onClick={toggleDropdownMenu} title="菜单" alt="菜单" />
-                          <img src="x.png" className="vp-close-icon" onClick={handleBetHeaderClose} alt="关闭" />
-                        </div>
-                      </div>
-
-                      {menuOpen && (
-                        <div className="feg-dropdown open" style={{ display: 'block', top: '35px' }}>
-                          {['未结明细', '今日已结', '报表查询', '开奖历史', '活动规则'].map(opt => (
-                            <div
-                              key={opt}
-                              className="feg-dropdown-item"
-                              onClick={() => handleMenuDropdownItemClick(opt)}
-                            >
-                              {opt}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <div className="vp-bet-header-row2">
-                        <span>第 {shortIssue(issue)} 期</span>
-                        {renderDrawResultTrigger('ffc', ffcResult)}
-                      </div>
-
-                      {renderDrawHistoryPanel('ffc')}
-                    </div>
-
-                    <div className="embedded-game-body">
-                      {/* Play category tabs：万位 / 龙虎 / 佰位 */}
-                      <div className="live-play-tabs-row" style={{ backgroundColor: '#ffffff', padding: '6px 12px' }}>
-                        {FFC2_TABS.map(tab => (
-                          <div
-                            key={tab.cat}
-                            className={`live-play-tab ${ffc2ActiveTab === tab.cat ? 'active' : ''}`}
-                            onClick={() => setFfc2ActiveTab(tab.cat)}
-                          >
-                            {tab.label}
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="vp-odds-area" style={{ padding: '8px 12px' }}>
-                        {/* 万位：大 / 小 / 单 / 双 */}
-                        {ffc2ActiveTab === 'wan' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                            {['大', '小', '单', '双'].map(name => {
-                              const isSelected = selectedFFC2.has(`万位|${name}`);
-                              return (
-                                <div
-                                  key={name}
-                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
-                                  onClick={() => handleFFC2CardClick('万位', name)}
-                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
-                                >
-                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: FFC2_COLORS[name] }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: FFC2_COLORS[name] }}>1.97</div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-
-                        {/* 龙虎：龙 / 虎 / 和 */}
-                        {ffc2ActiveTab === 'dragon' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                            {['龙', '虎', '和'].map(name => {
-                              const isSelected = selectedFFC2.has(`龙虎|${name}`);
-                              return (
-                                <div
-                                  key={name}
-                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
-                                  onClick={() => handleFFC2CardClick('龙虎', name)}
-                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
-                                >
-                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', marginBottom: '2px', color: FFC2_COLORS[name] }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem', color: FFC2_COLORS[name] }}>{name === '和' ? '9.0' : '1.97'}</div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-
-                        {/* 佰位：数字 0 ~ 9 */}
-                        {ffc2ActiveTab === 'bai' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
-                            {Array.from({ length: 10 }, (_, i) => String(i)).map(name => {
-                              const isSelected = selectedFFC2.has(`佰位|${name}`);
-                              return (
-                                <div
-                                  key={name}
-                                  className={`live-odds-card ${isSelected ? 'selected' : ''}`}
-                                  onClick={() => handleFFC2CardClick('佰位', name)}
-                                  style={{ aspectRatio: '1 / 1', height: 'auto', padding: '0 4px' }}
-                                >
-                                  <div className="odds-card-name" style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '2px', color: '#1e293b' }}>{name}</div>
-                                  <div className="odds-card-val" style={{ fontSize: '0.7rem' }}>9.6</div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Embedded betting console */}
-                    <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
-                      <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
-                        <div className="info-balance-box">
-                          余额: <span className="console-balance-value">{balance.toFixed(2)}</span>
-                          <i className="fa-solid fa-rotate console-refresh-icon" onClick={handleRefreshBalance} style={{ marginLeft: '4px' }}></i>
-                        </div>
-                        <div className="info-selected-box">
-                          共 <span className="console-selected-value">{ffc2Count}</span> 注 &nbsp; 下注金额: <span className="console-selected-value">{ffc2TotalCost.toFixed(2)}</span>
-                        </div>
-                      </div>
-
-                      <div className="bet-console-action-row" style={{ gap: '6px' }}>
-                        <button className="console-edit-amount-btn" onClick={() => setEditQuickAmountsActive(true)}>
-                          <i className="fa-solid fa-pencil"></i>
-                        </button>
-                        <div className="quick-amounts-bar" style={{ gap: '4px' }}>
-                          {quickAmounts.map(val => (
-                            <div
-                              key={val}
-                              className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
-                              onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
-                            >
-                              {val}
-                            </div>
-                          ))}
-                        </div>
-                        <input
-                          type="number"
-                          className="manual-amount-input"
-                          placeholder="输入金额"
-                          value={manualAmount}
-                          onChange={(e) => setManualAmount(e.target.value)}
-                          onFocus={() => setManualFocused(true)}
-                          onBlur={() => setManualFocused(false)}
-                          style={{ height: '28px', fontSize: '0.7rem', width: '70px' }}
-                        />
-                      </div>
-
-                      <div className="bet-console-buttons-row">
-                        <button className="console-cancel-btn" onClick={handleFFC2Reset} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
-                          <i className="fa-solid fa-arrow-rotate-left"></i> 撤回
-                        </button>
-                        <button className="console-submit-btn active" onClick={handleFFC2Submit} style={{ padding: '6px 0', fontSize: '0.7rem' }}>
                           提交下注
                         </button>
                       </div>

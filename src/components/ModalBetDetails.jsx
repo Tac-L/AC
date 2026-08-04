@@ -35,8 +35,6 @@ export default function ModalBetDetails() {
     gameTitle = '一分动物运动会 投注详情';
   } else if (currentActiveGame === 'ffc') {
     gameTitle = '一分分分彩 投注详情';
-  } else if (currentActiveGame === 'ffc2') {
-    gameTitle = '一分分分彩2 投注详情';
   } else if (currentActiveGame === 'lucky28') {
     gameTitle = '一分幸运28 投注详情';
   } else if (currentActiveGame === 'sports_live') {
@@ -97,8 +95,6 @@ export default function ModalBetDetails() {
       gameName = '一分动物运动会';
     } else if (currentActiveGame === 'ffc') {
       gameName = '一分分分彩';
-    } else if (currentActiveGame === 'ffc2') {
-      gameName = '一分分分彩2';
     } else if (currentActiveGame === 'lucky28') {
       gameName = '一分幸运28';
     } else if (currentActiveGame === 'sports_live') {

@@ -4912,8 +4912,18 @@ input:checked + .slider:before {
      弹窗高 = 抬头 + 玩法页签 + 点位区(默认 160px) + 下注列
    弹窗最高只到容器顶（容器本身就从播放器下缘开始），所以永远遮不到播放器；
    一旦内容超过可用高度，只有点位区会被压缩（其余列都 flex-shrink: 0）。
-   用 :has(.vp-odds-area) 限定：Slot 类游戏画面没有点位区，仍旧铺满不受影响。
+
+   Slot 类游戏（糖果派对／麻将胡了2）画面没有点位区、高度没有内容可依据，
+   所以改吃固定的 --vp-bet-sheet-h，视觉上跟彩票的简易版弹窗一样高。
+   两者用 :has(.vp-odds-area, .vp-slot-stage) 一起纳入。
    ========================================================================== */
+
+/* Slot 弹窗的高度：比照彩票简易版弹窗（抬头 69 + 玩法页签 48.5 + 点位区 160
+   + 下注列 117.5 ≈ 395）。这几段都跟宽度无关，所以写成常数是准的；
+   若上面任一段的高度改了，这里要跟着调。 */
+:root {
+  --vp-bet-sheet-h: 395px;
+}
 
 /* 点位区：默认 160px，空间不够时优先压缩这里 */
 .vp-odds-area {
@@ -4929,15 +4939,23 @@ input:checked + .slider:before {
   height: var(--vp-odds-row-h) !important;
   min-height: 0 !important;
   aspect-ratio: auto !important;
+  /* 卡片里的图案／圆圈跟上下缘至少留 4px。
+     各游戏 inline 写的是 padding: 0 4px，所以要 !important 才盖得掉上下那两个 0；
+     padding-block 只动上下，左右保留各游戏自己的值。
+     注意这只是「内容放得下时」的保证 —— 图案本身的尺寸也要够小（见
+     .vp-fc-symbol-img 与 renderL28PNumCard），内容超过 content box 还是会挤掉留白。 */
+  padding-block: 4px !important;
 }
 
 /* 控制台靠底部对齐 */
-.vp-play-panel:has(.vp-odds-area) {
+.vp-play-panel:has(.vp-odds-area),
+.vp-play-panel:has(.vp-slot-stage) {
   justify-content: flex-end;
 }
 
 /* 高度改由内容决定（覆盖 JSX 上的 inline flex: 1，以及基底那条 height: 100%） */
-.player-embedded-game-panel:has(.vp-odds-area) {
+.player-embedded-game-panel:has(.vp-odds-area),
+.player-embedded-game-panel:has(.vp-slot-stage) {
   flex: 0 1 auto !important;
   height: auto;
   max-height: 100%;
@@ -4945,6 +4963,11 @@ input:checked + .slider:before {
   border-top-right-radius: 14px;
   overflow: hidden;
   box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.18);
+}
+
+/* Slot 没有内容可决定高度，直接吃固定值 */
+.player-embedded-game-panel:has(.vp-slot-stage) {
+  height: var(--vp-bet-sheet-h);
 }
 
 /* 抬头、玩法页签、下注列一律不压缩，压缩只发生在点位区。
@@ -11752,7 +11775,8 @@ body {
 /* 边看边玩：弹窗改成叠在简介上方的浮层（原本是简介的兄弟节点，会被简介挤掉高度，
    点位区拿不到 160px）。容器 .player-scroll-content 本身就从播放器下缘开始，
    所以弹窗最高只到播放器下缘，遮不到播放器；圆角阴影交给里面的控制台画。 */
-.vp-tab-content.vp-play-sheet:has(.vp-odds-area) {
+.vp-tab-content.vp-play-sheet:has(.vp-odds-area),
+.vp-tab-content.vp-play-sheet:has(.vp-slot-stage) {
   position: absolute;
   inset: 0;
   z-index: 20;
@@ -11763,7 +11787,8 @@ body {
   pointer-events: none;
 }
 
-.vp-tab-content.vp-play-sheet:has(.vp-odds-area) > * {
+.vp-tab-content.vp-play-sheet:has(.vp-odds-area) > *,
+.vp-tab-content.vp-play-sheet:has(.vp-slot-stage) > * {
   pointer-events: auto;
 }
 
@@ -11947,10 +11972,12 @@ body {
   line-height: 1;
 }
 
-/* 鱼虾蟹 图案（下注格 / 开奖结果）—— SVG 自带圆角，不再额外裁切以免切到四角 */
+/* 鱼虾蟹 图案（下注格 / 开奖结果）—— SVG 自带圆角，不再额外裁切以免切到四角。
+   点位区两行撑满时卡片只有 ~66px，图案原本 38px 会贴到卡片上缘，
+   缩到 32px 才留得住上下各 4px 以上 */
 .vp-fc-symbol-img {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 0;
   object-fit: contain;
   margin-bottom: 4px;
