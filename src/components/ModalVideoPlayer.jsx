@@ -29,9 +29,12 @@ const renderDiceOptionName = (name) => {
 };
 
 // 快三 二同号/三不同：三颗骰子「上一下二」金字塔排列
+// 这两个玩法有 20~30 个点位（10 行），点位区两行撑满后每张卡片只剩 65px、
+// 扣掉 padding-block 4px×2 与赔率列 18px 后金字塔只有 ~37px 可用；骰子放 22px
+// 会两层叠到 46px 而顶出卡片上下缘，所以缩到 17px（17×2 + 2 gap = 36px）。
 const renderDicePyramid = (name) => {
   const digits = name.split('');
-  const size = 22;
+  const size = 17;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
       <img src={`K3-ball/${digits[0]}.png`} alt={digits[0]} style={{ width: `${size}px`, height: `${size}px` }} />
@@ -2805,7 +2808,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               const isSelected = selectedF3P.has(`二同号|${name}`);
                               return (
                                 <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('二同号', name)} style={{ height: '96px', padding: '0 4px' }}>
-                                  <div style={{ marginBottom: '4px' }}>{renderDicePyramid(name)}</div>
+                                  <div style={{ marginBottom: '2px' }}>{renderDicePyramid(name)}</div>
                                   <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>69.12</div>
                                 </div>
                               );
@@ -2820,7 +2823,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               const isSelected = selectedF3P.has(`三不同|${name}`);
                               return (
                                 <div key={name} className={`live-odds-card ${isSelected ? 'selected' : ''}`} onClick={() => handleF3PCardClick('三不同', name)} style={{ height: '96px', padding: '0 4px' }}>
-                                  <div style={{ marginBottom: '4px' }}>{renderDicePyramid(name)}</div>
+                                  <div style={{ marginBottom: '2px' }}>{renderDicePyramid(name)}</div>
                                   <div className="odds-card-val" style={{ fontSize: '0.6rem' }}>35.28</div>
                                 </div>
                               );
