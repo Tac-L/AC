@@ -5,8 +5,9 @@ export default function PageSports() {
   const { 
     balance, 
     updateBalance, 
-    stagedSportsBets, 
+    stagedSportsBets,
     setStagedSportsBets,
+    stageSportsBet,
     activeSportsDrawerTab,
     setActiveSportsDrawerTab,
     parlayBetAmount,
@@ -336,13 +337,17 @@ export default function PageSports() {
     } else {
       let market = '独赢';
       let selection = '主胜';
+      // 盘口的哪一面：让球分主客、大小分大小，独赢不做互斥所以留空
+      let side = null;
 
       if (type.startsWith('handicap')) {
         market = '全场让球';
         selection = type === 'handicapHome' ? `${match.home} (${handicapText})` : `${match.away} (${handicapText})`;
+        side = type === 'handicapHome' ? 'home' : 'away';
       } else if (type.startsWith('ou')) {
         market = '全场大小';
         selection = handicapText;
+        side = type === 'ouOver' ? 'over' : 'under';
       } else {
         market = '全场独赢';
         selection = type === 'winHome' ? `${match.home}` : (type === 'winAway' ? `${match.away}` : '和局');
@@ -350,18 +355,19 @@ export default function PageSports() {
 
       const sportLabel = categories.find(c => c.id === match.sport)?.label || '体育';
 
-      const nextList = [...stagedSportsBets, {
+      // stageSportsBet 会挤掉同一场比赛、同一盘口的对立点位（大↔小、主↔客）
+      stageSportsBet({
         key,
         matchId: match.id,
         type,
+        side,
         selection,
         market,
         teams: `${match.home} V ${match.away}`,
         odds: parseFloat(oddsVal),
         amount: 10, // Default base amount is 10
         sport: sportLabel
-      }];
-      setStagedSportsBets(nextList);
+      });
       setSportsDrawerActive(true);
     }
   };

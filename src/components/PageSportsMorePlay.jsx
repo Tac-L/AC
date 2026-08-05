@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 export default function PageSportsMorePlay() {
-  const { 
-    stagedSportsBets, 
-    setStagedSportsBets, 
-    setSportsDrawerActive, 
-    setActiveSubGame, 
-    showToast 
+  const {
+    stagedSportsBets,
+    setStagedSportsBets,
+    stageSportsBet,
+    setSportsDrawerActive,
+    setActiveSubGame,
+    showToast
   } = useApp();
 
   const [activeTab, setActiveTab] = useState('betting'); // betting, data, red_order, anchor
@@ -25,6 +26,15 @@ export default function PageSportsMorePlay() {
     }));
   };
 
+  // 点位属于盘口的哪一面（大小／主客互斥用）：key 形如 mp_handicap_home_1、mp_ou_over_3
+  const sideOfOddsKey = (key) => {
+    if (key.includes('_home_')) return 'home';
+    if (key.includes('_away_')) return 'away';
+    if (key.includes('_over_')) return 'over';
+    if (key.includes('_under_')) return 'under';
+    return null;
+  };
+
   // Helper to click odds and sync with betting drawer
   const handleOddsClick = (key, selection, market, oddsVal) => {
     const isSelected = stagedSportsBets.some(item => item.key === key);
@@ -34,18 +44,19 @@ export default function PageSportsMorePlay() {
       if (nextList.length === 0) setSportsDrawerActive(false);
     } else {
       const sportLabel = '足球';
-      const nextList = [...stagedSportsBets, {
+      // stageSportsBet 会挤掉同盘口的对立点位（大↔小、主↔客）
+      stageSportsBet({
         key,
         matchId: '100', // Unique ID for this match
         type: key,
+        side: sideOfOddsKey(key),
         selection,
         market,
         teams: 'SC圣地亚哥市 VS 阿纳海姆',
         odds: parseFloat(oddsVal),
         amount: 10,
         sport: sportLabel
-      }];
-      setStagedSportsBets(nextList);
+      });
       setSportsDrawerActive(true);
     }
   };

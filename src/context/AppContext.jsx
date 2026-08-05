@@ -4,6 +4,9 @@ const AppContext = createContext();
 
 export const useApp = () => useContext(AppContext);
 
+// 体育注单里同一个盘口的对立面（点位互斥用）：大↔小、主↔客
+const SPORTS_OPPOSITE_SIDE = { over: 'under', under: 'over', home: 'away', away: 'home' };
+
 export const AppProvider = ({ children }) => {
   // 1. Core State
   const [balance, setBalance] = useState(1000.00);
@@ -60,6 +63,17 @@ export const AppProvider = ({ children }) => {
 
   // 4. Staged Sports Bets
   const [stagedSportsBets, setStagedSportsBets] = useState([]);
+  // 加一笔体育注单：同一场比赛的同一个盘口内，大↔小、主↔客 不能同时选，
+  // 选了新的就把对立面挤掉（体育页与更多玩法共用这张注单，所以写在这里）
+  const stageSportsBet = (bet) => {
+    const opposite = SPORTS_OPPOSITE_SIDE[bet.side];
+    setStagedSportsBets(prev => [
+      ...prev.filter(item => !(
+        opposite && item.matchId === bet.matchId && item.market === bet.market && item.side === opposite
+      )),
+      bet
+    ]);
+  };
   const [activeSportsDrawerTab, setActiveSportsDrawerTab] = useState('single');
   const [parlayBetAmount, setParlayBetAmount] = useState(10);
   const [sportsDrawerActive, setSportsDrawerActive] = useState(false);
@@ -310,6 +324,7 @@ export const AppProvider = ({ children }) => {
 
       stagedSportsBets,
       setStagedSportsBets,
+      stageSportsBet,
       
       activeSportsDrawerTab,
       setActiveSportsDrawerTab,
