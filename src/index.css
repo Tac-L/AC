@@ -1297,16 +1297,13 @@ body {
 }
 
 /* Betting drawer：嵌入视频游戏控制台的底部抽屉。
-   高度改由内容决定（点位区默认 160px），不再固定 56%，否则点位区拿不到 160；
-   仍用 max-height 压住，上方短剧画面不会被吃光。 */
+   高度由内容决定（点位区默认 160px），不再固定 56%，否则点位区拿不到 160。
+   跟直播间／视频不同：短剧上方是全屏直立影片，没有 16:9 播放器要让位，
+   所以不设「不能盖住播放器」那种上限 —— 只用整个短剧容器当天花板。
+   原本压了 max-height: 78%，会在矮萤幕上先把点位区挤扁、再被迫进覆盖模式，
+   而那个 78% 并没有要保护的东西，所以放开。 */
 .drama-betting-sheet {
   height: auto;
-  max-height: 78%;
-}
-
-/* 矮萤幕：78% 放不下「固定段 + 160px 点位区」时，由 layoutBetOverlay 挂上
-   is-bet-overlay，放行到整个短剧容器的高度（短剧本来就是抽屉盖在影片上） */
-.drama-betting-sheet.is-bet-overlay {
   max-height: 100%;
 }
 
@@ -2611,11 +2608,11 @@ input:checked + .slider:before {
   padding: 0;
 }
 
+/* 单关／串关页签：底色跟下方注单列表同一片浅灰，不再是白底加分隔线 */
 .sports-drawer-tabs {
   display: flex;
   height: 40px;
-  border-bottom: 1px solid #f1f2f6;
-  background-color: #ffffff;
+  background-color: #f5f6fa;
 }
 
 .sports-drawer-tab {
@@ -2880,49 +2877,44 @@ input:checked + .slider:before {
 
 .sports-drawer-footer-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+}
+
+/* 取消／确认投注：比照一般投注确认弹窗的底部按钮（.modal-action-btn） */
+.sports-drawer-cancel-btn,
+.sports-drawer-confirm-btn {
+  flex: 1;
+  height: 38px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .sports-drawer-cancel-btn {
-  flex: 1;
-  height: 36px;
+  background: #ffffff;
   border: 1px solid #1e90ff;
-  border-radius: 8px;
   color: #1e90ff;
-  background-color: #ffffff;
-  font-weight: bold;
-  font-size: 0.82rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
 }
 
-.sports-drawer-cancel-btn:active {
-  background-color: #f1f2f6;
+.sports-drawer-cancel-btn:hover {
+  background: rgba(30, 144, 255, 0.03);
 }
 
 .sports-drawer-confirm-btn {
-  flex: 1.5;
-  height: 36px;
+  background: linear-gradient(90deg, #70a1ff 0%, #1e90ff 100%);
   border: none;
-  border-radius: 8px;
   color: #ffffff;
-  background-color: #1e90ff;
-  font-weight: bold;
-  font-size: 0.82rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  box-shadow: 0 3px 8px rgba(30, 144, 255, 0.2);
 }
 
 .sports-drawer-confirm-btn:active {
-  background-color: #0077e6;
+  transform: scale(0.98);
 }
 
 /* Active style for odds buttons on the page */
@@ -10869,9 +10861,10 @@ body {
 .sports-drawer-tab.active::after {
   background-color: var(--color-primary) !important;
 }
+/* 注单卡纯白，靠列表区的浅灰底衬出层次（原本卡片也是浅灰，两者贴在一起看不出卡片） */
 .sports-drawer-bet-card {
-  background-color: #f8fafc !important;
-  border: 1px solid var(--border-color) !important;
+  background-color: #ffffff !important;
+  border: none !important;
 }
 .sports-drawer-card-option {
   color: var(--text-white) !important;
@@ -12415,6 +12408,9 @@ body {
   font-size: 0.72rem;
   color: #94a3b8;
 }
+
+/* 专业版选中点位的样式（蓝框＋右上角勾）与「体育」页更多玩法共用，
+   写在 .odds-option-btn.selected 那一段 */
 
 .vp-bet-header-right.is-compact {
   gap: 5px;
@@ -19587,6 +19583,7 @@ body {
 }
 
 .odds-option-btn {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19614,15 +19611,43 @@ body {
   background-color: #e4e7eb;
 }
 
-/* Odds active selection states */
+/* 选中点位（「体育」页更多玩法与直播间体育专业版共用）：
+   只加蓝色边框＋右上角蓝底白勾，底色与文字维持未选中的样子，不整块填蓝 */
 .odds-option-btn.selected {
-  background-color: #3b82f6 !important;
-  border-color: #2563eb !important;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  background-color: #f1f2f6 !important;
+  border-color: #3b82f6 !important;
+  box-shadow: none;
 }
 
-.odds-option-btn.selected .odds-option-label,
+.odds-option-btn.selected .odds-option-label {
+  color: #57606f !important;
+}
+
 .odds-option-btn.selected .odds-option-value {
-  color: #ffffff !important;
+  color: #2f3542 !important;
+}
+
+/* 徽章比照彩票点位（.live-odds-card.selected::after），只是换成蓝色系；
+   稍微溢出边角，靠盘口卡的内距吃掉溢出量 */
+.odds-option-btn.selected::after {
+  content: '\f00c'; /* FontAwesome check */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
+  font-size: 0.52rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 

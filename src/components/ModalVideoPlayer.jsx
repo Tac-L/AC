@@ -383,6 +383,16 @@ const SPORTS_PRO_MARKETS = [
   }
 ];
 
+// 点位属于盘口的哪一面（互斥判断用）：名称有「大 3」「主队 -1」这类前缀
+const spSideOf = (name) => {
+  if (name.includes('大')) return 'over';
+  if (name.includes('小')) return 'under';
+  if (name.includes('主')) return 'home';
+  if (name.includes('客')) return 'away';
+  return null;
+};
+const SP_OPPOSITE_SIDE = { over: 'under', under: 'over', home: 'away', away: 'home' };
+
 // ===== 历史开奖：各游戏共用的开奖号产生器（纯前端 mock）=====
 // 有历史开奖记录的分钟彩（澳门六合彩每天一开，另外处理）
 const DRAW_HISTORY_GAMES = ['fast3', 'marksix', 'speedrace', 'ffc', 'lucky28', 'fishcrab', 'baccarat', 'animal'];
@@ -721,14 +731,30 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
         //    读 clientHeight 会强制同步重排，所以拿到的是真实值、不是自己写进去的。
         sheet.classList.remove('is-bet-overlay');
         sheet.style.height = '';
+        sheet.style.maxHeight = '';
         const avail = sheet.clientHeight;
 
-        // ② 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px、不被压缩）
+        // ② 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px、不被压缩）。
+        //    maxHeight 也要暂时解除 —— 短剧抽屉的 max-height: 100% 会把量测值
+        //    夹在容器高度以内，量不到真正的自然高度。
         sheet.classList.add('is-bet-overlay');
+        sheet.style.maxHeight = 'none';
         sheet.style.height = `${hardCap}px`;
         const natural = panel.getBoundingClientRect().height;
+        sheet.style.maxHeight = '';
 
-        // ③ 放得下就还原，放不下才维持盖住播放器
+        // ③-a 短剧：上方是全屏直立影片，没有 16:9 播放器要让位，所以不需要
+        //     「盖住播放器」这个概念，高度直接取「自然高 vs 短剧容器高」的较小值。
+        //     一定要写成明确的 px：抽屉如果停在 height: auto，内部那串 height: 100%
+        //     解析不出来（百分比对不上不确定的高度），面板就不受约束，
+        //     容器不够高时送出列会溢出被裁掉，而不是压缩点位区。
+        if (sheet.classList.contains('drama-betting-sheet')) {
+          sheet.classList.remove('is-bet-overlay');
+          sheet.style.height = `${Math.min(natural, sheet.parentElement.clientHeight)}px`;
+          return;
+        }
+
+        // ③-b 直播间／视频：放得下就还原，放不下才维持盖住播放器
         if (natural > avail + 0.5) {
           sheet.style.height = `${Math.min(natural, hardCap)}px`;
         } else {
@@ -2452,10 +2478,23 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const spProMarkets = SPORTS_PRO_MARKETS.filter(m => m.filters.includes(spProFilter));
   const toggleSpSection = (key) => setSpExpanded(prev => ({ ...prev, [key]: !prev[key] }));
 
+  // 同一盘口内的对立面不能同时选：大↔小、主↔客（简易版与专业版都套用）
   const handleSpBetClick = (category, name) => {
     const key = `${category}|${name}`;
     const next = new Set(selectedSp);
-    next.has(key) ? next.delete(key) : next.add(key);
+    if (next.has(key)) {
+      next.delete(key);
+    } else {
+      const opposite = SP_OPPOSITE_SIDE[spSideOf(name)];
+      // 只清掉同一盘口（category）里的对立点位，其他盘口的选择不受影响
+      if (opposite) {
+        next.forEach(k => {
+          const [cat, n] = k.split('|');
+          if (cat === category && spSideOf(n) === opposite) next.delete(k);
+        });
+      }
+      next.add(key);
+    }
     setSelectedSp(next);
   };
   const handleSpCardClick = (name) => handleSpBetClick(spCurrentTab.label, name);
