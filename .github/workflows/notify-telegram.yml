@@ -1,0 +1,80 @@
+name: Notify Telegram on Push
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram notification
+        uses: actions/github-script@v7
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        with:
+          script: |
+            const token = process.env.TELEGRAM_BOT_TOKEN;
+            const chatId = process.env.TELEGRAM_CHAT_ID;
+            if (!token || !chatId) {
+              core.warning('缺少 TELEGRAM_BOT_TOKEN 或 TELEGRAM_CHAT_ID secret，略過通知');
+              return;
+            }
+
+            const p = context.payload;
+            if (p.deleted) {
+              core.info('分支已刪除，略過通知');
+              return;
+            }
+
+            // Telegram HTML parse_mode 只需轉義這三個字元，
+            // 這樣 commit 訊息裡的 <div>、& 才不會被當成標籤而整則發送失敗
+            const esc = (s) => String(s ?? '')
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+            const branch = context.ref.replace(/^refs\/heads\//, '');
+            const pusher = p.pusher?.name || context.actor;
+            const commits = p.commits?.length ? p.commits : (p.head_commit ? [p.head_commit] : []);
+
+            // 只取每筆 commit 的第一行標題，最多列 10 筆避免超過 4096 字元上限
+            const MAX = 10;
+            const titles = commits.slice(0, MAX).map((c) => c.message.split('\n')[0]);
+            let messageBlock = titles.length
+              ? titles.map((t) => esc(t)).join('\n')
+              : '（無 commit 資訊）';
+            if (commits.length > MAX) {
+              messageBlock += `\n… 另有 ${commits.length - MAX} 筆`;
+            }
+
+            const url = p.compare || p.head_commit?.url || `https://github.com/${repo}`;
+
+            const text = [
+              `<b>${esc('<檔案更新通知>')}</b>`,
+              '',
+              `儲存庫：${esc(repo)}（${esc(branch)}）`,
+              `更新者：${esc(pusher)}`,
+              `提交訊息：${messageBlock}`,
+              '',
+              `<a href="${url}">點此查看 Commit 變更</a>`,
+            ].join('\n');
+
+            const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text,
+                parse_mode: 'HTML',
+                disable_web_page_preview: true,
+              }),
+            });
+
+            if (!res.ok) {
+              const body = await res.text();
+              core.setFailed(`Telegram API 回傳 ${res.status}: ${body}`);
+            }
