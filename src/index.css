@@ -4964,10 +4964,16 @@ input:checked + .slider:before {
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
   overflow: hidden;
-  /* 原本这里有一道 box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.18)。
-     20px 的模糊会绕过上缘两个圆角往侧边糊开，糊在白底上就成了抬头两侧
-     两块「莫名的灰」（视频「边看边玩」最明显，直播／短剧同一条规则也有）。
-     圆角要留，所以直接不打这道阴影。 */
+  /* 上缘的浮起感：box-shadow 本来就会跟着 border-radius 走、并且由内往外渐淡，
+     所以不另外拿伪元素做。原本的 0 -6px 20px 问题在于没收 spread，20px 的模糊
+     绕过两个圆角往侧边糊开一大片，在白底上就成了抬头两侧两块「莫名的灰」。
+     面板是满宽、又贴着页面的，侧边那点阴影没有「浮起」的语意，落在白底上只会
+     像角落多一块灰暈。
+     所以分工：上缘那道分界改用 border-top 的发丝线来画 —— 它精准跟着 14px 圆角
+     走、完全不外溢；阴影只负责浮起感，spread 收成 -(blur/2) 让侧边溢出刚好为 0，
+     只从上缘透出约 8px。（inset 阴影画不了这条线，会被白色抬头盖掉。） */
+  border-top: 1px solid rgba(15, 23, 42, 0.10);
+  box-shadow: 0 -8px 16px -8px rgba(15, 23, 42, 0.22);
 }
 
 /* Slot 没有内容可决定高度，直接吃固定值 */
