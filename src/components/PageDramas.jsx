@@ -730,9 +730,9 @@ export default function PageDramas() {
           </form>
         </div>
 
-        {/* Betting Backdrop Overlay */}
-        <div 
-          className={`drama-comments-backdrop ${betPanelOpen ? 'open' : ''}`} 
+        {/* Betting Backdrop Overlay：只当「点外面关闭」的判定区，不压暗画面 */}
+        <div
+          className={`drama-comments-backdrop drama-betting-backdrop ${betPanelOpen ? 'open' : ''}`}
           onClick={() => setBetPanelOpen(false)}
         />
 

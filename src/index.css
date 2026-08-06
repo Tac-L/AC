@@ -1275,6 +1275,13 @@ body {
   pointer-events: auto;
 }
 
+/* 投注抽屉的遮罩不压暗画面：抽屉上缘是 16px 圆角，圆角外侧会露出遮罩，
+   那层平铺的半透明黑就变成抬头两侧的两块灰。这里只留点击关闭的判定区，
+   圆角外侧改成直接透出影片，圆角本身保留。 */
+.drama-betting-backdrop {
+  background-color: transparent;
+}
+
 .drama-comments-sheet {
   position: absolute;
   bottom: 0;
@@ -4957,7 +4964,10 @@ input:checked + .slider:before {
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.18);
+  /* 原本这里有一道 box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.18)。
+     20px 的模糊会绕过上缘两个圆角往侧边糊开，糊在白底上就成了抬头两侧
+     两块「莫名的灰」（视频「边看边玩」最明显，直播／短剧同一条规则也有）。
+     圆角要留，所以直接不打这道阴影。 */
 }
 
 /* Slot 没有内容可决定高度，直接吃固定值 */
