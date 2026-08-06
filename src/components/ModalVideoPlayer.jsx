@@ -3862,7 +3862,8 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                         {/* 前中后：「龙虎和」的 龙/虎/和，或前三/中三/后三的 豹子/顺子/对子/杂六 */}
                         {ffcActiveTab === 'position' && (
-                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                          // 点位数依玩法而异（龙虎和 3 个、前/中/后三 4 个），栏数跟着点位数走才能均分整行宽度
+                          <div className="live-betting-options-grid" style={{ gridTemplateColumns: `repeat(${(ffcActivePos === 'dragon' ? FFC_DRAGON_BETS : FFC_POSITION_BETS).length}, 1fr)`, gap: '8px' }}>
                             {(ffcActivePos === 'dragon' ? FFC_DRAGON_BETS : FFC_POSITION_BETS).map(bet => {
                               const isSelected = selectedFFC.has(`${ffcActiveSection}|${bet.name}`);
                               return (
