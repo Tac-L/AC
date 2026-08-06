@@ -4917,7 +4917,10 @@ input:checked + .slider:before {
   --vp-bet-sheet-h: 395px;
 }
 
-/* 点位区：默认 160px，空间不够时优先压缩这里 */
+/* 点位区：一律 160px，不压缩。
+   flex-shrink 仍留 1 当最后的安全阀 —— 只有「整个 app 可视区都放不下弹窗」这种
+   极端情况才会真的压到它，否则不可压缩的各列会溢出、送出列被裁掉（宁可矮也要
+   点得到送出）。正常情况 layoutBetOverlay 会把弹窗撑到自然高度，压不到这里。 */
 .vp-odds-area {
   flex: 0 1 160px;
   min-height: 0;

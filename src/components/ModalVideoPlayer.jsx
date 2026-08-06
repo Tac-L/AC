@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 
-// 点位区的预设高度，必须跟 index.css 里 .vp-odds-area 的 flex-basis 一致。
-// layoutBetOverlay 用它算「弹窗不被压缩时该有多高」。
-const ODDS_AREA_BASE = 160;
+// 点位区的高度（160px）写在 index.css 的 .vp-odds-area 上，JS 只量测、不持有
+// 高度常数，避免两边数字不同步。
 
 // 抬头的期号一律只显示末 5 码：内部期号是 202606041276 这种长格式，抬头列塞不下。
 // 日彩（每天一期、期号本身是当天日期）也照同一规则截，不另外例外。
@@ -710,57 +709,49 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // 用 useLayoutEffect 而非 useEffect：要在浏览器 paint 前就把行高写好，
   // 否则切换玩法时会先画一帧旧行高再跳到新行高。
   useLayoutEffect(() => {
-    // 第一趟：决定弹窗要不要往上盖住播放器。
-    // 播放器下方的空间放不下「固定段 + 160px 点位区」时，就让弹窗脱离播放器的范围
-    // 往上长，点位区才不会被挤扁。不用固定的萤幕尺寸门槛，直接量当下的实际高度
-    // —— 各游戏抬头列数不同（体育房 41px、彩票 69px），门槛本来就不一样。
+    // 第一趟：把弹窗撑到自然高度（点位区一律完整 160px，不压缩）。
+    // 需求是「统一 160、不压缩，也不管有没有遮到播放器」，所以不再比较
+    // 播放器下方剩多少空间 —— 一律让弹窗脱离那个范围往上长，需要就盖住播放器。
+    //
+    // 自然高度不自己推算，用「先给足空间、量出来」的方式：中间层
+    //（.embedded-game-body）自己也有 overflow: hidden，靠相减推算固定段会漏掉
+    // 被它裁掉的部分（快三的下注列就在里面），量出来最可靠。
     const layoutBetOverlay = () => {
       const appBody = document.querySelector('.app-body');
       const hardCap = appBody ? appBody.clientHeight : window.innerHeight;
 
-      // 彩票／体育的高度由内容决定（点位区 160px），Slot 类吃 CSS 的 --vp-bet-sheet-h。
-      // 两者都不自己推算，统一用「先给足空间、量出来」的方式：
-      // 中间层（.embedded-game-body）自己也有 overflow: hidden，靠相减推算固定段
-      // 会漏掉被它裁掉的部分（快三的下注列就在里面），量出来最可靠。
       document.querySelectorAll('.player-embedded-game-panel').forEach(panel => {
         const sheet = panel.closest('.live-bet-sheet, .vp-play-sheet, .drama-betting-sheet');
         const hasBoard = !!panel.querySelector('.vp-odds-area, .vp-slot-stage');
         if (!sheet || !hasBoard) return;
 
-        // ① 先清掉上一轮的结果，量「不盖住播放器」时的可用空间。
-        //    读 clientHeight 会强制同步重排，所以拿到的是真实值、不是自己写进去的。
-        sheet.classList.remove('is-bet-overlay');
-        sheet.style.height = '';
-        sheet.style.maxHeight = '';
-        const avail = sheet.clientHeight;
-
-        // ② 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px、不被压缩）。
+        // ① 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px）。
         //    maxHeight 也要暂时解除 —— 短剧抽屉的 max-height: 100% 会把量测值
         //    夹在容器高度以内，量不到真正的自然高度。
+        //    量高度一律用 offsetHeight，不要用 getBoundingClientRect()：
+        //    .app-page 的进场动画（tabFadeIn）会短暂套上 transform: scale(0.98)，
+        //    rect 拿到的是缩放后的视觉尺寸，而 style.height 写进去的是版面尺寸 ——
+        //    混用会让写回去的高度少 2%，弹窗永远被压缩一点。
         sheet.classList.add('is-bet-overlay');
         sheet.style.maxHeight = 'none';
         sheet.style.height = `${hardCap}px`;
-        const natural = panel.getBoundingClientRect().height;
+        const natural = panel.offsetHeight;
         sheet.style.maxHeight = '';
 
-        // ③-a 短剧：上方是全屏直立影片，没有 16:9 播放器要让位，所以不需要
-        //     「盖住播放器」这个概念，高度直接取「自然高 vs 短剧容器高」的较小值。
-        //     一定要写成明确的 px：抽屉如果停在 height: auto，内部那串 height: 100%
-        //     解析不出来（百分比对不上不确定的高度），面板就不受约束，
-        //     容器不够高时送出列会溢出被裁掉，而不是压缩点位区。
-        if (sheet.classList.contains('drama-betting-sheet')) {
-          sheet.classList.remove('is-bet-overlay');
-          sheet.style.height = `${Math.min(natural, sheet.parentElement.clientHeight)}px`;
-          return;
-        }
+        // ② 写回自然高度。天花板：
+        //    短剧的抽屉不能超出短剧容器（会盖掉页面抬头／底部导览），
+        //    直播间／视频则可以一路盖到 app 可视区顶端。
+        //    一定要写成明确的 px：弹窗如果停在 height: auto，内部那串 height: 100%
+        //    解析不出来（百分比对不上不确定的高度），面板就不受约束，
+        //    空间真的不够时送出列会溢出被裁掉，而不是压缩点位区。
+        const isDrama = sheet.classList.contains('drama-betting-sheet');
+        const ceiling = isDrama ? sheet.parentElement.clientHeight : hardCap;
+        sheet.style.height = `${Math.min(natural, ceiling)}px`;
 
-        // ③-b 直播间／视频：放得下就还原，放不下才维持盖住播放器
-        if (natural > avail + 0.5) {
-          sheet.style.height = `${Math.min(natural, hardCap)}px`;
-        } else {
-          sheet.classList.remove('is-bet-overlay');
-          sheet.style.height = '';
-        }
+        // is-bet-overlay 只用来让直播间／视频的弹窗脱离容器往上长（top: auto +
+        // 放开祖先的 overflow）。短剧本来就不受播放器限制、没有对应样式，
+        // 量完就把它拿掉，不留没有意义的状态。
+        if (isDrama) sheet.classList.remove('is-bet-overlay');
       });
     };
 
