@@ -86,21 +86,30 @@ export default function PhoneContainer({ children }) {
 
 // 模拟真手机浏览器上下的 chrome（合称 mock chrome），由上到下四条：
 //   系统列 47px + 网址列 48px + [app 本体] + 底部工具列 44px + home indicator 34px
-// 共 173px，让本机预览剩下的中间高度贴近真机（iPhone 13/14 Safari 实测约 663px，
-// 这里 844 - 173 = 671px）。每个数字都是 iOS 的实际尺寸：47px = 刘海机 safe-area-inset-top，
+// 共 173px。每个数字都是 iOS 的实际尺寸：47px = 刘海机 safe-area-inset-top，
 // 34px = safe-area-inset-bottom，44px = Safari 底部工具列。
+// 补上这四条，PC 上缩成手机宽度时剩下的中间高度才贴近真机
+//（iPhone X 812 - 173 = 639px，Safari 实测可用高度约 635px）。
 //
-// 这四条只给「PC 上把浏览器缩成手机尺寸」的本机预览用，绝不能出现在真手机上
-// —— 真手机开的是 build 后部署的版本（import.meta.env.DEV 为 false），
-// 而 dev server 没开 --host，只有本机连得到。
+// 判定只看「这台是不是真手机」，跟 dev／正式、本机／内网都无关：
+//   PC（有滑鼠）→ 挂上，补出真机被浏览器 UI 吃掉的那段空间；
+//   真手机 → 不挂，手机自己的系统列／网址列就是真的，再画一套会变成两层。
+// 不用 user agent 判断 —— 那串在各家浏览器和模拟器上早就不可靠，
+// 改看指标类型：桌机滑鼠是 fine + hover，触控装置是 coarse。
+//
+// 已知限制：DevTools 的装置模拟（iPhone 12 Pro 那种）会把 pointer／hover／user agent／
+// screen 一起伪装成真手机，所以「PC + DevTools 手机模式」会被判成真手机、看不到这四条。
+// 那是刻意取舍 —— 从 JS 分不出它和真手机（试过 outerWidth／screen，都被覆盖或不可靠）。
+// 要在 DevTools 手机模式下看，网址加 ?mock=1；要在真手机上关掉，加 ?mock=0。
+// PC 上直接把浏览器视窗拖窄到 ≤500px 则不受影响，照样看得到。
+//
 // 显示条件还要再叠一层：index.css 里的 Responsive Real Mobile Viewport Override
 // （≤500px）才会把它们从 display:none 打开。
-// 需要临时开/关可加 ?mock=1 / ?mock=0。
 const SHOW_MOCK_PHONE_CHROME = (() => {
   const flag = new URLSearchParams(window.location.search).get('mock');
   if (flag === '1') return true;
   if (flag === '0') return false;
-  return import.meta.env.DEV;
+  return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 })();
 
 // 模拟手机系统列：左边时间（沿用 context 里每 30 秒更新的 systemTime），右边讯号/wifi/电量

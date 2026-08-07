@@ -323,7 +323,8 @@ body {
 }
 
 /* 模拟真手机浏览器上下 chrome（系统列 / 网址列 / 底部工具列 / home indicator）：
-   桌机预览时不显示，只在 Responsive Real Mobile Viewport Override（≤500px）里开启并占位 */
+   桌机宽萤幕不显示，只在 Responsive Real Mobile Viewport Override（≤500px）里开启并占位。
+   要不要挂上则由 JSX 的 SHOW_MOCK_PHONE_CHROME 决定（真手机不挂，PC 一律挂）。 */
 .mobile-status-bar,
 .mobile-url-bar,
 .mobile-bottom-chrome {
