@@ -9,6 +9,153 @@ import { useApp } from '../context/AppContext';
 // 新增游戏时抬头请一律用这个函式，不要各自 slice。
 const shortIssue = (issue) => String(issue).slice(-5);
 
+/* ==========================================================================
+   投注面板内的报表（未结明细／今日已结／报表查询）
+   --------------------------------------------------------------------------
+   满版页面那套「一张卡 8 行『标签：值』」在这里读不动：投注面板高度只有 ~395px，
+   扣掉抬头／筛选／汇总后列表只剩 ~280px，一张卡就吃掉一半，一次看不到两笔，
+   而且 8 个字段一律同字级、同灰度，眼睛得逐行来回找重点。
+
+   所以面板版改成「两行一列 + 点开看细节」：
+     第一行 = 真正要看的（玩法、金额／盈亏），字大、右侧对齐、带语意色；
+     第二行 = 定位用的灰字（游戏·期号·时间）＋一个状态；
+     其余字段（注单号、赔率、退水、结算金额）收进展开层，要看才点开。
+   一列 52px，同样的 280px 能一次看到 5 笔多，比满版卡片多 3 倍。
+
+   报表查询的每一行都是同构数字（注数／金额／退水／结果），卡片反而难比较，
+   所以那一页改成真的表格：固定表头 + 右对齐数字栏，上下扫一眼就能比大小。
+
+   资料是纯前端 mock。本组件每秒因倒计时重渲染，所以不能用 Math.random（数字会
+   每秒乱跳），一律走下面这组「给种子就得同一个值」的确定性伪随机。
+   ========================================================================== */
+
+// 各游戏的玩法样本：报表列第一行显示玩法，各游戏叫法不同，这里各给一组。
+const REPORT_PLAYS = {
+  fast3: ['大', '小', '单', '双', '和值10', '豹子'],
+  marksix: ['特码 08', '红波', '特码大', '合数单'],
+  lhcday: ['特码 23', '蓝波', '特码小', '合数双'],
+  speedrace: ['冠军 单', '冠军 大', '亚军 5', '冠亚和 大'],
+  ffc: ['第一球 大', '第二球 单', '总和 大', '龙虎 龙'],
+  lucky28: ['大', '小', '单', '双', '极大'],
+  fishcrab: ['鱼', '虾', '蟹', '葫芦'],
+  baccarat: ['庄', '闲', '和', '幸运6'],
+  animal: ['兔', '狮', '象', '熊猫']
+};
+
+const REPORT_GAME_LABELS = {
+  fast3: '一分快三',
+  marksix: '一分澳门六合彩',
+  lhcday: '澳门六合彩',
+  speedrace: '一分极速赛车',
+  ffc: '一分分分彩',
+  lucky28: '一分幸运28',
+  fishcrab: '一分鱼虾蟹',
+  baccarat: '百家乐A1',
+  animal: '一分动物运动会'
+};
+
+// 确定性伪随机：同一个 seed 永远得到同一个 0~1
+const reportRand = (seed) => {
+  const x = Math.sin(seed * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+};
+// 玩法用轮替而不是伪随机取：随机常常连出两笔一样的玩法，列表看起来像坏掉。
+// 步长取 7 —— 各游戏的玩法数是 4/5/6，7 跟三者都互质，走完一轮才会重复。
+const reportPickBy = (arr, i) => arr[(i * 7 + 1) % arr.length];
+const reportInt = (seed, min, max) => min + Math.floor(reportRand(seed) * (max - min + 1));
+const pad2 = (n) => String(n).padStart(2, '0');
+const reportMoney = (n) => (Math.round(n * 100) / 100).toFixed(2);
+
+// 注单号：满版页面显示 20 码，面板里只在展开层完整给出，列上不占位
+const reportOrderNo = (seed) => {
+  let s = '2064';
+  for (let i = 0; i < 16; i++) s += String(Math.floor(reportRand(seed + i * 3.7) * 10));
+  return s;
+};
+
+// 打开报表那一刻算一份快照（不跟着每秒重渲染变动）。
+// 未结／已结都混进 1~2 个别的游戏，「全部游戏」这个筛选才有意义。
+const buildReportData = (gameKey, issue) => {
+  const others = Object.keys(REPORT_PLAYS).filter(k => k !== gameKey);
+  const gameOf = (i) => (i % 3 === 2 ? others[i % others.length] : gameKey);
+  const baseIssue = Number(String(issue).slice(-6)) || 1274;
+  // 列上只显示末 5 码（塞不下），开奖结果弹窗要给完整期号，所以两个都留着
+  const issuePrefix = String(issue).slice(0, -6);
+  const fullPeriod = (p) => `${issuePrefix}${String(p).padStart(6, '0')}`;
+
+  const unsettled = Array.from({ length: 7 }, (_, i) => {
+    const g = gameOf(i);
+    const seed = baseIssue + i * 37;
+    const amount = [10, 10, 20, 50][i % 4];
+    const rebateRate = [0, 0.8, 1.2][i % 3];
+    return {
+      id: `u${i}`,
+      game: g,
+      gameLabel: REPORT_GAME_LABELS[g] || g,
+      // 未结＝当期与前几期还没开奖的注单，期号不能超过当期
+      period: baseIssue - i,
+      play: reportPickBy(REPORT_PLAYS[g] || ['大'], i),
+      odds: reportMoney(1.8 + reportRand(seed + 5) * 8),
+      amount,
+      rebateRate,
+      rebate: (amount * rebateRate) / 100,
+      time: `${pad2(reportInt(seed + 11, 9, 18))}:${pad2(reportInt(seed + 12, 0, 59))}:${pad2(reportInt(seed + 13, 0, 59))}`,
+      orderNo: reportOrderNo(seed)
+    };
+  });
+
+  const settled = Array.from({ length: 6 }, (_, i) => {
+    const g = gameOf(i);
+    const seed = baseIssue * 2 + i * 53;
+    const amount = [10, 20, 10, 50, 10, 20][i];
+    // 中奖率写死成 6 中 2：交给伪随机的话常常连中五把，报表看起来假
+    const won = i % 3 === 2;
+    const odds = reportMoney(1.8 + reportRand(seed + 5) * 4);
+    const profit = won ? amount * Number(odds) - amount : -amount;
+    return {
+      id: `s${i}`,
+      game: g,
+      gameLabel: REPORT_GAME_LABELS[g] || g,
+      period: baseIssue - 7 - i,
+      fullPeriod: fullPeriod(baseIssue - 7 - i),
+      // 该期的开奖号，「开奖结果」弹窗直接拿这份（跟着快照走，不会每次点开都变）
+      draw: randomDrawResult(g),
+      play: reportPickBy(REPORT_PLAYS[g] || ['大'], i),
+      odds,
+      amount,
+      won,
+      profit,
+      rebate: Math.round(amount * 0.8) / 100,
+      settleAmount: won ? amount * Number(odds) : 0,
+      time: `${pad2(reportInt(seed + 11, 6, 16))}:${pad2(reportInt(seed + 12, 0, 59))}:${pad2(reportInt(seed + 13, 0, 59))}`,
+      orderNo: reportOrderNo(seed)
+    };
+  });
+
+  // 报表查询：本周／上周各 7 天（日期从今天往前推）
+  const buildDaily = (weekOffset) => Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(Date.now() - (i + weekOffset * 7) * 86400000);
+    const seed = d.getDate() + weekOffset * 100 + baseIssue;
+    const bets = reportInt(seed, 0, 24);
+    const amount = bets * 10;
+    const rebate = Math.round(amount * 0.8) / 100;
+    const profit = bets === 0 ? 0 : Math.round((reportRand(seed + 3) * 2 - 0.9) * amount);
+    return {
+      id: `d${weekOffset}-${i}`,
+      date: `${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`,
+      weekday: '日一二三四五六'[d.getDay()],
+      period: 2026218 - i - weekOffset * 7,
+      bets,
+      amount,
+      rebate,
+      profit,
+      result: profit + rebate
+    };
+  });
+
+  return { unsettled, settled, daily: { 0: buildDaily(0), 1: buildDaily(1) } };
+};
+
 // 快三点位：用 public/K3-ball/{1-6}.png 骰子图渲染点数（单/对/豹子按数量调整大小）
 const renderDiceOptionName = (name) => {
   if (/^\d+$/.test(name)) {
@@ -472,6 +619,14 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [issue, setIssue] = useState(202606041274);
   const [lastDice, setLastDice] = useState(INITIAL_DRAW.fast3);
   const [analysis, setAnalysis] = useState({ sum: 10, size: '小', oe: '双' });
+  // 抬头菜单里的三张报表：盖在投注面板上的整块阅读层（见档头 buildReportData 的说明）
+  const [reportTab, setReportTab] = useState(null);      // null | 'unsettled' | 'settled' | 'query'
+  const [reportData, setReportData] = useState(null);    // 打开那一刻的资料快照
+  const [reportOpenRows, setReportOpenRows] = useState(new Set()); // 展开看细节的列
+  const [reportGame, setReportGame] = useState('all');   // 'all' | 游戏 key
+  const [reportGameOpen, setReportGameOpen] = useState(false);
+  const [reportWeek, setReportWeek] = useState(0);       // 报表查询：0 本周 / 1 上周
+  const [reportDraw, setReportDraw] = useState(null);    // 「开奖结果」弹窗看的那一笔已结注单
   // 各彩票游戏的历史开奖记录（点抬头开奖结果区展开的弹窗；纯前端 mock）
   const [drawHistoryOpen, setDrawHistoryOpen] = useState(false);
   const [drawHistory, setDrawHistory] = useState(() => {
@@ -701,6 +856,9 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
   useEffect(() => { setSelectedSp(new Set()); }, [spActiveTab, spSimpleMode]);
 
+  // 切游戏时关掉报表：资料是打开当下按游戏产的快照，留着会跟抬头对不上
+  useEffect(() => { setReportTab(null); setReportGameOpen(false); setReportDraw(null); }, [activeCarouselGame]);
+
   // 点位区行高（简易版／专业版都套用）：玩法只有一行点位时，该行撑满整个点位区；
   // 超过一行时改用两行撑满（第三行以后照旧滚动）。
   // 各游戏的栏数与间距都写在 inline style 里、彼此不一致，
@@ -724,6 +882,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
         const sheet = panel.closest('.live-bet-sheet, .vp-play-sheet, .drama-betting-sheet');
         const hasBoard = !!panel.querySelector('.vp-odds-area, .vp-slot-stage');
         if (!sheet || !hasBoard) return;
+
+        // 报表层盖在面板上时不重量：下面①那步会先把 sheet 撑到 hardCap 再收回，
+        // 一撑一收之间报表列表不再溢出，浏览器就把它的 scrollTop 夹成 0 ——
+        // 本组件每秒重渲染，等于每秒把用户滚到一半的列表弹回顶端。
+        // 此时面板内容没变、高度也早就写好了，本来就不需要重量。
+        if (sheet.querySelector('.vp-report-sheet')) return;
 
         // ① 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px）。
         //    maxHeight 也要暂时解除 —— 短剧抽屉的 max-height: 100% 会把量测值
@@ -1085,6 +1249,258 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
           </div>
         </div>
       </>
+    );
+  };
+
+  /* ------------------------------------------------------------------------
+     报表层：盖住整个投注面板的阅读层（未结明细／今日已结／报表查询）
+     版面固定三段，只有列表会滚：
+       抬头（三页签互切，不必回菜单） 40px
+       筛选列（游戏 / 周次）          32px
+       汇总条（2~3 个大数字）         40px
+       列表 ← 唯一的滚动区
+     ---------------------------------------------------------------------- */
+  const toggleReportRow = (id) => {
+    setReportOpenRows(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const renderReportKv = (label, value, cls = '', full = false) => (
+    <div className={`vp-rp-kv ${full ? 'full' : ''}`}>
+      <span>{label}</span>
+      <b className={cls}>{value}</b>
+    </div>
+  );
+
+  const renderReportSheet = () => {
+    if (!reportTab || !reportData) return null;
+
+    const matchGame = (row) => reportGame === 'all' || row.game === reportGame;
+    const unsettledRows = reportData.unsettled.filter(matchGame);
+    const settledRows = reportData.settled.filter(matchGame);
+    const dailyRows = reportData.daily[reportWeek];
+
+    // 筛选下拉＝投注面板里开得起来的所有彩票游戏（顺序跟着游戏切换器走）。
+    // Slot 类（糖果派对／麻将胡了2）抬头没有菜单、也没有注单，用 REPORT_PLAYS 滤掉。
+    const gameFilterOptions = carouselGameItems.filter(
+      item => playableCarouselGames.includes(item.key) && REPORT_PLAYS[item.key]
+    );
+    const gameFilterLabel = reportGame === 'all'
+      ? '全部游戏'
+      : (gameFilterOptions.find(g => g.key === reportGame)?.label || reportGame);
+
+    // 汇总：每页各自 2~3 个数字
+    const sumAmount = (rows) => rows.reduce((a, r) => a + r.amount, 0);
+    const summary = reportTab === 'unsettled'
+      ? [
+          { label: '注单', value: `${unsettledRows.length} 笔` },
+          { label: '总投注', value: `¥${reportMoney(sumAmount(unsettledRows))}` },
+          { label: '可返水', value: `¥${reportMoney(unsettledRows.reduce((a, r) => a + r.rebate, 0))}`, cls: 'muted' }
+        ]
+      : reportTab === 'settled'
+        ? [
+            { label: '注单', value: `${settledRows.length} 笔` },
+            { label: '总投注', value: `¥${reportMoney(sumAmount(settledRows))}` },
+            (() => {
+              const p = settledRows.reduce((a, r) => a + r.profit, 0);
+              return { label: '总盈亏', value: `${p >= 0 ? '+' : ''}${reportMoney(p)}`, cls: p >= 0 ? 'win' : 'lose' };
+            })()
+          ]
+        : [
+            { label: '注数', value: `${dailyRows.reduce((a, d) => a + d.bets, 0)}` },
+            { label: '投注额', value: `¥${reportMoney(dailyRows.reduce((a, d) => a + d.amount, 0))}` },
+            (() => {
+              const p = dailyRows.reduce((a, d) => a + d.result, 0);
+              return { label: '结果', value: `${p >= 0 ? '+' : ''}${reportMoney(p)}`, cls: p >= 0 ? 'win' : 'lose' };
+            })()
+          ];
+
+    return (
+      <div className="vp-report-sheet">
+        {/* 抬头：三张报表互切 */}
+        <div className="vp-rp-head">
+          <div className="vp-rp-seg">
+            {[
+              { key: 'unsettled', label: '未结明细' },
+              { key: 'settled', label: '今日已结' },
+              { key: 'query', label: '报表查询' }
+            ].map(t => (
+              <div
+                key={t.key}
+                className={`vp-rp-seg-item ${reportTab === t.key ? 'active' : ''}`}
+                onClick={() => { setReportTab(t.key); setReportOpenRows(new Set()); setReportGameOpen(false); setReportDraw(null); }}
+              >
+                {t.label}
+              </div>
+            ))}
+          </div>
+          <img src="x.png" className="vp-rp-close" onClick={() => { setReportTab(null); setReportDraw(null); }} alt="关闭" />
+        </div>
+
+        {/* 筛选列 */}
+        <div className="vp-rp-filter">
+          {reportTab === 'query' ? (
+            <div className="vp-rp-week">
+              {[{ k: 0, l: '本周' }, { k: 1, l: '上周' }].map(w => (
+                <div
+                  key={w.k}
+                  className={`vp-rp-week-item ${reportWeek === w.k ? 'active' : ''}`}
+                  onClick={() => setReportWeek(w.k)}
+                >
+                  {w.l}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="vp-rp-select-wrap">
+              <div className="vp-rp-select" onClick={() => setReportGameOpen(o => !o)}>
+                {gameFilterLabel}
+                <i className="fa-solid fa-chevron-down"></i>
+              </div>
+              {reportGameOpen && (
+                <>
+                  <div className="vp-rp-select-mask" onClick={() => setReportGameOpen(false)} />
+                  <div className="vp-rp-select-menu">
+                    {[{ key: 'all', label: '全部游戏' }, ...gameFilterOptions].map(g => (
+                      <div
+                        key={g.key}
+                        className={`vp-rp-select-opt ${reportGame === g.key ? 'active' : ''}`}
+                        onClick={() => { setReportGame(g.key); setReportGameOpen(false); }}
+                      >
+                        {g.label}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 汇总条：固定在顶，不跟着列表滚 */}
+        <div className="vp-rp-summary">
+          {summary.map(s => (
+            <div className="vp-rp-sum-item" key={s.label}>
+              <span>{s.label}</span>
+              <b className={s.cls || ''}>{s.value}</b>
+            </div>
+          ))}
+        </div>
+
+        {/* 列表（唯一的滚动区） */}
+        {reportTab === 'query' ? (
+          <div className="vp-rp-table">
+            <div className="vp-rp-th">
+              <span className="c-date">日期</span>
+              <span className="c-num">注数</span>
+              <span className="c-num">投注额</span>
+              <span className="c-num">退水</span>
+              <span className="c-num">结果</span>
+            </div>
+            <div className="vp-rp-list">
+              {dailyRows.map(d => (
+                <div
+                  key={d.id}
+                  className="vp-rp-tr"
+                  onClick={() => showToast(d.bets ? `提示：【${d.date} 明细】正在对接中！` : '当日没有投注记录')}
+                >
+                  <span className="c-date"><b>{d.date}</b><i>周{d.weekday}</i></span>
+                  <span className={`c-num ${d.bets ? '' : 'zero'}`}>{d.bets}</span>
+                  <span className={`c-num ${d.bets ? '' : 'zero'}`}>{reportMoney(d.amount)}</span>
+                  <span className="c-num muted">{reportMoney(d.rebate)}</span>
+                  <span className={`c-num ${d.result > 0 ? 'win' : d.result < 0 ? 'lose' : 'zero'}`}>
+                    {d.result > 0 ? '+' : ''}{reportMoney(d.result)}
+                  </span>
+                </div>
+              ))}
+              <div className="vp-rp-more">没有更多了</div>
+            </div>
+          </div>
+        ) : reportTab === 'unsettled' ? (
+          <div className="vp-rp-list">
+            {unsettledRows.length === 0 && <div className="vp-rp-empty">暂无未结注单</div>}
+            {unsettledRows.map(r => {
+              const open = reportOpenRows.has(r.id);
+              return (
+                <div key={r.id} className={`vp-rp-row ${open ? 'open' : ''}`} onClick={() => toggleReportRow(r.id)}>
+                  <div className="vp-rp-l1">
+                    <span className="vp-rp-play">{r.play}</span>
+                    <span className="vp-rp-odds">@{r.odds}</span>
+                    <span className="vp-rp-amt">¥{reportMoney(r.amount)}</span>
+                  </div>
+                  <div className="vp-rp-l2">
+                    <span className="vp-rp-meta">{r.gameLabel} · {String(r.period).slice(-5)}期 · {r.time}</span>
+                    <i className={`fa-solid fa-chevron-down vp-rp-caret ${open ? 'up' : ''}`}></i>
+                  </div>
+                  {open && (
+                    <div className="vp-rp-detail" onClick={(e) => e.stopPropagation()}>
+                      {renderReportKv('注单号', r.orderNo, '', true)}
+                      {renderReportKv('退水比例', `${r.rebateRate}%`)}
+                      {renderReportKv('可返金额', `¥${reportMoney(r.rebate)}`)}
+                      {renderReportKv('可赢金额', `¥${reportMoney(r.amount * Number(r.odds))}`, 'win')}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {unsettledRows.length > 0 && <div className="vp-rp-more">没有更多了</div>}
+          </div>
+        ) : (
+          <div className="vp-rp-list">
+            {settledRows.length === 0 && <div className="vp-rp-empty">今日尚无已结注单</div>}
+            {settledRows.map(r => {
+              const open = reportOpenRows.has(r.id);
+              return (
+                <div key={r.id} className={`vp-rp-row ${open ? 'open' : ''}`} onClick={() => toggleReportRow(r.id)}>
+                  <div className="vp-rp-l1">
+                    <span className="vp-rp-play">{r.play}</span>
+                    <span className="vp-rp-odds">@{r.odds}</span>
+                    <span className={`vp-rp-amt ${r.won ? 'win' : 'lose'}`}>
+                      {r.profit >= 0 ? '+' : ''}{reportMoney(r.profit)}
+                    </span>
+                  </div>
+                  <div className="vp-rp-l2">
+                    <span className="vp-rp-meta">{r.gameLabel} · {String(r.period).slice(-5)}期 · {r.time}</span>
+                    <span className="vp-rp-chip done">本金 {reportMoney(r.amount)}</span>
+                    <i className={`fa-solid fa-chevron-down vp-rp-caret ${open ? 'up' : ''}`}></i>
+                  </div>
+                  {open && (
+                    <div className="vp-rp-detail" onClick={(e) => e.stopPropagation()}>
+                      {renderReportKv('注单号', r.orderNo, '', true)}
+                      {renderReportKv('退水金额', `¥${reportMoney(r.rebate)}`)}
+                      {renderReportKv('结算金额', `¥${reportMoney(r.settleAmount)}`, r.won ? 'win' : '')}
+                      {renderReportKv('状态', '已结算')}
+                      <div className="vp-rp-detail-act">
+                        <button onClick={() => setReportDraw(r)}>开奖结果</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {settledRows.length > 0 && <div className="vp-rp-more">没有更多了</div>}
+          </div>
+        )}
+
+        {/* 开奖结果：该期开出什么，用抬头那套球图渲染（满版页面也是这个小弹窗） */}
+        {reportDraw && (
+          <div className="vp-rp-draw-mask" onClick={() => setReportDraw(null)}>
+            <div className="vp-rp-draw-card" onClick={(e) => e.stopPropagation()}>
+              <div className="vp-rp-draw-head">
+                <span>{reportDraw.gameLabel}（期数: {reportDraw.fullPeriod}）</span>
+                <img src="x.png" onClick={() => setReportDraw(null)} alt="关闭" />
+              </div>
+              <div className="vp-rp-draw-balls">
+                {/* 用 header 那一档尺寸：这个弹窗就是专门来看开奖号的，球要大一点 */}
+                {renderDrawBalls(reportDraw.game, reportDraw.draw, 'header')}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -2527,8 +2943,21 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setDrawHistoryOpen(false); // 菜单与历史开奖弹窗不同时展开
   };
 
+  // 抬头菜单 → 报表：算一份资料快照再开，之后每秒的重渲染都不会动到数字
+  const openReport = (tab) => {
+    setReportData(buildReportData(activeCarouselGame, issue));
+    setReportOpenRows(new Set());
+    setReportGame('all');
+    setReportWeek(0);
+    setReportDraw(null);
+    setReportTab(tab);
+  };
+
   const handleMenuDropdownItemClick = (label) => {
     setMenuOpen(false);
+    if (label === '未结明细') { openReport('unsettled'); return; }
+    if (label === '今日已结') { openReport('settled'); return; }
+    if (label === '报表查询') { openReport('query'); return; }
     if (label === '活动规则') {
       // 已有规则说明的游戏：点击「活动规则」打开对应说明页
       if (activeCarouselGame === 'fishcrab') { setShowFcRules(true); return; }
@@ -5034,6 +5463,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                     </div>
                   </div>
                 )}
+
+                {/* 报表层：挂在 .vp-play-panel（position: relative）上，absolute 盖住整个
+                    投注面板。挂这一层是因为九个游戏各有自己的面板分支，挂这里只要一处。 */}
+                {renderReportSheet()}
               </div>
   );
 
@@ -5073,132 +5506,96 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
         {/* 2/3 Scrollable Video Info & Games Content */}
         <div className="player-scroll-content" ref={scrollContainerRef}>
           
-          {/* Video Info Block & Tab Bar - Only show when NOT in Watch & Play tab */}
-          {vpActiveTab !== 'play' && (
-            <>
-              {/* Video Info Block */}
-              <div className="vp-video-info-block">
-                <h3 className="vp-video-title">
-                  {activeVideo?.title || "诺曼底72小时"}
-                </h3>
-                
-                {/* Meta stats row */}
-                <div className="vp-video-meta-row">
-                  <div className="vp-meta-item">
-                    <i className="fa-regular fa-clock"></i>
-                    <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
-                  </div>
-                  <div className="vp-meta-item">
-                    <i className="fa-regular fa-eye"></i>
-                    <span>{activeVideo?.views || "1.9万"}</span>
-                  </div>
-                  <div className="vp-meta-item">
-                    <i className="fa-solid fa-star meta-star"></i>
-                    <span>{activeVideo?.rating || "8.2"}</span>
-                  </div>
-                </div>
-
-                {/* Tags row */}
-                <div className="vp-video-tags-row">
-                  {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
-                    <span key={idx} className="vp-video-tag">{tag}</span>
-                  ))}
-                </div>
-
-                {/* Description block */}
-                <div className="vp-video-description-box">
-                  <div className="vp-desc-text">
-                    {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
-                  </div>
-                  <span className="vp-desc-more" onClick={() => setShowDetailsModal(true)}>详情 &gt;</span>
-                </div>
-
-                {/* Actions row */}
-                <div className="vp-actions-row">
-                  <button className={`vp-action-btn ${hasLiked ? 'active' : ''}`} onClick={handleLike}>
-                    <i className={`${hasLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up`}></i>
-                    <span>{likes}</span>
-                  </button>
-                  <button className={`vp-action-btn ${hasDisliked ? 'active' : ''}`} onClick={handleDislike}>
-                    <i className={`${hasDisliked ? 'fa-solid' : 'fa-regular'} fa-thumbs-down`}></i>
-                    <span>{dislikes}</span>
-                  </button>
-                  <button className="vp-action-btn" onClick={() => showToast('评论功能暂未开放')}>
-                    <i className="fa-regular fa-comment-dots"></i>
-                    <span>0</span>
-                  </button>
-                  <button className={`vp-action-btn ${hasFav ? 'active' : ''}`} onClick={handleFavorite}>
-                    <i className={`${hasFav ? 'fa-solid' : 'fa-regular'} fa-star`}></i>
-                    <span>{favCount}</span>
-                  </button>
-                </div>
-
-                {/* Rotating winning banner */}
-                <div className="vp-winning-banner">
-                  <div className="vp-banner-left">
-                    <span className="vp-banner-badge">恭喜中奖</span>
-                    <span className="vp-banner-text">
-                      恭喜 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].name}</span> 赢的 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].amount}</span> 元
-                    </span>
-                  </div>
-                  <div className="vp-banner-right">
-                    <span className="vp-banner-game-tag">{winningAnnouncements[bannerIdx].game}</span>
-                    <i className="fa-solid fa-chevron-right"></i>
-                  </div>
-                </div>
+          {/* Video Info Block & Tab Bar：投注面板是浮在这层之上的独立弹窗
+              （.vp-play-sheet 走 position: absolute），不占这层的版面，
+              所以「边看边玩」时底下这些照常整块显示，不再换成精简标题条。 */}
+          {/* Video Info Block */}
+          <div className="vp-video-info-block">
+            <h3 className="vp-video-title">
+              {activeVideo?.title || "诺曼底72小时"}
+            </h3>
+            
+            {/* Meta stats row */}
+            <div className="vp-video-meta-row">
+              <div className="vp-meta-item">
+                <i className="fa-regular fa-clock"></i>
+                <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
               </div>
-
-              {/* Sticky Tab Bar */}
-              <div className="vp-tab-bar">
-                <button className={`vp-tab-btn ${vpActiveTab === 'chatroom' ? 'active' : ''}`} onClick={() => setVpActiveTab('chatroom')}>
-                  聊天室
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'play' ? 'active' : ''}`} onClick={() => setVpActiveTab('play')}>
-                  边看边玩
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'recommend' ? 'active' : ''}`} onClick={() => setVpActiveTab('recommend')}>
-                  为您推荐
-                </button>
-                <button className={`vp-tab-btn ${vpActiveTab === 'more-games' ? 'active' : ''}`} onClick={() => setVpActiveTab('more-games')}>
-                  更多游戏
-                </button>
+              <div className="vp-meta-item">
+                <i className="fa-regular fa-eye"></i>
+                <span>{activeVideo?.views || "1.9万"}</span>
               </div>
-            </>
-          )}
-
-          {/* Compact title bar for 边看边玩：保留标题区，游戏面板不占满高度 */}
-          {vpActiveTab === 'play' && (
-            <div className="vp-video-info-block vp-play-title-bar">
-              <h3 className="vp-video-title">
-                {activeVideo?.title || "诺曼底72小时"}
-              </h3>
-              <div className="vp-video-meta-row">
-                <div className="vp-meta-item">
-                  <i className="fa-regular fa-clock"></i>
-                  <span>{activeVideo?.views ? "3天前" : "昨天 01:00"}</span>
-                </div>
-                <div className="vp-meta-item">
-                  <i className="fa-regular fa-eye"></i>
-                  <span>{activeVideo?.views || "1.9万"}</span>
-                </div>
-                <div className="vp-meta-item">
-                  <i className="fa-solid fa-star meta-star"></i>
-                  <span>{activeVideo?.rating || "8.2"}</span>
-                </div>
-              </div>
-              <div className="vp-video-tags-row">
-                {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
-                  <span key={idx} className="vp-video-tag">{tag}</span>
-                ))}
-              </div>
-              <div className="vp-video-description-box">
-                <div className="vp-desc-text">
-                  {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
-                </div>
-                <span className="vp-desc-more" onClick={() => setShowDetailsModal(true)}>详情 &gt;</span>
+              <div className="vp-meta-item">
+                <i className="fa-solid fa-star meta-star"></i>
+                <span>{activeVideo?.rating || "8.2"}</span>
               </div>
             </div>
-          )}
+
+            {/* Tags row */}
+            <div className="vp-video-tags-row">
+              {(activeVideo?.tags || ['#剧情', '#战争']).map((tag, idx) => (
+                <span key={idx} className="vp-video-tag">{tag}</span>
+              ))}
+            </div>
+
+            {/* Description block */}
+            <div className="vp-video-description-box">
+              <div className="vp-desc-text">
+                {activeVideo?.description || "影片聚焦诺曼底登陆前夕的紧张局势，围绕盟军远征军最高司令部首席气象学家詹姆斯斯塔格上校（安德鲁斯科特饰）展开，他的职责是向盟军最高指挥官德怀特特戴维汇报天气情况，决定登陆的最佳时机。"}
+              </div>
+              <span className="vp-desc-more" onClick={() => setShowDetailsModal(true)}>详情 &gt;</span>
+            </div>
+
+            {/* Actions row */}
+            <div className="vp-actions-row">
+              <button className={`vp-action-btn ${hasLiked ? 'active' : ''}`} onClick={handleLike}>
+                <i className={`${hasLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up`}></i>
+                <span>{likes}</span>
+              </button>
+              <button className={`vp-action-btn ${hasDisliked ? 'active' : ''}`} onClick={handleDislike}>
+                <i className={`${hasDisliked ? 'fa-solid' : 'fa-regular'} fa-thumbs-down`}></i>
+                <span>{dislikes}</span>
+              </button>
+              <button className="vp-action-btn" onClick={() => showToast('评论功能暂未开放')}>
+                <i className="fa-regular fa-comment-dots"></i>
+                <span>0</span>
+              </button>
+              <button className={`vp-action-btn ${hasFav ? 'active' : ''}`} onClick={handleFavorite}>
+                <i className={`${hasFav ? 'fa-solid' : 'fa-regular'} fa-star`}></i>
+                <span>{favCount}</span>
+              </button>
+            </div>
+
+            {/* Rotating winning banner */}
+            <div className="vp-winning-banner">
+              <div className="vp-banner-left">
+                <span className="vp-banner-badge">恭喜中奖</span>
+                <span className="vp-banner-text">
+                  恭喜 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].name}</span> 赢的 <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{winningAnnouncements[bannerIdx].amount}</span> 元
+                </span>
+              </div>
+              <div className="vp-banner-right">
+                <span className="vp-banner-game-tag">{winningAnnouncements[bannerIdx].game}</span>
+                <i className="fa-solid fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky Tab Bar */}
+          <div className="vp-tab-bar">
+            <button className={`vp-tab-btn ${vpActiveTab === 'chatroom' ? 'active' : ''}`} onClick={() => setVpActiveTab('chatroom')}>
+              聊天室
+            </button>
+            <button className={`vp-tab-btn ${vpActiveTab === 'play' ? 'active' : ''}`} onClick={() => setVpActiveTab('play')}>
+              边看边玩
+            </button>
+            <button className={`vp-tab-btn ${vpActiveTab === 'recommend' ? 'active' : ''}`} onClick={() => setVpActiveTab('recommend')}>
+              为您推荐
+            </button>
+            <button className={`vp-tab-btn ${vpActiveTab === 'more-games' ? 'active' : ''}`} onClick={() => setVpActiveTab('more-games')}>
+              更多游戏
+            </button>
+          </div>
 
           {/* Tab Content Panel */}
           <div className={`vp-tab-content ${vpActiveTab === 'play' ? 'vp-play-sheet' : ''}`}>

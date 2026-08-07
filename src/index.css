@@ -11481,17 +11481,6 @@ body {
   margin-bottom: 6px;
 }
 
-/* 边看边玩：精简标题条（仅标题 + 元信息），让游戏面板不占满高度 */
-/* 标题与元信息保持与完整信息块完全一致，切换分页时不产生跳动 */
-.vp-play-title-bar {
-  flex-shrink: 0;
-  padding: 12px 14px 8px;
-}
-
-.vp-play-meta-row {
-  margin-bottom: 0;
-}
-
 .vp-video-meta-row {
   display: flex;
   align-items: center;
@@ -19671,3 +19660,526 @@ body {
   pointer-events: none;
 }
 
+
+/* ==========================================================================
+   投注面板内的报表（未结明细／今日已结／报表查询）
+   --------------------------------------------------------------------------
+   为什么不照抄满版页面：满版是「一张卡 8 行『标签：值』」，一张卡就 150px。
+   投注面板只有 ~395px 高，扣掉抬头／筛选／汇总后列表只剩 ~280px —— 照抄的话
+   一次看不到两笔，而且 8 个字段同字级同灰度，眼睛得逐行来回找重点。
+
+   面板版的取舍：
+     ① 每列只给一个重点 —— 第一行放玩法与金额／盈亏（大字、右对齐、语意色），
+        第二行降级成灰字（游戏·期号·时间）＋一个状态 chip，一列 55px；
+        剩下的字段（注单号、退水、结算金额）收进展开层，要看才点开。
+        同样的 280px 从 1.8 笔变成 5 笔。
+     ② 汇总条钉在顶端不跟着滚 —— 面板矮，滚两下就看不到总额了。
+     ③ 三张报表做成页签互切，不必退回抬头菜单再进来。
+     ④ 报表查询每行都是同构数字（注数／金额／退水／结果），卡片反而难比较，
+        所以那一页改成真表格：固定表头 + 右对齐等宽数字，上下扫一眼就比得出来。
+   金额一律 tabular-nums，位数才对得齐。
+   ========================================================================== */
+
+.vp-report-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 120; /* 投注面板本体是 110 */
+  display: flex;
+  flex-direction: column;
+  background: #f1f5f9;
+  border-radius: 14px 14px 0 0;
+  overflow: hidden;
+  animation: vpReportIn 0.18s ease;
+}
+
+@keyframes vpReportIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- 抬头：三张报表互切 ---- */
+.vp-rp-head {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 8px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vp-rp-seg {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.vp-rp-seg-item {
+  flex: 1;
+  padding: 5px 0;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0.66rem;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.vp-rp-seg-item.active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.vp-rp-close {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* ---- 筛选列 ---- */
+.vp-rp-filter {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f6;
+}
+
+/* 这层要自己也是 flex：留成 block 的话里面的 inline-flex 胶囊会跟着行内基线走，
+   底下多出一截行高留白，胶囊就比同列的其他东西低约 3px。 */
+.vp-rp-select-wrap {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.vp-rp-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #f8fafc;
+  font-size: 0.58rem;
+  color: #475569;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.vp-rp-select i {
+  font-size: 0.42rem;
+  color: #94a3b8;
+}
+
+.vp-rp-select-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+}
+
+.vp-rp-select-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 131;
+  min-width: 128px;
+  max-height: 168px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+
+.vp-rp-select-opt {
+  padding: 7px 12px;
+  font-size: 0.6rem;
+  color: #475569;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.vp-rp-select-opt.active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.vp-rp-week {
+  display: flex;
+  gap: 4px;
+}
+
+.vp-rp-week-item {
+  height: 22px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  border-radius: 11px;
+  background: #f1f5f9;
+  font-size: 0.58rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.vp-rp-week-item.active {
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ---- 汇总条：钉在顶端，不跟着列表滚 ---- */
+.vp-rp-summary {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vp-rp-sum-item {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.vp-rp-sum-item + .vp-rp-sum-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: #eef2f6;
+}
+
+.vp-rp-sum-item span {
+  font-size: 0.5rem;
+  color: #94a3b8;
+}
+
+.vp-rp-sum-item b {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- 注单列表（唯一的滚动区） ---- */
+.vp-rp-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vp-rp-row {
+  margin: 6px 8px;
+  padding: 7px 10px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.vp-rp-row.open {
+  border-color: #dbeafe;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.vp-rp-l1 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.vp-rp-play {
+  min-width: 0;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vp-rp-odds {
+  flex-shrink: 0;
+  font-size: 0.54rem;
+  color: #94a3b8;
+}
+
+.vp-rp-amt {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #2563eb;
+  font-variant-numeric: tabular-nums;
+}
+
+.vp-rp-l2 {
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vp-rp-meta {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.52rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vp-rp-chip {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.5rem;
+  white-space: nowrap;
+}
+
+.vp-rp-chip.done {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.vp-rp-caret {
+  flex-shrink: 0;
+  font-size: 0.44rem;
+  color: #cbd5e1;
+  transition: transform 0.18s ease;
+}
+
+.vp-rp-caret.up {
+  transform: rotate(180deg);
+}
+
+/* ---- 展开层：次要字段 ---- */
+.vp-rp-detail {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px dashed #e2e8f0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 12px;
+}
+
+.vp-rp-kv {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.vp-rp-kv.full {
+  grid-column: 1 / -1;
+}
+
+.vp-rp-kv span {
+  flex-shrink: 0;
+  font-size: 0.5rem;
+  color: #94a3b8;
+}
+
+.vp-rp-kv b {
+  min-width: 0;
+  font-size: 0.56rem;
+  font-weight: 600;
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* 注单号要能长按选取（全域 * 关掉了 user-select） */
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.vp-rp-detail-act {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1px;
+}
+
+.vp-rp-detail-act button {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 12px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 0.54rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---- 报表查询：同构数字改用表格 ---- */
+.vp-rp-table {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.vp-rp-th {
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.5rem;
+  color: #94a3b8;
+}
+
+.vp-rp-tr {
+  height: 42px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.vp-rp-th .c-date,
+.vp-rp-tr .c-date {
+  flex: 0 0 64px;
+}
+
+.vp-rp-th .c-num,
+.vp-rp-tr .c-num {
+  flex: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.vp-rp-tr .c-date {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.vp-rp-tr .c-date b {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.vp-rp-tr .c-date i {
+  font-style: normal;
+  font-size: 0.46rem;
+  color: #cbd5e1;
+}
+
+.vp-rp-tr .c-num {
+  font-size: 0.6rem;
+  color: #475569;
+}
+
+.vp-rp-empty {
+  padding: 46px 0;
+  text-align: center;
+  font-size: 0.6rem;
+  color: #94a3b8;
+}
+
+/* ---- 语意色：写在最后，压过上面各处的基础色 ---- */
+.vp-report-sheet .win { color: #16a34a; }
+.vp-report-sheet .lose { color: #ef4444; }
+.vp-report-sheet .muted { color: #94a3b8; }
+.vp-report-sheet .zero { color: #cbd5e1; }
+
+/* 列表末尾：告诉用户已经到底了（面板矮，不然会以为还有内容没滚到） */
+.vp-rp-more {
+  padding: 10px 0 14px;
+  text-align: center;
+  font-size: 0.5rem;
+  color: #cbd5e1;
+}
+
+/* ---- 开奖结果弹窗：那一期开出什么（照满版页面的小卡形式） ---- */
+.vp-rp-draw-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 140;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.vp-rp-draw-card {
+  width: 100%;
+  padding: 12px 14px 14px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
+  animation: vpReportIn 0.16s ease;
+}
+
+.vp-rp-draw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.vp-rp-draw-head span {
+  min-width: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #1e293b;
+  /* 期号是 12 码，窄面板放不下就换行，不要压缩球区 */
+  overflow-wrap: anywhere;
+}
+
+.vp-rp-draw-head img {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* 球图各游戏尺寸不同（赛车 10 颗、六合彩 7 颗＋特码），窄面板一律允许换行 */
+.vp-rp-draw-balls {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+}
+
+.vp-rp-draw-balls > * {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 6px;
+}
