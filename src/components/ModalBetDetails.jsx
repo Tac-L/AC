@@ -1,5 +1,22 @@
-import React from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
+
+// 各投注入口对应的游戏名。抬头的「游戏名 投注详情」和投注成功的 toast 都取这一份 ——
+// 原本两边各写一串 if/else，久了就会漂：fast_three_embedded 那个「(视频)」后缀
+// 只是同一个游戏从视频页进来的入口，玩家看到的还是同一个游戏，不该出现在名字里。
+const GAME_NAMES = {
+  mark_six: '一分澳门六合彩',
+  fast_three_embedded: '一分快三',
+  speed_race: '一分极速赛车',
+  fish_crab: '一分鱼虾蟹',
+  baccarat: '百家乐A1',
+  animal_sports: '一分动物运动会',
+  ffc: '一分分分彩',
+  lucky28: '一分幸运28',
+  sports_live: '体育赛事'
+};
+
+const gameNameOf = (key) => GAME_NAMES[key] || '一分快三';
 
 export default function ModalBetDetails() {
   const {
@@ -17,29 +34,33 @@ export default function ModalBetDetails() {
     showToast
   } = useApp();
 
+  // 高度对齐投注面板。
+  // 原本这个弹窗是 height: auto + max-height: 85%，高度跟着注单数量长：一注约 280px、
+  // 八注就顶到 690px，而投注面板只有 400 上下 —— 从「提交下注」跳到「确认投注」，
+  // 同一个动作的前后两步版面高度差一大截，看起来像换了个界面。
+  // 改成开窗当下量一次投注面板的高度贴上来，注单列表在里面滚（本来就有 overflow-y）。
+  //
+  // 量的是 DOM 而不是从 context 拿：面板高度是 ModalVideoPlayer 里那支 layoutBetOverlay
+  // 依各游戏点位区实际布局量完写进 inline style 的，没有第二个地方持有这个数字。
+  // 量到就直接写进 DOM，不绕一轮 state：这本来就是「把量到的版面尺寸同步给 DOM」，
+  // 走 setState 只是多触发一次渲染。用 useLayoutEffect 是要在 paint 前写好，
+  // 否则会先画一帧自适应高度再跳到面板高度。
+  const contentRef = useRef(null);
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return; // 关闭时整个组件 return null，量不到也不用量
+    const panel = document.querySelector('.vp-play-sheet, .live-bet-sheet, .drama-betting-sheet');
+    const h = panel ? panel.getBoundingClientRect().height : 0;
+    if (h <= 0) return; // 找不到投注面板：留着样式表的 auto + max-height: 85%
+    el.style.height = `${h}px`;
+    // max-height 一起解除 —— 面板本身已被 layoutBetOverlay 夹在 .app-body 高度以内，
+    // 不会超出手机可视区，留着 85% 反而会让两边对不齐。
+    el.style.maxHeight = 'none';
+  }, [betDetailsModalActive]);
+
   if (!betDetailsModalActive) return null;
 
-  // Set game title
-  let gameTitle = '一分快三 投注详情';
-  if (currentActiveGame === 'mark_six') {
-    gameTitle = '一分澳门六合彩 投注详情';
-  } else if (currentActiveGame === 'fast_three_embedded') {
-    gameTitle = '一分快三(视频) 投注详情';
-  } else if (currentActiveGame === 'speed_race') {
-    gameTitle = '一分极速赛车 投注详情';
-  } else if (currentActiveGame === 'fish_crab') {
-    gameTitle = '一分鱼虾蟹 投注详情';
-  } else if (currentActiveGame === 'baccarat') {
-    gameTitle = '百家乐A1 投注详情';
-  } else if (currentActiveGame === 'animal_sports') {
-    gameTitle = '一分动物运动会 投注详情';
-  } else if (currentActiveGame === 'ffc') {
-    gameTitle = '一分分分彩 投注详情';
-  } else if (currentActiveGame === 'lucky28') {
-    gameTitle = '一分幸运28 投注详情';
-  } else if (currentActiveGame === 'sports_live') {
-    gameTitle = '体育赛事 投注详情';
-  }
+  const gameTitle = `${gameNameOf(currentActiveGame)} 投注详情`;
 
   // Handle amount change for specific staged item.
   // The input shows baseVal * currentMultiplier, so divide back to store the 1x base.
@@ -80,28 +101,7 @@ export default function ModalBetDetails() {
     // Deduct balance
     updateBalance(-totalCost);
 
-    let gameName = '一分快三';
-    if (currentActiveGame === 'mark_six') {
-      gameName = '一分澳门六合彩';
-    } else if (currentActiveGame === 'fast_three_embedded') {
-      gameName = '一分快三(视频)';
-    } else if (currentActiveGame === 'speed_race') {
-      gameName = '一分极速赛车';
-    } else if (currentActiveGame === 'fish_crab') {
-      gameName = '一分鱼虾蟹';
-    } else if (currentActiveGame === 'baccarat') {
-      gameName = '百家乐A1';
-    } else if (currentActiveGame === 'animal_sports') {
-      gameName = '一分动物运动会';
-    } else if (currentActiveGame === 'ffc') {
-      gameName = '一分分分彩';
-    } else if (currentActiveGame === 'lucky28') {
-      gameName = '一分幸运28';
-    } else if (currentActiveGame === 'sports_live') {
-      gameName = '体育赛事';
-    }
-
-    showToast(`🎉 ${gameName} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);
+    showToast(`🎉 ${gameNameOf(currentActiveGame)} 投注成功！共 ${stagedItems.length} 注，总投注额 ¥${totalCost.toFixed(2)}`);
 
     // Reset staged items and close
     setStagedItems([]);
@@ -110,7 +110,7 @@ export default function ModalBetDetails() {
 
   return (
     <div className={`bet-details-modal-overlay ${betDetailsModalActive ? 'active' : ''}`} id="modal-bet-details" style={{ display: 'flex' }}>
-      <div className="bet-details-modal-content">
+      <div className="bet-details-modal-content" ref={contentRef}>
         <div className="modal-header">
           <span className="modal-title-text" id="bet-details-game-title">{gameTitle}</span>
           <button className="modal-close-x" id="btn-close-bet-details" onClick={closeBetDetailsModal}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
+import { RULE_CATEGORIES, RULE_CATEGORY_OF_GAME, getRuleDoc } from '../data/gameRules';
 
 // 点位区的高度（160px）写在 index.css 的 .vp-odds-area 上，JS 只量测、不持有
 // 高度常数，避免两边数字不同步。
@@ -627,6 +628,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   const [reportGameOpen, setReportGameOpen] = useState(false);
   const [reportWeek, setReportWeek] = useState(0);       // 报表查询：0 本周 / 1 上周
   const [reportDraw, setReportDraw] = useState(null);    // 「开奖结果」弹窗看的那一笔已结注单
+  // 抬头菜单里的「活动规则」：跟报表同一种整块阅读层（见 renderRulesSheet）
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [rulesCat, setRulesCat] = useState('k3');        // 左边下拉：玩法类别
+  const [rulesGame, setRulesGame] = useState('fast3');   // 右边下拉：类别底下的具体游戏
+  const [rulesCatOpen, setRulesCatOpen] = useState(false);
+  const [rulesGameOpen, setRulesGameOpen] = useState(false);
   // 各彩票游戏的历史开奖记录（点抬头开奖结果区展开的弹窗；纯前端 mock）
   const [drawHistoryOpen, setDrawHistoryOpen] = useState(false);
   const [drawHistory, setDrawHistory] = useState(() => {
@@ -715,14 +722,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   // 鱼虾蟹 (Fish-Prawn-Crab) embedded selections: key encoded as `${category}|${symbolKey}`
   const [selectedFC, setSelectedFC] = useState(new Set());
   const [fcActiveTab, setFcActiveTab] = useState('single'); // single(单骰), all(全围)
-  const [showFcRules, setShowFcRules] = useState(false);
   // 鱼虾蟹 last draw result: three symbol keys
   const [fcResult, setFcResult] = useState(INITIAL_DRAW.fishcrab);
 
   // 百家乐 (Baccarat) selections: key `${category}|${name}`
   const [selectedBac, setSelectedBac] = useState(new Set());
   const [bacActiveTab, setBacActiveTab] = useState('main'); // main(庄闲), pair(对子), sides(两面)
-  const [showBacRules, setShowBacRules] = useState(false);
   // 百家乐当前牌局（初始牌局见 INITIAL_DRAW.baccarat）
   const [bacPlayer, setBacPlayer] = useState(INITIAL_DRAW.baccarat.player);
   const [bacBanker, setBacBanker] = useState(INITIAL_DRAW.baccarat.banker);
@@ -856,8 +861,12 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
   useEffect(() => { setSelectedAnimal(new Set()); }, [animalActiveTab]);
   useEffect(() => { setSelectedSp(new Set()); }, [spActiveTab, spSimpleMode]);
 
-  // 切游戏时关掉报表：资料是打开当下按游戏产的快照，留着会跟抬头对不上
-  useEffect(() => { setReportTab(null); setReportGameOpen(false); setReportDraw(null); }, [activeCarouselGame]);
+  // 切游戏时关掉报表：资料是打开当下按游戏产的快照，留着会跟抬头对不上。
+  // 规则层一起关：它也是「进来时对准当前游戏」的，留着会停在上一个游戏的说明。
+  useEffect(() => {
+    setReportTab(null); setReportGameOpen(false); setReportDraw(null);
+    setRulesOpen(false); setRulesCatOpen(false); setRulesGameOpen(false);
+  }, [activeCarouselGame]);
 
   // 点位区行高（简易版／专业版都套用）：玩法只有一行点位时，该行撑满整个点位区；
   // 超过一行时改用两行撑满（第三行以后照旧滚动）。
@@ -883,11 +892,16 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
         const hasBoard = !!panel.querySelector('.vp-odds-area, .vp-slot-stage');
         if (!sheet || !hasBoard) return;
 
-        // 报表层盖在面板上时不重量：下面①那步会先把 sheet 撑到 hardCap 再收回，
+        // 报表／规则层盖在面板上时不重量：下面①那步会先把 sheet 撑到 hardCap 再收回，
         // 一撑一收之间报表列表不再溢出，浏览器就把它的 scrollTop 夹成 0 ——
         // 本组件每秒重渲染，等于每秒把用户滚到一半的列表弹回顶端。
         // 此时面板内容没变、高度也早就写好了，本来就不需要重量。
-        if (sheet.querySelector('.vp-report-sheet')) return;
+        //
+        // 但「高度已经写好」要真的验一次：面板刚挂上那一帧量到的自然高度是 0，
+        // 若这一帧之后紧接着就开了报表／规则，不验就等于把弹窗冻在 0px，整片空白。
+        // 所以只有量到过有效高度才跳过，没量到就照常量一次（下一轮就会跳过了）。
+        const laidOut = parseFloat(sheet.style.height) > 0;
+        if (laidOut && sheet.querySelector('.vp-report-sheet, .vp-rules-sheet')) return;
 
         // ① 给足空间，量控制台的自然高度（此时点位区拿得到完整 160px）。
         //    maxHeight 也要暂时解除 —— 短剧抽屉的 max-height: 100% 会把量测值
@@ -1500,6 +1514,164 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
             </div>
           </div>
         )}
+      </div>
+    );
+  };
+
+  /* ==========================================================================
+     抬头菜单 →「活动规则」
+     --------------------------------------------------------------------------
+     跟报表同一种「盖住整个投注面板的阅读层」：抬头一列、筛选一列，剩下全给正文，
+     面板本来就只有 ~395px 高，任何额外的框都会再吃掉一段能读的行数。
+
+     两个下拉分工：左边选玩法类别（一份说明对应一份文件），右边选该类别底下的
+     具体游戏。六合彩底下有两个游戏共用同一份说明，所以类别与游戏不能合成一个
+     下拉——合起来会让同一份文字重复列两次。
+
+     正文是 src/data/gameRules.js 的资料，交给下面这组 renderer 画：
+     区块种类固定（段落／小标／子项／例子／清单／表格），排版就统一了，
+     以后加新彩种只要写资料，不必再写一次 JSX。
+     ========================================================================== */
+
+  const renderRuleBlocks = (blocks, keyPrefix) => blocks.map((b, i) => {
+    const k = `${keyPrefix}-${i}`;
+    switch (b.t) {
+      case 'h3':
+        return <div key={k} className="vp-gr-h3">{b.v}</div>;
+      case 'note':
+        return <p key={k} className="vp-gr-note">{b.v}</p>;
+      case 'sub':
+        return <div key={k} className={`vp-gr-sub ${b.c ? `c-${b.c}` : ''}`}>{b.v}</div>;
+      case 'eg':
+        return (
+          <div key={k} className="vp-gr-eg">
+            {b.label && <div className="vp-gr-eg-label">{b.label}</div>}
+            {Array.isArray(b.v)
+              ? b.v.map((line, j) => <p key={j} className="vp-gr-eg-item">{line}</p>)
+              : b.v}
+          </div>
+        );
+      case 'ul':
+        return (
+          <ul key={k} className="vp-gr-ul">
+            {b.v.map((li, j) => <li key={j}>{li}</li>)}
+          </ul>
+        );
+      case 'ol':
+        return (
+          <ol key={k} className="vp-gr-ol">
+            {b.v.map((li, j) => (
+              <li key={j}>
+                {typeof li === 'string' ? li : (
+                  <>
+                    {li.v}
+                    {li.extra && renderRuleBlocks(li.extra, `${k}-${j}`)}
+                  </>
+                )}
+              </li>
+            ))}
+          </ol>
+        );
+      case 'table':
+        return (
+          <div key={k} className="vp-gr-table-wrap">
+            {b.caption && <div className="vp-gr-caption">{b.caption}</div>}
+            <table className="vp-gr-table">
+              <thead>
+                <tr>{b.head.map((h, j) => <th key={j}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {b.rows.map((row, j) => (
+                  <tr key={j}>
+                    {row.map((cell, c) => (
+                      // 第一栏是项目名（短、置中），其余是说明文字（长、靠左才好读）
+                      <td key={c} className={c === 0 ? '' : 'l'}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      default:
+        return <p key={k} className="vp-gr-p">{b.v}</p>;
+    }
+  });
+
+  const renderRulesSheet = () => {
+    if (!rulesOpen) return null;
+
+    const cat = RULE_CATEGORIES.find(c => c.key === rulesCat) || RULE_CATEGORIES[0];
+    const gameLabel = cat.games.find(g => g.key === rulesGame)?.label || cat.games[0].label;
+    const doc = getRuleDoc(cat.key);
+
+    return (
+      <div className="vp-rules-sheet">
+        <div className="vp-gr-head">
+          <span className="vp-gr-title">活动规则</span>
+          <img src="x.png" className="vp-rp-close" onClick={() => setRulesOpen(false)} alt="关闭" />
+        </div>
+
+        {/* 筛选列：左类别、右游戏。沿用报表那组下拉，两处样式才一致 */}
+        <div className="vp-gr-filter">
+          <div className="vp-rp-select-wrap">
+            <div className="vp-rp-select" onClick={() => { setRulesCatOpen(o => !o); setRulesGameOpen(false); }}>
+              {cat.label}
+              <i className="fa-solid fa-chevron-down"></i>
+            </div>
+            {rulesCatOpen && (
+              <>
+                <div className="vp-rp-select-mask" onClick={() => setRulesCatOpen(false)} />
+                <div className="vp-rp-select-menu">
+                  {RULE_CATEGORIES.map(c => (
+                    <div
+                      key={c.key}
+                      className={`vp-rp-select-opt ${rulesCat === c.key ? 'active' : ''}`}
+                      onClick={() => pickRulesCat(c.key)}
+                    >
+                      {c.label}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="vp-rp-select-wrap">
+            <div className="vp-rp-select" onClick={() => { setRulesGameOpen(o => !o); setRulesCatOpen(false); }}>
+              {gameLabel}
+              <i className="fa-solid fa-chevron-down"></i>
+            </div>
+            {rulesGameOpen && (
+              <>
+                <div className="vp-rp-select-mask" onClick={() => setRulesGameOpen(false)} />
+                <div className="vp-rp-select-menu">
+                  {cat.games.map(g => (
+                    <div
+                      key={g.key}
+                      className={`vp-rp-select-opt ${rulesGame === g.key ? 'active' : ''}`}
+                      onClick={() => { setRulesGame(g.key); setRulesGameOpen(false); }}
+                    >
+                      {g.label}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* 正文（唯一的滚动区）。key 带上类别：换玩法时重建节点，滚动位置回到顶端 */}
+        <div className="vp-gr-body" key={cat.key}>
+          {doc.length === 0 && <div className="vp-rp-empty">该玩法暂无规则说明</div>}
+          {doc.map((sec, i) => (
+            <section className="vp-gr-section" key={i}>
+              <h2 className="vp-gr-section-title">{sec.title}</h2>
+              {renderRuleBlocks(sec.blocks, `s${i}`)}
+            </section>
+          ))}
+          {doc.length > 0 && <div className="vp-rp-more">以上为本玩法全部规则</div>}
+        </div>
       </div>
     );
   };
@@ -2945,6 +3117,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
   // 抬头菜单 → 报表：算一份资料快照再开，之后每秒的重渲染都不会动到数字
   const openReport = (tab) => {
+    setRulesOpen(false); // 报表与规则同一层，只能开一个
     setReportData(buildReportData(activeCarouselGame, issue));
     setReportOpenRows(new Set());
     setReportGame('all');
@@ -2953,16 +3126,35 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
     setReportTab(tab);
   };
 
+  // 抬头菜单 →「活动规则」：预设定位到正在玩的这个游戏。
+  // 该游戏还没有规则文件时（拉霸类），退回列表第一项，两个下拉照样能翻其他玩法。
+  const openRules = () => {
+    const cat = RULE_CATEGORY_OF_GAME[activeCarouselGame] || RULE_CATEGORIES[0].key;
+    const game = RULE_CATEGORY_OF_GAME[activeCarouselGame]
+      ? activeCarouselGame
+      : RULE_CATEGORIES[0].games[0].key;
+    setReportTab(null); // 报表与规则同一层，只能开一个
+    setRulesCat(cat);
+    setRulesGame(game);
+    setRulesCatOpen(false);
+    setRulesGameOpen(false);
+    setRulesOpen(true);
+  };
+
+  // 切类别时右边的游戏下拉要跟着换到该类别的第一个游戏，否则会显示别类的游戏名
+  const pickRulesCat = (catKey) => {
+    const cat = RULE_CATEGORIES.find(c => c.key === catKey);
+    setRulesCat(catKey);
+    setRulesGame(cat.games[0].key);
+    setRulesCatOpen(false);
+  };
+
   const handleMenuDropdownItemClick = (label) => {
     setMenuOpen(false);
     if (label === '未结明细') { openReport('unsettled'); return; }
     if (label === '今日已结') { openReport('settled'); return; }
     if (label === '报表查询') { openReport('query'); return; }
-    if (label === '活动规则') {
-      // 已有规则说明的游戏：点击「活动规则」打开对应说明页
-      if (activeCarouselGame === 'fishcrab') { setShowFcRules(true); return; }
-      if (activeCarouselGame === 'baccarat') { setShowBacRules(true); return; }
-    }
+    if (label === '活动规则') { openRules(); return; }
     showToast(`提示：【${label}】正在对接中，敬请期待！`);
   };
 
@@ -3140,7 +3332,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       ) : (
                       <React.Fragment key="f3-pro">
                       {/* 专业版：玩法页签（可左右滑动，样式同一分分分彩的圆角胶囊） */}
-                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                      <div className="sr-scroll-row vp-play-tabs-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px' }}>
                         {F3_PLAY_TABS.map(tab => {
                           const active = f3PlayTab === tab.cat;
                           return (
@@ -3320,7 +3512,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                                 key={val}
                                 className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                                 onClick={() => handleQuickAmountClick(val)}
-                                style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                               >
                                 {val}
                               </div>
@@ -3534,7 +3725,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       ) : (
                       <React.Fragment key="m6-pro">
                       {/* 专业版：第一层玩法大类（可左右滑动的胶囊） */}
-                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                      <div className="sr-scroll-row vp-play-tabs-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px' }}>
                         {M6P_PLAY_TABS.map(tab => {
                           const active = m6PlayTab === tab.cat;
                           return (
@@ -3571,7 +3762,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                       {/* 第二层小类：特码A/B、特一~特六、合肖/连码/不中 的组合类别 */}
                       {m6pSubList && (
-                        <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                        <div className="vp-sub-tab-row">
                           <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                           <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
                             {m6pSubList.map(item => {
@@ -3707,7 +3898,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -3910,7 +4100,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       {/* 第二层：名次（可左右滑动，两侧箭头） */}
-                      <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                      <div className="vp-sub-tab-row">
                         <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                         <div className="sr-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
                           {srSecondLayer.map(item => {
@@ -4019,7 +4209,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -4217,7 +4406,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
 
                       {/* 第二层：球号/区段（可左右滑动，两侧箭头） */}
-                      <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                      <div className="vp-sub-tab-row">
                         <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                         <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
                           {ffcSecondLayer.map(item => {
@@ -4327,7 +4516,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -4532,7 +4720,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       ) : (
                       <React.Fragment key="l28-pro">
                       {/* 专业版：第一层玩法（可左右滑动的胶囊，样式同一分快三专业版） */}
-                      <div className="sr-scroll-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px', borderBottom: '1px solid #e1e8ed' }}>
+                      <div className="sr-scroll-row vp-play-tabs-row" style={{ display: 'flex', gap: '8px', overflowX: 'auto', background: '#ffffff', padding: '6px 12px' }}>
                         {L28P_PLAY_TABS.map(tab => {
                           const active = l28PlayTab === tab.cat;
                           return (
@@ -4569,7 +4757,7 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
 
                       {/* 第二层：数字 / 两面（仅总和、尾球有） */}
                       {L28P_SUB_TABS[l28PlayTab] && (
-                        <div style={{ display: 'flex', alignItems: 'center', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                        <div className="vp-sub-tab-row">
                           <i className="fa-solid fa-chevron-left" style={{ color: '#cbd5e1', fontSize: '0.7rem', padding: '0 8px', flexShrink: 0 }}></i>
                           <div className="ffc-scroll-row" style={{ display: 'flex', overflowX: 'auto', flex: 1, minWidth: 0 }}>
                             {L28P_SUB_TABS[l28PlayTab].map(item => {
@@ -4672,7 +4860,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -4777,32 +4964,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    {/* 玩法/游戏规则 overlay */}
-                    {showFcRules && (
-                      <div className="vp-fc-rules-overlay" onClick={() => setShowFcRules(false)}>
-                        <div className="vp-fc-rules-panel" onClick={(e) => e.stopPropagation()}>
-                          <div className="vp-fc-rules-header">
-                            <span>鱼虾蟹玩法说明</span>
-                            <i className="fa-solid fa-xmark" onClick={() => setShowFcRules(false)}></i>
-                          </div>
-                          <div className="vp-fc-rules-body">
-                            <p>鱼虾蟹，又称鱼虾蟹骰宝，在中国南方民间曾是相当普遍的游戏，直至现在人们仍然经常于新春期间进行作娱乐之用。其型式与赔率跟另壹游戏骰宝玩法基本壹样，不过采用的骰子由鱼、虾、蟹、金钱、葫芦及鸡的图案代替点数。</p>
-                            <p className="vp-fc-rules-subtitle">1. 单骰</p>
-                            <p>投注每颗骰子 1 至 6 中指定的图案：</p>
-                            <ul>
-                              <li>图案出现壹次，赔率 1.97</li>
-                              <li>图案出现二次，赔率 2.94</li>
-                              <li>图案出现三次，赔率 3.92</li>
-                            </ul>
-                            <p className="vp-fc-rules-subtitle">2. 全围</p>
-                            <ul>
-                              <li>三颗骰子的图案都壹样视为中奖，赔率 180.0</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Embedded betting console */}
                     <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
                       <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
@@ -4825,7 +4986,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -4950,34 +5110,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                       </div>
                     </div>
 
-                    {/* 游戏规则 overlay */}
-                    {showBacRules && (
-                      <div className="vp-fc-rules-overlay" onClick={() => setShowBacRules(false)}>
-                        <div className="vp-fc-rules-panel" onClick={(e) => e.stopPropagation()}>
-                          <div className="vp-fc-rules-header">
-                            <span>百家乐游戏规则</span>
-                            <i className="fa-solid fa-xmark" onClick={() => setShowBacRules(false)}></i>
-                          </div>
-                          <div className="vp-fc-rules-body">
-                            <p className="vp-fc-rules-subtitle">游戏简介</p>
-                            <p>百家乐分为【闲家】和【庄家】，玩家可以下注闲家或庄家，点数总和最接近 9 点者获胜。双方各收到至少两至三张牌，将依照补牌规则多发一张牌。任何一家拿到「例牌」（两张牌合计为 8 或 9 点）时，牌局即结束，不再补牌。</p>
-                            <p className="vp-fc-rules-subtitle">点数计算方法</p>
-                            <p>10、J、Q、K 的扑克牌算作零点，其他按牌面点数计算。当所有牌的点数总和超过 9 点时，仅算总数中的个位。例，最小点数为 0 点（4+6=10）；最大点数为 9 点（4+5=9）取个位数。</p>
-                            <p className="vp-fc-rules-subtitle">例牌</p>
-                            <p>庄闲任何一方两牌合计为 8 或 9 点（称为例牌），双方都不需补牌，即定胜负（双方同持 8 点或 9 点为和局）。</p>
-                            <p className="vp-fc-rules-subtitle">补牌规则</p>
-                            <p>若闲家不需补牌（即闲家首两张牌合计为「6 至 9 点」），庄家以「闲家补牌规则」补牌，即庄首两张牌合计「0 至 5」点要补一张牌，6 点以上不许补牌。</p>
-                            <p className="vp-fc-rules-subtitle">赔率</p>
-                            <ul>
-                              <li>庄 1.95 / 闲 2.0 / 和 9.0 / 庄幸运6 12.0</li>
-                              <li>庄对 12.0 / 闲对 12.0 / 任意对子 6.0 / 完美对子 26.0</li>
-                              <li>闲单 / 闲双 / 庄单 / 庄双 1.96</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Embedded betting console */}
                     <div className="embedded-bet-console" style={{ borderTop: '1px solid #e2e8f0' }}>
                       <div className="bet-console-info-row" style={{ fontSize: '0.7rem' }}>
@@ -4999,7 +5131,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -5144,7 +5275,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -5346,7 +5476,6 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                               key={val}
                               className={`quick-amount-btn ${activeQuickAmount === val ? 'active' : ''}`}
                               onClick={() => handleQuickAmountClick(val)}
-                              style={{ fontSize: '0.7rem', padding: '4px 6px' }}
                             >
                               {val}
                             </div>
@@ -5464,9 +5593,10 @@ export default function ModalVideoPlayer({ embedded = false, onClose, initialGam
                   </div>
                 )}
 
-                {/* 报表层：挂在 .vp-play-panel（position: relative）上，absolute 盖住整个
+                {/* 报表层／规则层：挂在 .vp-play-panel（position: relative）上，absolute 盖住整个
                     投注面板。挂这一层是因为九个游戏各有自己的面板分支，挂这里只要一处。 */}
                 {renderReportSheet()}
+                {renderRulesSheet()}
               </div>
   );
 

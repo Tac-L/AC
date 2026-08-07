@@ -2894,7 +2894,8 @@ input:checked + .slider:before {
   flex: 1;
   height: 38px;
   border-radius: 6px;
-  font-size: 0.84rem;
+  /* 跟 .modal-action-btn 同字级（见那边的说明） */
+  font-size: 0.7rem;
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -5137,12 +5138,21 @@ input:checked + .slider:before {
   overflow: visible;
   gap: 4px;
 }
+/* 字级与内距原本九个游戏各自写在 JSX inline（九份一模一样），收进这里一处管，
+   数字的视觉置中补偿才有地方写（inline style 压得过样式表）。 */
 .embedded-bet-console .quick-amount-btn {
   background-color: #ffffff;
   border: 1px solid #e1e8ed;
   border-right: 1px solid #e1e8ed;
   border-radius: 6px;
   color: #333;
+  font-size: 0.7rem;
+  /* 数字要看起来置中：align-items: center 只把「行盒」摆正，而 Noto Sans SC 为了
+     容纳汉字，上伸部有 1.16em，数字实际只有 0.735em 高 —— 行盒置中后，数字墨迹的
+     中线会落在按钮中线下方约 0.075em（这个字级下量到 1.06px），看起来就是偏低。
+     下缘多给 0.15em 内距，置中的内容盒往上挪半个量（≈1.08px），正好抵掉。
+     用 em 不用 px：日后改字级，补偿量会跟着缩放，不必重算。 */
+  padding: 4px 6px calc(4px + 0.15em);
 }
 .embedded-bet-console .quick-amount-btn:last-child {
   border-right: 1px solid #e1e8ed;
@@ -5206,7 +5216,8 @@ input:checked + .slider:before {
   justify-content: center;
   background-color: #a5b1c2;
   border: none;
-  border-radius: 6px;
+  /* 圓角也跟「撤回」對齊（那顆本來就是 8px） */
+  border-radius: 8px;
   color: #fff;
   padding: 8px 0;
   font-size: 0.78rem;
@@ -7092,10 +7103,13 @@ input:checked + .slider:before {
   box-sizing: border-box;
 }
 
+/* 字级与颜色都对齐投注面板抬头的游戏名（.vp-bet-title-box：0.8rem / #1e293b）：
+   两者是同一个动作的前后两步，标题忽大忽小、忽黑忽灰会像两套东西。
+   #333 是纯灰，跟面板那套 slate 色系（#1e293b 带一点蓝）并排看得出色偏。 */
 .modal-title-text {
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   font-weight: bold;
-  color: #333;
+  color: #1e293b;
 }
 
 .modal-close-x {
@@ -7289,7 +7303,9 @@ input:checked + .slider:before {
   flex: 1;
   height: 38px;
   border-radius: 6px;
-  font-size: 0.84rem;
+  /* 字级对齐投注面板那颗「提交下注」（.console-submit-btn 实际渲染的 0.7rem）：
+     同一个下注动作的前后两步，字忽大忽小会像两套东西。 */
+  font-size: 0.7rem;
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -7406,7 +7422,8 @@ input:checked + .slider:before {
   flex: 1;
   height: 38px;
   border-radius: 6px;
-  font-size: 0.84rem;
+  /* 跟 .modal-action-btn 同字级（见那边的说明） */
+  font-size: 0.7rem;
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -12136,74 +12153,6 @@ body {
   flex-shrink: 0;
 }
 
-/* 鱼虾蟹 玩法/规则 overlay */
-.vp-fc-rules-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 40; /* 需盖住抬头（含历史开奖弹窗）*/
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.vp-fc-rules-panel {
-  width: 100%;
-  max-width: 320px;
-  max-height: 82%;
-  background: #ffffff;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-}
-
-.vp-fc-rules-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #1e293b;
-  border-bottom: 1px solid #eef2f7;
-}
-
-.vp-fc-rules-header i {
-  cursor: pointer;
-  color: #94a3b8;
-}
-
-.vp-fc-rules-body {
-  padding: 12px 14px;
-  overflow-y: auto;
-  font-size: 0.76rem;
-  line-height: 1.6;
-  color: #475569;
-}
-
-.vp-fc-rules-body p {
-  margin: 0 0 10px;
-}
-
-.vp-fc-rules-subtitle {
-  font-weight: 700;
-  color: #1e293b;
-  margin-top: 4px !important;
-}
-
-.vp-fc-rules-body ul {
-  margin: 0 0 10px;
-  padding-left: 18px;
-}
-
-.vp-fc-rules-body li {
-  margin-bottom: 4px;
-}
-
 .vp-game-label-capsule {
   width: 100%;
   height: 16px;
@@ -12352,6 +12301,36 @@ body {
   box-shadow: inset 0 1px 3px rgba(153, 27, 27, 0.12);
   /* 边框改浅红，跟面色与红字统一 */
   border-color: #f3bfbf;
+}
+
+/* ==========================================================================
+   专业版的两层玩法列
+   --------------------------------------------------------------------------
+   第一层是可左右滑的胶囊（.vp-play-tabs-row），第二层是两侧带箭头的页签列
+   （.vp-sub-tab-row）。两者是同一组控制项，中间只该有一条浅色发丝线。
+
+   原本第一层自带 border-bottom: #e1e8ed、第二层又自带 border-top: #f1f5f9，
+   两条 1px 叠在一起变成一条 2px 的灰带，存在感盖过页签本身。
+   现在第二层不再自带上缘线，改成「后面接着第二层时，把第一层那条压成浅色」——
+   没有第二层的玩法（边球、龙虎豹…）第一层维持 #e1e8ed，因为那时它是玩法区
+   与点位区之间的边界，本来就该实一点。
+   ========================================================================== */
+
+.vp-play-tabs-row {
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.vp-sub-tab-row {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+}
+
+/* :has() 不支援的旧壳里整条规则会被丢掉 —— 那时退化成「只有第一层那条 #e1e8ed」，
+   仍然比原本的两条线干净，不必另外写 fallback。 */
+.vp-play-tabs-row:has(+ .vp-sub-tab-row),
+.live-play-tabs-row:has(+ .vp-sub-tab-row) {
+  border-bottom-color: #f1f5f9;
 }
 
 /* 第二层玩法小类（数字／两面、名次、球号…）：选中时铺上点位区底色 + 上方圆角，像贴着内容区的标签 */
@@ -19770,7 +19749,7 @@ body {
   height: 22px;
   padding: 0 9px;
   border: 1px solid #e2e8f0;
-  border-radius: 11px;
+  border-radius: 8px;
   background: #f8fafc;
   font-size: 0.58rem;
   color: #475569;
@@ -19778,7 +19757,13 @@ body {
   cursor: pointer;
 }
 
+/* align-items: center 只把 <i> 的「盒子」置中，箭头本身还是偏低：
+   Font Awesome 的 chevron-down 字身在 em 框里是贴着上缘画的（墨迹中线在基线上方
+   0.3125em，而 line-height: 1 的内容盒中线在 0.375em），差的 0.0625em 就是那一点点
+   下沉。写成 em 而不是 px，改字级时补偿量会跟着缩放，不用重新算。 */
 .vp-rp-select i {
+  position: relative;
+  top: -0.0625em;
   font-size: 0.42rem;
   color: #94a3b8;
 }
@@ -19827,7 +19812,7 @@ body {
   padding: 0 14px;
   display: flex;
   align-items: center;
-  border-radius: 11px;
+  border-radius: 8px;
   background: #f1f5f9;
   font-size: 0.58rem;
   color: #64748b;
@@ -20182,4 +20167,226 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   row-gap: 6px;
+}
+
+/* ==========================================================================
+   投注面板内的活动规则（抬头菜单 →「活动规则」）
+   --------------------------------------------------------------------------
+   跟报表同一个骨架（.vp-rules-sheet 与 .vp-report-sheet 只差内容），
+   抬头／筛选两列固定，正文是唯一的滚动区，下拉直接沿用 .vp-rp-select 那组。
+
+   排版沿用 docs/*玩法说明.html 的视觉语言：浅灰底 + 白卡分节、章节名蓝字带
+   底线、例子是浅蓝左边条的灰框。字级整体比那份文件小一档 ——
+   面板宽只有手机的一栏、高约 395px，原尺寸一屏读不到三行。
+
+   六合彩那种「一条规则挂十几行号码分布」是这里最长的内容，所以：
+     · 子项（.vp-gr-sub）用 12px 悬挂缩排，号码换行后仍对齐首字，不会回到圆点下；
+     · 号码串一律 overflow-wrap: anywhere，窄面板不会把卡片撑破横向滚动。
+   ========================================================================== */
+
+.vp-rules-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 120; /* 与报表同层：两者不会同时开 */
+  display: flex;
+  flex-direction: column;
+  background: #f1f5f9;
+  border-radius: 14px 14px 0 0;
+  overflow: hidden;
+  animation: vpReportIn 0.18s ease;
+}
+
+/* ---- 抬头 ---- */
+.vp-gr-head {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vp-gr-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ---- 筛选列：左类别、右游戏 ---- */
+.vp-gr-filter {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f6;
+}
+
+/* ---- 正文：唯一的滚动区 ---- */
+.vp-gr-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 10px;
+}
+
+.vp-gr-section {
+  margin: 10px 0;
+  padding: 11px 12px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06);
+  font-size: 0.62rem;
+  line-height: 1.75;
+  color: #374151;
+  /* 号码串（01、02、07…）没有断点，不给 anywhere 会把卡片顶宽 */
+  overflow-wrap: anywhere;
+}
+
+.vp-gr-section-title {
+  margin: 0 0 9px;
+  padding-bottom: 7px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4e7fff;
+  border-bottom: 2px solid #eef3ff;
+}
+
+.vp-gr-p {
+  margin: 5px 0;
+}
+
+.vp-gr-h3 {
+  margin: 11px 0 4px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* 小标题若是该区块第一项，上缘不要再多一段空白（章节名底线已经隔开了） */
+.vp-gr-section > .vp-gr-h3:first-of-type {
+  margin-top: 0;
+}
+
+.vp-gr-note {
+  margin: 3px 0;
+  font-size: 0.58rem;
+  color: #6b7280;
+}
+
+/* 子项：号码分布那种一行一条。悬挂缩排让换行的号码仍贴齐首字 */
+.vp-gr-sub {
+  position: relative;
+  margin: 2px 0 0;
+  padding-left: 12px;
+  font-size: 0.58rem;
+  color: #374151;
+}
+
+.vp-gr-sub::before {
+  content: '•';
+  position: absolute;
+  left: 2px;
+  color: #94a3b8;
+}
+
+.vp-gr-sub.c-red { color: #e3342f; }
+.vp-gr-sub.c-green { color: #16a34a; }
+.vp-gr-sub.c-blue { color: #2563eb; }
+
+/* 例子：浅蓝左边条的灰框，跟正文拉开层级 */
+.vp-gr-eg {
+  margin: 5px 0;
+  padding: 5px 8px;
+  border-left: 3px solid #a7bfff;
+  border-radius: 0 6px 6px 0;
+  background: #f8fafc;
+  font-size: 0.58rem;
+  color: #6b7280;
+}
+
+.vp-gr-eg-label {
+  font-weight: 700;
+  color: #475569;
+}
+
+.vp-gr-eg-item {
+  margin: 3px 0 0;
+}
+
+.vp-gr-eg-item:first-of-type {
+  margin-top: 0;
+}
+
+.vp-gr-ol,
+.vp-gr-ul {
+  margin: 5px 0 6px;
+  padding-left: 18px;
+}
+
+.vp-gr-ol > li,
+.vp-gr-ul > li {
+  margin: 6px 0;
+  color: #334155;
+}
+
+.vp-gr-ol > li::marker {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* ---- 表格（百家乐的补牌牌例／赔率表） ---- */
+.vp-gr-table-wrap {
+  margin: 7px 0;
+}
+
+.vp-gr-caption {
+  margin-bottom: 4px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.vp-gr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.56rem;
+  line-height: 1.5;
+}
+
+.vp-gr-table th,
+.vp-gr-table td {
+  padding: 5px 6px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  vertical-align: middle;
+  color: #374151;
+}
+
+.vp-gr-table th {
+  background: #eef3ff;
+  color: #4e7fff;
+  font-weight: 700;
+}
+
+/* 项目名那一栏不换行，说明栏才是能挤的那一栏 */
+.vp-gr-table th:first-child,
+.vp-gr-table td:first-child {
+  white-space: nowrap;
+}
+
+.vp-gr-table td.l {
+  text-align: left;
+}
+
+/* 赔率表最后一栏是数字，加重才扫得到 */
+.vp-gr-table tr > td:last-child:nth-child(3) {
+  font-weight: 700;
+  color: #e3342f;
 }
